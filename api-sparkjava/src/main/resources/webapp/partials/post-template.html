@@ -1,0 +1,25 @@
+
+<div class="container border border-dark" ng-if="post">
+	<div class="row">
+		<div class="col-sm-2">
+		</div>
+		<div class="col-sm-8">
+			<div class="row">
+				<strong>{{post.fullName}}</strong>
+				&#160
+				<a ng-href="#!/posts?username={{post.username}}">
+					@{{post.username}}
+				</a>
+				&#160
+				<a ng-href="#!/posts?on={{post.postTimestamp.date | dateForLink}}">
+					{{post.postTimestamp.date | dateForPost}}
+				</a>
+				&#160
+				{{post.postTimestamp.time | timeForPost}}
+			</div>
+			<div class="row">
+				<p ng-bind-html="post.text | postText"></p>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,10 @@
+allprojects {
+    version = '1.0'
+}
+
+subprojects {
+    repositories {
+        // You can declare any Maven/Ivy/file repository here.
+        mavenCentral()
+    }
+}

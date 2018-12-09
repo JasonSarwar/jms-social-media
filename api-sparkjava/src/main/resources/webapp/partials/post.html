@@ -1,0 +1,7 @@
+
+<div ng-include="'partials/post-template.html'"></div>
+<div> {{ post.replies.length }} Replies:</div>
+<div ng-repeat="post in post.replies">
+	<br>
+	<div ng-include="'partials/post-template.html'"></div>
+</div>

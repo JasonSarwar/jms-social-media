@@ -1,0 +1,4 @@
+rootProject.name = 'my-social-media'
+include 'core'
+include 'api-sparkjava'
+include 'newfolder'
