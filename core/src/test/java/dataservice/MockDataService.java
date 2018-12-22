@@ -1,4 +1,4 @@
-package database;
+package dataservice;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -10,8 +10,6 @@ import com.google.gson.GsonBuilder;
 import com.mytwitter.model.Post;
 import com.mytwitter.model.User;
 import com.mytwitter.model.UserObject;
-
-import dataservice.DataService;
 
 public class MockDataService implements DataService {
 
@@ -101,9 +99,15 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Integer getUserIdBySessionKey(String sessionKey) {
+	public User getUserBySessionKey(String sessionKey) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void removeSessionKey(String sessionKey) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

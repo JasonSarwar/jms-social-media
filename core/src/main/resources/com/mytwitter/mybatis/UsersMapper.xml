@@ -36,9 +36,14 @@
         )
     </insert>
     
-    <select id="getUserIdBySessionKey" parameterType="String">
-        select session_key from user_sessions 
-        where user_id = #{id}
+    <select id="getUserBySessionKey" parameterType="String" resultType="user">
+        select user_sessions.user_id as user_id, full_name from user_sessions, users 
+        where session_key = #{id} and user_sessions.user_id = users.user_id
     </select>
+
+	<delete id="removeSessionKey" parameterType="String">
+		delete from user_sessions
+		where session_key = #{id}
+	</delete>
 
 </mapper>

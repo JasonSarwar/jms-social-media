@@ -35,7 +35,7 @@ public class RequestHandler {
 
 	private static final String SESSION_COOKIE = "my-twitter-session";
 	private static final String AUTHORIZATION = "Authorization";
-	private static final String BEARER = "Bearer: ";
+	private static final String BEARER = "Bearer ";
 	
 	private final DataService dataService;
 	private final PasswordService passwordService;
@@ -97,13 +97,13 @@ public class RequestHandler {
 		Post newPost = extractBodyContent(request, Post.class);
 		newPost.validate();
 		
-		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
-			String sessionKey = request.cookie(SESSION_COOKIE);
-			Integer userId = dataService.getUserIdBySessionKey(sessionKey);
-			if (!newPost.getUserId().equals(userId)) {
-				throw new UnauthorizedPostException("User ID Mismatch");
-			}
-		}
+//		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
+//			String sessionKey = request.cookie(SESSION_COOKIE);
+//			User user = dataService.getUserBySessionKey(sessionKey);
+//			if (!newPost.getUserId().equals(user.getUserId())) {
+//				throw new UnauthorizedPostException("User ID Mismatch");
+//			}
+//		}
 
 		String auth = request.headers(AUTHORIZATION);
 		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
@@ -127,13 +127,13 @@ public class RequestHandler {
 		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
 			
 			String sessionKey = request.cookie(SESSION_COOKIE);
-			Integer userId = dataService.getUserIdBySessionKey(sessionKey);
+			User user = dataService.getUserBySessionKey(sessionKey);
 			
-			if (userId != null) {
+			if (user != null) {
 				LoginSuccess loginSuccess = new LoginSuccess();
-				loginSuccess.setUserId(userId);
-				loginSuccess.setJwt(JWTUtils.createJWT(userId));
-				//loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
+				loginSuccess.setUserId(user.getUserId());
+				loginSuccess.setJwt(JWTUtils.createJWT(user.getUserId()));
+				loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
 				return loginSuccess;
 			} else {
 				return null;
@@ -142,13 +142,13 @@ public class RequestHandler {
 		} else {
 			return null;
 		}
-		
 	}
 	
 	public LoginSuccess handleLogin(Request request, Response response) throws IOException {
 
 		if (request.cookie(SESSION_COOKIE) != null) {
 			//throw new InvalidUserLoginStateException("A User is already logged in");
+			System.err.println("Cookie: " + request.cookie(SESSION_COOKIE));
 		}
 		
 		UserLogin userLogin = extractBodyContent(request, UserLogin.class);
@@ -168,9 +168,7 @@ public class RequestHandler {
 		if (dataService.addUserSession(user.getUserId(), sessionKey) != 1) {
 			throw new InvalidUserLoginStateException("Cannot create user session");
 		}
-		
 		response.cookie(SESSION_COOKIE, sessionKey);
-		
 		LoginSuccess loginSuccess = new LoginSuccess();
 		loginSuccess.setUserId(user.getUserId());
 		loginSuccess.setJwt(JWTUtils.createJWT(user.getUserId()));
@@ -184,18 +182,19 @@ public class RequestHandler {
 		if (request.cookie(SESSION_COOKIE) == null) {
 			throw new InvalidUserLoginStateException("A User is not logged in");
 		}
+		dataService.removeSessionKey(request.cookie(SESSION_COOKIE));
 		response.removeCookie(SESSION_COOKIE);
 		return null;
 	}
 	
 	private <T> T extractBodyContent(Request request, Class<T> aClass) {
 
-		if (request.contentType().startsWith("application/json") 
+		if (request.contentType().toLowerCase().startsWith("application/json") 
 				|| StringUtils.isBlank(request.contentType())) {
 			return gson.fromJson(request.body(), aClass);
-		} else if (request.contentType().startsWith("application/xml")) {
+		} else if (request.contentType().toLowerCase().startsWith("application/xml")) {
 			return null;
-		} else if (request.contentType().startsWith("application/x-protobuf")) {
+		} else if (request.contentType().toLowerCase().startsWith("application/x-protobuf")) {
 			return null;
 		} else {
 			throw new UnsupportedContentTypeException("Unsupported Content Type");

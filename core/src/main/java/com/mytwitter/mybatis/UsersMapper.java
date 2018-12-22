@@ -17,5 +17,7 @@ public interface UsersMapper {
 	
 	int addUserSession(@Param(value="userId") int userId, @Param(value="sessionKey") String sessionKey);
 	
-	Integer getUserIdBySessionKey(String sessionKey);
+	User getUserBySessionKey(String sessionKey);
+	
+	void removeSessionKey(String sessionKey);
 }

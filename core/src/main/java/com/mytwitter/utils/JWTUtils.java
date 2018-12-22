@@ -25,9 +25,10 @@ import java.util.Date;
 public class JWTUtils {
 
 	private static final String SUBJECT = "User Authenication";
-	private static final String ISSUER = "my-twitter";
+	private static final String ISSUER = "jason-social-media";
 	private static final String JWT_ID = "JWT_ID";
-	private static final String USERID = "userId";
+	private static final String CLAIM_USERID = "userId";
+	private static final String CLAIM_ORIGIN = "origin";
 	
 	public JWTUtils() {
 		// TODO Auto-generated constructor stub
@@ -35,7 +36,7 @@ public class JWTUtils {
 	
 	private static String getKey() throws IOException {
 		Path path = Paths.get(AppProperties.JWT_KEY_PATH);
-		return Files.readAllLines(path).get(0);
+		return Files.readString(path);
 	}
 	
 	/**
@@ -54,7 +55,7 @@ public class JWTUtils {
 	    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
 	    Date now = Date.from(ZonedDateTime.now().toInstant());
-	    Date expiresAt = Date.from(ZonedDateTime.now().plusDays(1).toInstant());
+	    //Date expiresAt = Date.from(ZonedDateTime.now().plusDays(1).toInstant());
 	 
 	    //We will sign our JWT with our ApiKey secret
 	    byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(getKey());
@@ -66,7 +67,7 @@ public class JWTUtils {
 	                                .setIssuer(ISSUER)
 	                                .setIssuedAt(now)
 	                                //.setExpiration(expiresAt)
-	                                .claim(USERID, userId)
+	                                .claim(CLAIM_USERID, userId)
 	                                .signWith(signatureAlgorithm, signingKey);
 	 
 	    //Builds the JWT and serializes it to a compact, URL-safe string
@@ -94,7 +95,7 @@ public class JWTUtils {
 	       .setSigningKey(DatatypeConverter.parseBase64Binary(getKey()))
 	       .parseClaimsJws(jwt).getBody();
 	    
-	    return claims.get(USERID, Integer.class);
+	    return claims.get(CLAIM_USERID, Integer.class);
 	}
 
 }

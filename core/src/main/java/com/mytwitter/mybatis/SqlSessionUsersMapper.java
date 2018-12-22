@@ -55,10 +55,18 @@ public class SqlSessionUsersMapper implements UsersMapper {
 	}
 
 	@Override
-	public Integer getUserIdBySessionKey(String sessionKey) {
+	public User getUserBySessionKey(String sessionKey) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			UsersMapper mapper = session.getMapper(UsersMapper.class);
-			return mapper.getUserIdBySessionKey(sessionKey);
+			return mapper.getUserBySessionKey(sessionKey);
+		}
+	}
+
+	@Override
+	public void removeSessionKey(String sessionKey) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			UsersMapper mapper = session.getMapper(UsersMapper.class);
+			mapper.removeSessionKey(sessionKey);
 		}
 	}
 

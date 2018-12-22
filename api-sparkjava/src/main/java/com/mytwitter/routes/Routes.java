@@ -32,17 +32,8 @@ public class Routes {
 		Spark.path("/api", () -> {
 			Spark.before("/*", this::informAllListenersOnRequest);
 			Spark.after("/*", this::informAllListenersOnResponse);
-			
-//			Spark.get("/user/:username", userController::getUser);
-//			
-//			Spark.get("/users", userController::getUsers);
-//			
-//			Spark.get("/users/count", userController::getUsersCount);
-//			
-//			Spark.post("/adduser", userController::createUser);
-			
-			Spark.post("/edituser", (request, response) -> "Hi");
 
+			//Spark.get("/post/:id", "text/plain", requestHandler::handleGetPost, e -> e.toString());
 			Spark.get("/post/:id", "application/json", requestHandler::handleGetPost, gson::toJson);
 			Spark.get("/post/:id", "application/xml", requestHandler::handleGetPost, xmlMapper::writeValueAsString);
 			
@@ -52,10 +43,7 @@ public class Routes {
 			Spark.post("/post/add", "application/json", requestHandler::handleAddPost, gson::toJson);
 			Spark.post("/post/add", "application/xml", requestHandler::handleAddPost, xmlMapper::writeValueAsString);
 			
-			Spark.get("/user/:username/posts", (request, response) -> "Hi");
-			
-			Spark.get("/user/:username/post/:postno", (request, response) -> "Hi");
-			
+			Spark.post("/retrieveSession", "application/json", requestHandler::handleSessionRetrieval, gson::toJson);
 			Spark.post("/login", "application/json", requestHandler::handleLogin, gson::toJson);
 			Spark.post("/logout", requestHandler::handleLogout);
 		

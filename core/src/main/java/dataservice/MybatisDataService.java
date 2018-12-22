@@ -91,8 +91,13 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Integer getUserIdBySessionKey(String sessionKey) {
-		return usersMapper.getUserIdBySessionKey(sessionKey);
+	public User getUserBySessionKey(String sessionKey) {
+		return usersMapper.getUserBySessionKey(sessionKey);
+	}
+
+	@Override
+	public void removeSessionKey(String sessionKey) {
+		usersMapper.removeSessionKey(sessionKey);
 	}
 
 }

@@ -20,7 +20,9 @@ public interface DataService {
 	
 	int addUserSession(int userId, String sessionKey);
 	
-	Integer getUserIdBySessionKey(String sessionKey);
+	User getUserBySessionKey(String sessionKey);
+	
+	void removeSessionKey(String sessionKey);
 	
 	Post getPost(int postId);
 	

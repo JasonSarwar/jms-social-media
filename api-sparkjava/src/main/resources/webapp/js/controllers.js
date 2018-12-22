@@ -1,15 +1,13 @@
 (function() {
 
-	var MainController = function($scope, $rootScope, $location, alertService, loginService) {
+	var MainController = function($scope, $location, alertService, loginService) {
 		$scope.$on('$routeChangeStart', function(scope, next, current){
 			alertService.clearAlerts();
 		});
 		
 		$scope.attemptLogin = function (user, password) {
-			console.log("User: " + user);
-			console.log("Password: " + password);
 			loginService.attemptLogin(user, password)
-				.then(function(data) {
+				.then(function (data) {
 					$scope.loginError = null;
 					$scope.password = null;
 					$scope.userId = data.userId;
@@ -19,10 +17,35 @@
 					if ($location.path() == "/login") {
 						$location.path("/home");
 					}
-			  	}, function(error) {
+			  	}, function (error) {
 			  		$scope.loginError = error.data;
+			  		$scope.password = null;
 			  	});
-		}
+		};
+		
+		$scope.logout = function () {
+			loginService.logout()
+				.then(function (response) {
+					
+				}, function (error) {
+					
+				});
+			$scope.userId = null;
+			$scope.firstname = null;
+			$scope.jwt = null;
+			$location.path("/home");
+		};
+		
+		loginService.retrieveSession()
+			.then(function (data) {
+				if (data) {
+					$scope.userId = data.userId;
+					$scope.firstname = data.firstname;
+					$scope.jwt = data.jwt;
+				}
+		  	}, function (error) {
+
+		  	});
 	};
 
 	var PostController = function($scope, $routeParams, dataService, alertService) {

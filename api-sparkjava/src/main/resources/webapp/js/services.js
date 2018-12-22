@@ -41,7 +41,7 @@
     };
   };
 
-  var loginService = function($http, $rootScope) {
+  var loginService = function($http) {
 
     var attemptLogin = function (user, password) {
     	var data = {
@@ -49,27 +49,26 @@
     		password: password
     	};
     	return $http.post("/api/login", data)
-        	.then(function(response) {
+        	.then(function (response) {
         		return response.data;
         });
     };
-	
-    var startUserSession = function (data) {
-    	$rootScope.userId = data.userId;
-    	$rootScope.firstname = data.firstname;
-    	$rootScope.jwt = data.jwt;
+
+    var logout = function () {
+    	return $http.post("/api/logout");
     };
     
-    var endUserSession = function () {
-    	$rootScope.userId = null;
-    	$rootScope.firstname = null;
-    	$rootScope.jwt = null;
+    var retrieveSession = function () {
+    	return $http.post("/api/retrieveSession")
+        	.then(function (response) {
+        		return response.data;
+        });
     };
     
 	return {
     	attemptLogin: attemptLogin,
-    	startUserSession: startUserSession,
-    	endUserSession: endUserSession
+    	logout: logout,
+    	retrieveSession: retrieveSession
 	};
   };
 

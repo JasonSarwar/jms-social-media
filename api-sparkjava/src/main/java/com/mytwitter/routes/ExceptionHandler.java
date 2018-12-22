@@ -1,6 +1,10 @@
 package com.mytwitter.routes;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mytwitter.exception.BadRequestException;
@@ -15,6 +19,7 @@ import spark.Response;
 
 public class ExceptionHandler {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandler.class);
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
 	public ExceptionHandler() {
@@ -23,6 +28,8 @@ public class ExceptionHandler {
 
 	public void handleException(Exception exception, Request request, Response response) {
 
+		LOGGER.error("", exception);
+		
 		response.type("text/plain");
 		
 		if(exception instanceof BadRequestException) {
