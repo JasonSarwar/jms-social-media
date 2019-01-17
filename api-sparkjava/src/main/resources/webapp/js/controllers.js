@@ -48,6 +48,10 @@
 		  	});
 	};
 
+	var LogoutController = function($scope) {
+		$scope.logout();
+	};
+	
 	var PostController = function($scope, $routeParams, dataService, alertService) {
 		
 		var postId = $routeParams.postId;
@@ -88,6 +92,7 @@
 	
 	angular.module("mytwitter")
 		.controller("MainController", MainController)
+		.controller("LogoutController", LogoutController)
 		.controller("PostController", PostController)
 		.controller("PostsController", PostsController)
 		.controller("AddPostController", AddPostController);

@@ -21,16 +21,16 @@ import java.nio.file.Paths;
 import java.security.Key;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.UUID;
 
 public class JWTUtils {
 
 	private static final String SUBJECT = "User Authenication";
 	private static final String ISSUER = "jason-social-media";
-	private static final String JWT_ID = "JWT_ID";
 	private static final String CLAIM_USERID = "userId";
 	private static final String CLAIM_ORIGIN = "origin";
 	
-	public JWTUtils() {
+	private JWTUtils() {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -62,7 +62,7 @@ public class JWTUtils {
 	    Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 	 
 	    //Let's set the JWT Claims
-	    JwtBuilder builder = Jwts.builder().setId(JWT_ID)
+	    JwtBuilder builder = Jwts.builder().setId(UUID.randomUUID().toString())
 	                                .setSubject(SUBJECT)
 	                                .setIssuer(ISSUER)
 	                                .setIssuedAt(now)

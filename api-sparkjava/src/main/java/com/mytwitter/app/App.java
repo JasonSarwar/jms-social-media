@@ -6,6 +6,7 @@ import com.mytwitter.routes.LogRouteAdapter;
 import com.mytwitter.routes.Routes;
 
 import dataservice.DataService;
+import dataservice.MapCachingDataService;
 import dataservice.MybatisDataService;
 import spark.Spark;
 
@@ -17,7 +18,7 @@ public class App {
 	public static void main(String[] args) throws IOException {
 
 		Spark.staticFiles.location("/webapp/");
-		DataService dataService = new MybatisDataService();
+		DataService dataService = new MapCachingDataService(new MybatisDataService());
 		Routes routes = new Routes(dataService);
 		routes.addRouteListener(new LogRouteAdapter());
 		routes.start();

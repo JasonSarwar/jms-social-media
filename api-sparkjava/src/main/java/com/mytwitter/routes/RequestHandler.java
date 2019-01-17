@@ -105,16 +105,7 @@ public class RequestHandler {
 //			}
 //		}
 
-		String auth = request.headers(AUTHORIZATION);
-		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
-			throw new UnauthorizedPostException("Not authorized to Post");
-		} else {
-			String jwt = auth.substring(BEARER.length());
-			Integer userId = JWTUtils.validateJWTAndRetrieveUserId(jwt);
-			if (!newPost.getUserId().equals(userId)) {
-				throw new UnauthorizedPostException("User ID Mismatch");
-			}
-		}
+		authenicateAddPostRequest(request, newPost);
 
 		StandardResponse standardResponse = new StandardResponse();
 		boolean success = dataService.addPost(newPost);
@@ -147,8 +138,8 @@ public class RequestHandler {
 	public LoginSuccess handleLogin(Request request, Response response) throws IOException {
 
 		if (request.cookie(SESSION_COOKIE) != null) {
-			//throw new InvalidUserLoginStateException("A User is already logged in");
-			System.err.println("Cookie: " + request.cookie(SESSION_COOKIE));
+			throw new InvalidUserLoginStateException("A User is already logged in");
+			//System.err.println("Cookie: " + request.cookie(SESSION_COOKIE));
 		}
 		
 		UserLogin userLogin = extractBodyContent(request, UserLogin.class);
@@ -184,7 +175,21 @@ public class RequestHandler {
 		}
 		dataService.removeSessionKey(request.cookie(SESSION_COOKIE));
 		response.removeCookie(SESSION_COOKIE);
-		return null;
+		return "ok";
+	}
+	
+	private void authenicateAddPostRequest(Request request, Post newPost) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+		
+		String auth = request.headers(AUTHORIZATION);
+		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
+			throw new UnauthorizedPostException("Not authorized to Post");
+		} else {
+			String jwt = auth.substring(BEARER.length());
+			Integer userId = JWTUtils.validateJWTAndRetrieveUserId(jwt);
+			if (!newPost.getUserId().equals(userId)) {
+				throw new UnauthorizedPostException("User ID Mismatch");
+			}
+		}
 	}
 	
 	private <T> T extractBodyContent(Request request, Class<T> aClass) {

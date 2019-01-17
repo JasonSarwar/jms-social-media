@@ -8,6 +8,13 @@
 				.when("/login", {
 					templateUrl: "partials/login.html"
 				})
+				.when("/logout", {
+					templateUrl: "partials/logout.html",
+					controller: "LogoutController"
+				})
+				.when("/signup", {
+					templateUrl: "partials/signup.html"
+				})
 				.when("/post/:postId", {
 					templateUrl: "partials/post.html",
 					controller: "PostController"
