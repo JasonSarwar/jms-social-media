@@ -4,13 +4,15 @@ import java.util.Collection;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.mytwitter.model.Comment;
+import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
 
 public interface PostsMapper {
 
 	int getNumberOfPosts();
 	
-	Post getPost(int postId);
+	FullPost getPost(int postId);
 	
 	Collection<Post> getPosts(@Param(value="userId") int userId, @Param(value="username") String username, 
 			@Param(value="tag") String tag, @Param(value="onDate") String onDate, 
@@ -18,5 +20,7 @@ public interface PostsMapper {
 	
 	int addPost(Post post);
 	
-	Collection<Post> getReplies(int postId);
+	int addComment(Comment comment);
+	
+	Collection<Comment> getComments(int postId);
 }

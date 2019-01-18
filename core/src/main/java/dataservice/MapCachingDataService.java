@@ -3,11 +3,11 @@ package dataservice;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mytwitter.model.Post;
+import com.mytwitter.model.FullPost;
 
 public class MapCachingDataService extends CachingDataService {
 
-	private final Map<Integer, Post> postsById;
+	private final Map<Integer, FullPost> postsById;
 	
 	public MapCachingDataService(DataService dataService) {
 		super(dataService);
@@ -15,12 +15,12 @@ public class MapCachingDataService extends CachingDataService {
 	}
 
 	@Override
-	protected Post getPostFromCache(int postId) {
+	protected FullPost getPostFromCache(int postId) {
 		return postsById.get(postId);
 	}
 
 	@Override
-	protected void putPostIntoCache(Post post) {
+	protected void putPostIntoCache(FullPost post) {
 		postsById.put(post.getPostId(), post);
 	}
 

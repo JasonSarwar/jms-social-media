@@ -43,6 +43,9 @@ public class Routes {
 			Spark.post("/post/add", "application/json", requestHandler::handleAddPost, gson::toJson);
 			Spark.post("/post/add", "application/xml", requestHandler::handleAddPost, xmlMapper::writeValueAsString);
 			
+			Spark.post("/comment/add", "application/json", requestHandler::handleAddComment, gson::toJson);
+			Spark.post("/comment/add", "application/xml", requestHandler::handleAddComment, xmlMapper::writeValueAsString);
+			
 			Spark.post("/retrieveSession", "application/json", requestHandler::handleSessionRetrieval, gson::toJson);
 			Spark.post("/login", "application/json", requestHandler::handleLogin, gson::toJson);
 			Spark.post("/logout", requestHandler::handleLogout);

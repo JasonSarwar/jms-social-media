@@ -61,6 +61,8 @@
 		  	}, function(error) {
 		  		alertService.error(error.data);
 		  	});
+		
+		
 	};
 
 	var PostsController = function($scope, $location, dataService, alertService) {
@@ -80,8 +82,8 @@
 
 	var AddPostController = function($scope, $location, dataService, alertService) {
 		
-		$scope.addPost = function (postText) {
-			dataService.addPost($scope.userId, postText, $scope.jwt)
+		$scope.addPost = function (userId, postText, jwt) {
+			dataService.addPost(userId, postText, jwt)
 				.then(function (data) {
 					$location.path("/home");
 				}, function (error) {
@@ -89,12 +91,25 @@
 				});
 		};
 	};
-	
+
+	var AddCommentController = function($scope, $route, dataService, alertService) {
+		
+		$scope.addComment = function (userId, postId, commentText, jwt) {
+			dataService.addComment(userId, postId, commentText, jwt)
+				.then(function (data) {
+					$route.reload();
+				}, function (error) {
+					alertService.error(error.data);
+				});
+		};
+	};
+
 	angular.module("mytwitter")
 		.controller("MainController", MainController)
 		.controller("LogoutController", LogoutController)
 		.controller("PostController", PostController)
 		.controller("PostsController", PostsController)
-		.controller("AddPostController", AddPostController);
+		.controller("AddPostController", AddPostController)
+		.controller("AddCommentController", AddCommentController);
 	
 }());

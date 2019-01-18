@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import com.mytwitter.model.Comment;
+import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
 
 public class SqlSessionPostsMapper implements PostsMapper {
@@ -24,7 +26,7 @@ public class SqlSessionPostsMapper implements PostsMapper {
 	}
 	
 	@Override
-	public Post getPost(int postId) {
+	public FullPost getPost(int postId) {
 		try(SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
 			return mapper.getPost(postId);
@@ -45,16 +47,23 @@ public class SqlSessionPostsMapper implements PostsMapper {
 	public int addPost(Post post) {
 		try(SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			int x = mapper.addPost(post);
-			return x;
+			return mapper.addPost(post);
 		}
 	}
 	
 	@Override
-	public Collection<Post> getReplies(int postId) {
+	public int addComment(Comment comment) {
 		try(SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			return mapper.getReplies(postId);
+			return mapper.addComment(comment);
+		}
+	}
+	
+	@Override
+	public Collection<Comment> getComments(int postId) {
+		try(SqlSession session = sessionfactory.openSession(true)) {
+			PostsMapper mapper = session.getMapper(PostsMapper.class);
+			return mapper.getComments(postId);
 		}
 	}
 

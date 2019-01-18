@@ -15,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.mytwitter.app.AppProperties;
+import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
 
 public class SqlSessionPostsMapperTest {
@@ -43,8 +44,8 @@ public class SqlSessionPostsMapperTest {
 	public void testGetPost() {
 		try(SqlSession session = factory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			Post post = mapper.getPost(1);
-			System.out.println(post.getPostTimestamp());
+			FullPost post = mapper.getPost(1);
+			System.out.println(post.getTimestamp());
 			System.out.println(post.getFullName());
 			assertThat(post.getPostId(), equalTo(1));
 			assertThat(post.getUserId(), equalTo(1));
@@ -52,7 +53,7 @@ public class SqlSessionPostsMapperTest {
 			assertThat(post.getFullName(), equalTo("Jason Sarwar"));
 			assertThat(post.getText(), equalTo("First post!!"));
 			assertThat(post.getPostId(), equalTo(1));
-			System.out.println(post.getPostTimestamp());
+			System.out.println(post.getTimestamp());
 		}
 	}
 

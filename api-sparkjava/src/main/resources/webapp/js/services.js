@@ -34,10 +34,30 @@
         });
     };
 
+    var addComment = function (userId, postId, text, jwt) {
+    	var data = {
+			userId: userId,
+			postId: postId,
+			text: text
+    	};
+
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + jwt
+    		}
+    	};
+
+    	return $http.post("/api/comment/add", data, configs)
+        	.then(function(response) {
+        		return response.data;
+        });
+    };
+
     return {
     	getPost: getPost,
     	getPosts: getPosts,
-    	addPost: addPost
+    	addPost: addPost,
+    	addComment: addComment
     };
   };
 

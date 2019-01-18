@@ -6,15 +6,21 @@
     
     <sql id="retrievePosts">
 		select posts.post_id as post_id, posts.user_id as user_id, full_name, username, 
-        profile_picture_link, text, reply_of_post_id, link_to_video, post_timestamp
+        profile_picture_link, text, timestamp
         from posts, users    
+    </sql>
+    
+    <sql id="retrieveComments">
+		select post_id, posts_comments.user_id as user_id,
+		comment_id, full_name, username, profile_picture_link, text, timestamp
+        from posts_comments, users    
     </sql>
     
     <select id="getNumberOfPosts" resultType="int">
         select count(1) from posts
     </select>
     
-    <select id="getPost" parameterType="int" resultType="post">
+    <select id="getPost" parameterType="int" resultType="fullpost">
         <include refid="retrievePosts"></include>
         where post_id = #{id} and posts.user_id = users.user_id
     </select>
@@ -26,7 +32,7 @@
         , posts_tags
         </if>
         
-        WHERE reply_of_post_id IS NULL AND posts.user_id = users.user_id
+        WHERE posts.user_id = users.user_id
         
         <if test="userId != 0">
         	AND posts.user_id = #{userId}
@@ -46,23 +52,31 @@
         <if test="afterDate != null">
         	AND post_timestamp >= TO_DATE(#{afterDate}, 'MM-DD-YYYY') 
         </if>
-        order by post_timestamp desc
+        order by timestamp desc
     </select>
     
-    <select id="getReplies" parameterType="int" resultType="post">
-        <include refid="retrievePosts"></include>
-        where reply_of_post_id = #{id} and posts.user_id = users.user_id
-        order by post_timestamp desc
+    <select id="getComments" parameterType="int" resultType="comment">
+        <include refid="retrieveComments"></include>
+        where post_id = #{id} and posts_comments.user_id = users.user_id
+        order by timestamp asc
     </select>
     
     <insert id="addPost" parameterType="post" keyColumn="post_id">
     	<selectKey keyProperty="postId" resultType="int" order="BEFORE">
     		select POSTS_SEQ.nextval as postId from DUAL
     	</selectKey>
-        insert into posts (post_id, user_id, text, reply_of_post_id, link_to_video, post_timestamp) values (
-            #{postId}, #{userId}, #{text}, #{replyOfPostId}, #{linkToVideo}, systimestamp
+        insert into posts (post_id, user_id, text, timestamp) values (
+            #{postId}, #{userId}, #{text}, systimestamp
         )
     </insert>
     
-
+	<insert id="addComment" parameterType="comment" keyColumn="comment_id">
+    	<selectKey keyProperty="commentId" resultType="int" order="BEFORE">
+    		select COMMENTS_SEQ.nextval as commentId from DUAL
+    	</selectKey>
+        insert into posts_comments (comment_id, post_id, user_id, text, timestamp) values (
+            #{commentId}, #{postId}, #{userId}, #{text}, systimestamp
+        )
+    </insert>
+    
 </mapper>

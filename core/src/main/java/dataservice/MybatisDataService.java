@@ -10,6 +10,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import com.mytwitter.app.AppProperties;
+import com.mytwitter.model.Comment;
+import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
 import com.mytwitter.model.User;
 import com.mytwitter.model.UserObject;
@@ -62,29 +64,36 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Post getPost(int postId) {
-		Post post = postsMapper.getPost(postId);
-		post.setTags(tagsMapper.getPostTags(postId));
-		post.setReplies(postsMapper.getReplies(postId));
+	public FullPost getPost(int postId) {
+		FullPost post = postsMapper.getPost(postId);
+		post.setComments(postsMapper.getComments(postId));
 		return post;
 	}
 
 	@Override
 	public Collection<Post> getPosts(int userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
-		Collection<Post> posts = postsMapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
-		posts.forEach(post -> post.setTags(tagsMapper.getPostTags(post.getPostId())));
-		return posts;
+		return postsMapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+	}
+
+	@Override
+	public Collection<Comment> getComments(int postId) {
+		return postsMapper.getComments(postId);
 	}
 
 	@Override
 	public boolean addPost(Post post) {
 		List<String> tags = TagsUtils.extractTagsFromPost(post);
 		boolean addedPost = postsMapper.addPost(post) != 0;
-		boolean handledTags = tags.isEmpty() ? true : 
+		boolean addedTags = tags.isEmpty() ? true : 
 			tagsMapper.addTags(post.getPostId(), tags) == tags.size();
-		return addedPost && handledTags;
+		return addedPost && addedTags;
 	}
-
+	
+	@Override
+	public boolean addComment(Comment comment) {
+		return postsMapper.addComment(comment) != 0;
+	}
+	
 	@Override
 	public int addUserSession(int userId, String sessionKey) {
 		return usersMapper.addUserSession(userId, sessionKey);
@@ -99,5 +108,4 @@ public class MybatisDataService implements DataService {
 	public void removeSessionKey(String sessionKey) {
 		usersMapper.removeSessionKey(sessionKey);
 	}
-
 }

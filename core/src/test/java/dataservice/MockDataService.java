@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mytwitter.model.Comment;
+import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
 import com.mytwitter.model.User;
 import com.mytwitter.model.UserObject;
@@ -69,12 +71,6 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Post getPost(int postId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Collection<Post> getPosts(int userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
 		// TODO Auto-generated method stub
 		return null;
@@ -108,6 +104,24 @@ public class MockDataService implements DataService {
 	public void removeSessionKey(String sessionKey) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public FullPost getPost(int postId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<Comment> getComments(int postId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean addComment(Comment comment) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

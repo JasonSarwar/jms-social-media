@@ -4,18 +4,23 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mytwitter.exception.BadRequestException;
 import com.mytwitter.exception.FailedLoginAttemptException;
 import com.mytwitter.exception.PostNotFoundException;
-import com.mytwitter.exception.UnauthorizedPostException;
+import com.mytwitter.exception.UnauthorizedEntryException;
 import com.mytwitter.exception.UnsupportedContentTypeException;
 import com.mytwitter.exception.InvalidUserLoginStateException;
+import com.mytwitter.model.Comment;
+import com.mytwitter.model.Entry;
+import com.mytwitter.model.FullPost;
 import com.mytwitter.model.LoginSuccess;
 import com.mytwitter.model.Post;
 import com.mytwitter.model.StandardResponse;
-import com.mytwitter.model.StandardResponse.Status;
 import com.mytwitter.model.User;
 import com.mytwitter.model.UserLogin;
 import com.mytwitter.password.NonEncryptionPasswordService;
@@ -31,8 +36,9 @@ import spark.Request;
 import spark.Response;
 import spark.utils.StringUtils;
 
-public class RequestHandler {
+public final class RequestHandler {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
 	private static final String SESSION_COOKIE = "my-twitter-session";
 	private static final String AUTHORIZATION = "Authorization";
 	private static final String BEARER = "Bearer ";
@@ -63,12 +69,16 @@ public class RequestHandler {
 		return standardResponse;
 	}
 
-	public Post handleGetPost(Request request, Response response) {
+	public FullPost handleGetPost(Request request, Response response) {
 		
 		String strPostId = request.params(":id");
 		try {
 			int postId = Integer.parseInt(strPostId);
-			Post post = dataService.getPost(postId);
+			long start = System.currentTimeMillis();
+			FullPost post = dataService.getPost(postId);
+			long stop = System.currentTimeMillis();
+			LOGGER.info("Post Retrieved in {} ms", stop - start);
+			
 			if(post != null) {
 				response.type("application/json");
 				return post;
@@ -92,25 +102,20 @@ public class RequestHandler {
 		return dataService.getPosts(0, username, tag, onDate, beforeDate, afterDate);
 	}
 	
-	public StandardResponse handleAddPost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleAddPost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 		
 		Post newPost = extractBodyContent(request, Post.class);
-		newPost.validate();
+		validateAddEntryRequest(newPost);
+		authorizeAddEntryRequest(request, newPost);
+		return dataService.addPost(newPost);
+	}
+	
+	public Boolean handleAddComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 		
-//		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
-//			String sessionKey = request.cookie(SESSION_COOKIE);
-//			User user = dataService.getUserBySessionKey(sessionKey);
-//			if (!newPost.getUserId().equals(user.getUserId())) {
-//				throw new UnauthorizedPostException("User ID Mismatch");
-//			}
-//		}
-
-		authenicateAddPostRequest(request, newPost);
-
-		StandardResponse standardResponse = new StandardResponse();
-		boolean success = dataService.addPost(newPost);
-		standardResponse.setStatus(success ? Status.SUCCESS : Status.FAILURE);
-		return standardResponse;
+		Comment newComment = extractBodyContent(request, Comment.class);
+		validateAddEntryRequest(newComment);
+		authorizeAddEntryRequest(request, newComment);
+		return dataService.addComment(newComment);
 	}
 	
 	public LoginSuccess handleSessionRetrieval(Request request, Response response) throws IOException {
@@ -178,16 +183,16 @@ public class RequestHandler {
 		return "ok";
 	}
 	
-	private void authenicateAddPostRequest(Request request, Post newPost) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	private void authorizeAddEntryRequest(Request request, Entry newEntry) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 		
 		String auth = request.headers(AUTHORIZATION);
 		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
-			throw new UnauthorizedPostException("Not authorized to Post");
+			throw new UnauthorizedEntryException("Not authorized to Post");
 		} else {
 			String jwt = auth.substring(BEARER.length());
 			Integer userId = JWTUtils.validateJWTAndRetrieveUserId(jwt);
-			if (!newPost.getUserId().equals(userId)) {
-				throw new UnauthorizedPostException("User ID Mismatch");
+			if (!newEntry.getUserId().equals(userId)) {
+				throw new UnauthorizedEntryException("User ID Mismatch");
 			}
 		}
 	}
@@ -203,6 +208,22 @@ public class RequestHandler {
 			return null;
 		} else {
 			throw new UnsupportedContentTypeException("Unsupported Content Type");
+		}
+	}
+	
+	private void validateAddEntryRequest(Entry entry) {
+		StringBuilder sb = new StringBuilder();
+		if (!entry.hasUserId()) {
+			sb.append("Add ").append(entry.getClass().getSimpleName()).append(" Request requires a 'userId'\n");
+		}
+		if (entry instanceof Comment && !entry.hasPostId()) {
+			sb.append("Add ").append(entry.getClass().getSimpleName()).append(" Request requires a 'postId'\n");
+		}
+		if (!entry.hasText()) {
+			sb.append("Add ").append(entry.getClass().getSimpleName()).append(" Request requires 'text'");
+		}
+		if (sb.length() > 0) {
+			throw new BadRequestException(sb.toString());
 		}
 	}
 }

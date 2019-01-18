@@ -11,11 +11,11 @@
 					@{{post.username}}
 				</a>
 				&#160
-				<a ng-href="#!/posts?on={{post.postTimestamp.date | dateForLink}}">
-					{{post.postTimestamp.date | dateForPost}}
+				<a ng-href="#!/posts?on={{post.timestamp.date | dateForLink}}">
+					{{post.timestamp.date | dateForPost}}
 				</a>
 				&#160
-				{{post.postTimestamp.time | timeForPost}}
+				{{post.timestamp.time | timeForPost}}
 			</div>
 			<div class="row">
 				<p ng-bind-html="post.text | postText"></p>

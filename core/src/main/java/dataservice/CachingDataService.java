@@ -2,6 +2,8 @@ package dataservice;
 
 import java.util.Collection;
 
+import com.mytwitter.model.Comment;
+import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
 import com.mytwitter.model.User;
 import com.mytwitter.model.UserObject;
@@ -14,9 +16,9 @@ abstract class CachingDataService implements DataService {
 		this.dataService = dataService;
 	}
 
-	protected abstract Post getPostFromCache(int postId);
+	protected abstract FullPost getPostFromCache(int postId);
 	
-	protected abstract void putPostIntoCache(Post post);
+	protected abstract void putPostIntoCache(FullPost post);
 	
 	protected abstract void removePostFromCache(int postId);
 	
@@ -61,8 +63,8 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Post getPost(int postId) {
-		Post post = getPostFromCache(postId);
+	public FullPost getPost(int postId) {
+		FullPost post = getPostFromCache(postId);
 		if (post == null) {
 			post = dataService.getPost(postId);
 			putPostIntoCache(post);
@@ -75,11 +77,20 @@ abstract class CachingDataService implements DataService {
 			String afterDate) {
 		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
 	}
-
+	
+	@Override
+	public Collection<Comment> getComments(int postId) {
+		return dataService.getComments(postId);
+	}
+	
 	@Override
 	public boolean addPost(Post post) {
 		return dataService.addPost(post);
 	}
 
-	
+	@Override
+	public boolean addComment(Comment comment) {
+		removePostFromCache(comment.getPostId());
+		return dataService.addComment(comment);
+	}
 }
