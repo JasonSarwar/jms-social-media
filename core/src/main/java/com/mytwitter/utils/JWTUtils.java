@@ -3,7 +3,8 @@ package com.mytwitter.utils;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-import com.mytwitter.app.AppProperties;
+import com.mytwitter.configuration.Configuration;
+import com.mytwitter.configuration.CoreSettings;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -35,7 +36,7 @@ public class JWTUtils {
 	}
 	
 	private static String getKey() throws IOException {
-		Path path = Paths.get(AppProperties.JWT_KEY_PATH);
+		Path path = Paths.get(Configuration.get(CoreSettings.JWT_KEY_PATH));
 		return Files.readString(path);
 	}
 	

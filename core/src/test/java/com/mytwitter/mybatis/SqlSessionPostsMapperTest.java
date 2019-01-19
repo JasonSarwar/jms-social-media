@@ -1,8 +1,5 @@
 package com.mytwitter.mybatis;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -14,9 +11,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.mytwitter.app.AppProperties;
+import com.mytwitter.configuration.Configuration;
+import com.mytwitter.configuration.CoreSettings;
 import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class SqlSessionPostsMapperTest {
 
@@ -24,8 +25,8 @@ public class SqlSessionPostsMapperTest {
 	
 	@BeforeClass
 	public static void setupBeforeClass() throws IOException {
-		InputStream inputStream = Resources.getResourceAsStream(AppProperties.MYBATIS_CONFIG_FILE_PATH);
-		factory = new SqlSessionFactoryBuilder().build(inputStream, AppProperties.getProperties());
+		InputStream inputStream = Resources.getResourceAsStream(Configuration.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
+		factory = new SqlSessionFactoryBuilder().build(inputStream, Configuration.getProperties());
 	}
 
 	@Before

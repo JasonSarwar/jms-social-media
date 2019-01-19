@@ -2,6 +2,8 @@ package com.mytwitter.app;
 
 import java.io.IOException;
 
+import com.mytwitter.configuration.Configuration;
+import com.mytwitter.configuration.CoreSettings;
 import com.mytwitter.routes.LogRouteAdapter;
 import com.mytwitter.routes.Routes;
 
@@ -18,15 +20,14 @@ public class App {
 	public static void main(String[] args) throws IOException {
 
 		Spark.staticFiles.location("/webapp/");
-		DataService dataService = new MapCachingDataService(new MybatisDataService());
+		Spark.port(Configuration.get(CoreSettings.PORT));
+
+		DataService dataService = Configuration.get(CoreSettings.USE_CACHING) ?
+				new MapCachingDataService(new MybatisDataService()) :
+					new MybatisDataService();
+
 		Routes routes = new Routes(dataService);
 		routes.addRouteListener(new LogRouteAdapter());
 		routes.start();
-		/*
-		RestTemplate rt = new RestTemplate();
-		Post post = rt.getForObject("http://localhost:4567/api/post/1", Post.class);
-		System.out.println("PostId:" + post.getPostId());
-		System.out.println("Text:" + post.getText());
-		*/
 	}
 }

@@ -1,7 +1,5 @@
 package com.mytwitter.mybatis;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -13,10 +11,11 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.mytwitter.app.AppProperties;
+import com.mytwitter.configuration.Configuration;
+import com.mytwitter.configuration.CoreSettings;
 import com.mytwitter.model.AddUserDB;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public class SqlSessionUsersMapperTest {
@@ -25,8 +24,8 @@ public class SqlSessionUsersMapperTest {
 	
 	@BeforeClass
 	public static void setupBeforeClass() throws IOException {
-		InputStream inputStream = Resources.getResourceAsStream(AppProperties.MYBATIS_CONFIG_FILE_PATH);
-		factory = new SqlSessionFactoryBuilder().build(inputStream, AppProperties.getProperties());
+		InputStream inputStream = Resources.getResourceAsStream(Configuration.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
+		factory = new SqlSessionFactoryBuilder().build(inputStream, Configuration.getProperties());
 	}
 	
 	@Test
