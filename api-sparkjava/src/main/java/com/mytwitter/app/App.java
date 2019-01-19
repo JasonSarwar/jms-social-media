@@ -8,7 +8,7 @@ import com.mytwitter.routes.LogRouteAdapter;
 import com.mytwitter.routes.Routes;
 
 import dataservice.DataService;
-import dataservice.MapCachingDataService;
+import dataservice.GuavaCachingDataService;
 import dataservice.MybatisDataService;
 import spark.Spark;
 
@@ -23,7 +23,7 @@ public class App {
 		Spark.port(Configuration.get(CoreSettings.PORT));
 
 		DataService dataService = Configuration.get(CoreSettings.USE_CACHING) ?
-				new MapCachingDataService(new MybatisDataService()) :
+				new GuavaCachingDataService(new MybatisDataService()) :
 					new MybatisDataService();
 
 		Routes routes = new Routes(dataService);
