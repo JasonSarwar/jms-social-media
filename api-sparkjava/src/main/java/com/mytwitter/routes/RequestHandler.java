@@ -95,13 +95,15 @@ public final class RequestHandler {
 	
 	public Collection<Post> handleGetPosts(Request request, Response response) {
 		response.type("application/json");
+		String userIdStr = request.queryParams("userId");
+		Integer userId = userIdStr == null ? null : Integer.parseInt(userIdStr);
 		String username = request.queryParams("username");
 		String tag = request.queryParams("tag");
 		String onDate = request.queryParams("on");
 		String beforeDate = request.queryParams("before");
 		String afterDate = request.queryParams("after");
 		
-		return dataService.getPosts(0, username, tag, onDate, beforeDate, afterDate);
+		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
 	}
 	
 	public Boolean handleAddPost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
@@ -163,7 +165,7 @@ public final class RequestHandler {
 		}
 		
 		String sessionKey = UUID.randomUUID().toString();
-		if (dataService.addUserSession(user.getUserId(), sessionKey) != 1) {
+		if (!dataService.addUserSession(user.getUserId(), sessionKey)) {
 			throw new InvalidUserLoginStateException("Cannot create user session");
 		}
 		response.cookie(SESSION_COOKIE, sessionKey);

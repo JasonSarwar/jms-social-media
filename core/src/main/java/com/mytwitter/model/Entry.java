@@ -2,6 +2,8 @@ package com.mytwitter.model;
 
 import java.time.LocalDateTime;
 
+import com.google.common.base.MoreObjects;
+
 public abstract class Entry {
 	
 	protected Integer postId;
@@ -11,6 +13,18 @@ public abstract class Entry {
 	protected String profilePictureLink;
 	protected String text;
 	protected LocalDateTime timestamp;
+	
+	public Entry() {
+	}
+	
+	public Entry(Integer postId, Integer userId, String username, String fullName, String text, LocalDateTime timestamp) {
+		this.postId = postId;
+		this.userId = userId;
+		this.username = username;
+		this.fullName = fullName;
+		this.text = text;
+		this.timestamp = timestamp;
+	}
 	
 	public final boolean hasPostId() {
 		return postId != null;
@@ -62,5 +76,18 @@ public abstract class Entry {
 	}
 	public final void setTimestamp(LocalDateTime postTimestamp) {
 		this.timestamp = postTimestamp;
+	}
+	
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("postId", postId)
+				.add("userId", userId)
+				.add("username", username)
+				.add("fullName", fullName)
+				.add("profilePictureLink", profilePictureLink)
+				.add("text", text)
+				.add("timestamp", timestamp)
+				.toString();
 	}
 }

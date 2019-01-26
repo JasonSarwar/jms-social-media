@@ -48,7 +48,7 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
-	public int addUserSession(int userId, String sessionKey) {
+	public boolean addUserSession(int userId, String sessionKey) {
 		return dataService.addUserSession(userId, sessionKey);
 	}
 
@@ -73,7 +73,7 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(int userId, String username, String tag, String onDate, String beforeDate,
+	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate,
 			String afterDate) {
 		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
 	}

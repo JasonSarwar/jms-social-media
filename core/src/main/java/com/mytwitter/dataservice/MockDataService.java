@@ -1,13 +1,17 @@
 package com.mytwitter.dataservice;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.TreeMultimap;
 import com.mytwitter.model.Comment;
+import com.mytwitter.model.Entry;
 import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
 import com.mytwitter.model.User;
@@ -15,53 +19,32 @@ import com.mytwitter.model.UserObject;
 
 public class MockDataService implements DataService {
 
-	private Gson gson;
-	private Map<String, UserObject> usersByUsername;
+	private final Map<Integer, User> usersById;
+	private final Map<Integer, Post> postsById;
+	private final Multimap<Integer, Comment> commentsByPostId;
 	
 	public MockDataService() {
-		gson = new GsonBuilder().setPrettyPrinting().create();
-		usersByUsername = new HashMap<>();
-		UserObject userObject = UserObject.newBuilder()
-				.setUserId(1)
-				.setUsername("jasonsarwar")
-				.setFirstName("Jason")
-				.setLastName("Sarwar")
-				.setEmailAddress("jason_sarwar@yahoo.com")
-				.setBirthdate("1993-11-20")
-				.setPasswordHash("012345")
-				.setPasswordkey("543210")
-				.setTimeOfCreation(LocalDateTime.now())
-				.build();
-		usersByUsername.put(userObject.getUsername(), userObject);
-		
-		userObject = UserObject.newBuilder()
-				.setUserId(2)
-				.setUsername("rowansarwar")
-				.setFirstName("Rowan")
-				.setLastName("Sarwar")
-				.setEmailAddress("rowan_sarwar@yahoo.com")
-				.setBirthdate("1998-01-15")
-				.setPasswordHash("012345")
-				.setPasswordkey("543210")
-				.setTimeOfCreation(LocalDateTime.now())
-				.build();
-		
-		usersByUsername.put(userObject.getUsername(), userObject);
+
+		usersById = new HashMap<>();
+		postsById = new TreeMap<>();
+		commentsByPostId = TreeMultimap.create(Ordering.natural(), (a, b) -> a.getCommentId().compareTo(b.getCommentId()));
+		setupUsers();
+		setupPosts();
 	}
 	
 	@Override
 	public UserObject getUser(String username) {
-		return usersByUsername.get(username);
+		return null;//usersById.get(username);
 	}
 
 	@Override
 	public String getUsers() {
-		return gson.toJson(usersByUsername);
+		return null;
 	}
 	
 	@Override
 	public String getUsersCount() {
-		return "{\"userCount\": " + Integer.toString(usersByUsername.size()) + "}";
+		return "{\"userCount\": " + Integer.toString(usersById.size()) + "}";
 	}
 	
 	@Override
@@ -71,27 +54,34 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(int userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
+		return postsById.values();
+	}
+
+	@Override
+	public FullPost getPost(int postId) {
+		Post post = postsById.get(postId);
+		FullPost fullPost = new FullPost(post.getPostId(), post.getUserId(), post.getUsername(), post.getFullName(), post.getText(), post.getTimestamp());
+		fullPost.setComments(getComments(postId));
+		return fullPost;
 	}
 
 	@Override
 	public boolean addPost(Post post) {
-		// TODO Auto-generated method stub
-		return false;
+		post.setPostId(postsById.size());
+		post.setTimestamp(LocalDateTime.now());
+		setCreatorOfEntry(post, usersById.get(post.getUserId()));
+		return postsById.put(post.getPostId(), post) == null;
 	}
 
 	@Override
 	public User getUserLoginInfo(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return usersById.values().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
 	}
 
 	@Override
-	public int addUserSession(int userId, String sessionKey) {
-		// TODO Auto-generated method stub
-		return 0;
+	public boolean addUserSession(int userId, String sessionKey) {
+		return true;
 	}
 
 	@Override
@@ -107,21 +97,43 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public FullPost getPost(int postId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Collection<Comment> getComments(int postId) {
-		// TODO Auto-generated method stub
-		return null;
+		return commentsByPostId.get(postId);
 	}
 
 	@Override
 	public boolean addComment(Comment comment) {
-		// TODO Auto-generated method stub
-		return false;
+		comment.setCommentId(commentsByPostId.size());
+		comment.setTimestamp(LocalDateTime.now());
+		setCreatorOfEntry(comment, usersById.get(comment.getUserId()));
+		return commentsByPostId.put(comment.getPostId(), comment);
 	}
 
+	private void setupUsers() {
+		User user = new User(1, "user", "Visitor", "password");
+		User jason = new User(2, "Jason", "Jason Sarwar", "#$%@%$%");
+		usersById.put(1, user);
+		usersById.put(2, jason);
+	}
+	
+	private void setupPosts() {
+		
+		User user = usersById.get(2);
+		Post firstPost = new Post(1, "Hello!", LocalDateTime.of(2019, 1, 1, 0, 0, 0));
+		Post secondPost = new Post(2, "Welcome to my website!", LocalDateTime.of(2019, 1, 1, 0, 0, 1));
+		Post thirdPost = new Post(3, "These posts are from a Mock #Data Service and are not from a database", LocalDateTime.of(2019, 1, 1, 0, 0, 2));
+		
+		Collection<Post> posts = Arrays.asList(firstPost, secondPost, thirdPost);
+		for (Post post: posts) {
+			setCreatorOfEntry(post, user);
+			addPost(post);
+		}
+		
+	}
+	
+	private void setCreatorOfEntry(Entry entry, User user) {
+		entry.setUserId(user.getUserId());
+		entry.setUsername(user.getUsername());
+		entry.setFullName(user.getFullName());
+	}
 }

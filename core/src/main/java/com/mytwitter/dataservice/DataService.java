@@ -20,7 +20,7 @@ public interface DataService {
 	
 	String createUser();
 	
-	int addUserSession(int userId, String sessionKey);
+	boolean addUserSession(int userId, String sessionKey);
 	
 	User getUserBySessionKey(String sessionKey);
 	
@@ -28,7 +28,7 @@ public interface DataService {
 	
 	FullPost getPost(int postId);
 	
-	Collection<Post> getPosts(int userId, String username, String tag, String onDate, String beforeDate, String afterDate);
+	Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate);
 	
 	Collection<Comment> getComments(int postId);
 	

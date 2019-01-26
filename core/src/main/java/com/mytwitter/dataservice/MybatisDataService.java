@@ -72,7 +72,7 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(int userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
+	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
 		return postsMapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
 	}
 
@@ -96,8 +96,8 @@ public class MybatisDataService implements DataService {
 	}
 	
 	@Override
-	public int addUserSession(int userId, String sessionKey) {
-		return usersMapper.addUserSession(userId, sessionKey);
+	public boolean addUserSession(int userId, String sessionKey) {
+		return usersMapper.addUserSession(userId, sessionKey) == 1;
 	}
 
 	@Override

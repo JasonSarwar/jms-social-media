@@ -14,7 +14,7 @@ public interface PostsMapper {
 	
 	FullPost getPost(int postId);
 	
-	Collection<Post> getPosts(@Param(value="userId") int userId, @Param(value="username") String username, 
+	Collection<Post> getPosts(@Param(value="userId") Integer userId, @Param(value="username") String username, 
 			@Param(value="tag") String tag, @Param(value="onDate") String onDate, 
 			@Param(value="beforeDate") String beforeDate, @Param(value="afterDate")String afterDate);
 	

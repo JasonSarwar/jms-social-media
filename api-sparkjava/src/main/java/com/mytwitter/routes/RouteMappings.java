@@ -17,7 +17,7 @@ public class RouteMappings {
 	
 	private DataService dataService;
 	private Set<RouteListener> routeListeners;
-	
+
 	public RouteMappings(DataService dataService) {
 		this.dataService = dataService;
 		routeListeners = new HashSet<>();
@@ -56,15 +56,15 @@ public class RouteMappings {
 	
 		Spark.exception(Exception.class, exceptionHandler::handleException);
 	}
-	
+
 	public boolean addRouteListener(RouteListener routeListener) {
 		return routeListeners.add(routeListener);
 	}
-	
+
 	private void informAllListenersOnRequest(Request request, Response response) {
 		routeListeners.forEach(e -> e.onRequest(request));
 	}
-	
+
 	private void informAllListenersOnResponse(Request request, Response response) {
 		routeListeners.forEach(e -> e.onResponse(response));
 	}

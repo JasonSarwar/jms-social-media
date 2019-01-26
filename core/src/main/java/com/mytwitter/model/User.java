@@ -1,5 +1,7 @@
 package com.mytwitter.model;
 
+import com.google.common.base.MoreObjects;
+
 public class User {
 
 	private Integer userId;
@@ -8,9 +10,15 @@ public class User {
 	private String hashedPassword;
 	
 	public User() {
-
 	}
 
+	public User(Integer userId, String username, String fullName, String hashedPassword) {
+		this.userId = userId;
+		this.username = username;
+		this.fullName = fullName;
+		this.hashedPassword = hashedPassword;
+	}
+	
 	public final Integer getUserId() {
 		return userId;
 	}
@@ -43,5 +51,13 @@ public class User {
 		this.hashedPassword = hashedPassword;
 	}
 
-	
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("userId", userId)
+				.add("username", username)
+				.add("fullName", fullName)
+				.add("hashedPassword", hashedPassword)
+				.toString();
+	}
 }
