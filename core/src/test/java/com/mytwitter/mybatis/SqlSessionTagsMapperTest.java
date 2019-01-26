@@ -12,7 +12,8 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.mytwitter.configuration.Configuration;
+import com.mytwitter.configuration.Configurations;
+import com.mytwitter.configuration.ConfigurationsFromFile;
 import com.mytwitter.configuration.CoreSettings;
 
 public class SqlSessionTagsMapperTest {
@@ -21,8 +22,9 @@ public class SqlSessionTagsMapperTest {
 	
 	@BeforeClass
 	public static void setupBeforeClass() throws IOException {
-		InputStream inputStream = Resources.getResourceAsStream(Configuration.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
-		factory = new SqlSessionFactoryBuilder().build(inputStream, Configuration.getProperties());
+		Configurations configurations = new ConfigurationsFromFile("application.properties");
+		InputStream inputStream = Resources.getResourceAsStream(configurations.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
+		factory = new SqlSessionFactoryBuilder().build(inputStream, configurations.getProperties());
 	}
 
 	@Test

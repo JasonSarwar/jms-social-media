@@ -1,4 +1,4 @@
-package dataservice;
+package com.mytwitter.dataservice;
 
 import java.util.HashMap;
 import java.util.Map;

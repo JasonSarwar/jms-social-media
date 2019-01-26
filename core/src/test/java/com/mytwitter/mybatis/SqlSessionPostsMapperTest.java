@@ -11,7 +11,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.mytwitter.configuration.Configuration;
+import com.mytwitter.configuration.Configurations;
+import com.mytwitter.configuration.ConfigurationsFromFile;
 import com.mytwitter.configuration.CoreSettings;
 import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
@@ -25,8 +26,9 @@ public class SqlSessionPostsMapperTest {
 	
 	@BeforeClass
 	public static void setupBeforeClass() throws IOException {
-		InputStream inputStream = Resources.getResourceAsStream(Configuration.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
-		factory = new SqlSessionFactoryBuilder().build(inputStream, Configuration.getProperties());
+		Configurations configurations = new ConfigurationsFromFile("application.properties");
+		InputStream inputStream = Resources.getResourceAsStream(configurations.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
+		factory = new SqlSessionFactoryBuilder().build(inputStream, configurations.getProperties());
 	}
 
 	@Before

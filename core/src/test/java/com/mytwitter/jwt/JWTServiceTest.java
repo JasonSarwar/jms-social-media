@@ -1,4 +1,4 @@
-package com.mytwitter.utils;
+package com.mytwitter.jwt;
 
 import static org.junit.Assert.assertThat;
 
@@ -7,14 +7,16 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 
-public class JWTUtilsTest {
+import com.mytwitter.jwt.JWTService;
+
+public class JWTServiceTest {
 
 	@Test
 	public void testJWTUtils() throws IOException {
-
-		String jwt = JWTUtils.createJWT(5);
+		JWTService jwtService = new JWTService();
+		String jwt = jwtService.createJWT(5);
 		System.out.println(jwt);
-		Integer userId = JWTUtils.validateJWTAndRetrieveUserId(jwt);
+		Integer userId = jwtService.validateJWTAndRetrieveUserId(jwt);
 		assertThat(userId, is(5));
 	}
 

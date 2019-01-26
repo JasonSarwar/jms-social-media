@@ -1,4 +1,4 @@
-package dataservice;
+package com.mytwitter.dataservice;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

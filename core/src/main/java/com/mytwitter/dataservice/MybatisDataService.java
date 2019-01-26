@@ -1,4 +1,4 @@
-package dataservice;
+package com.mytwitter.dataservice;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +9,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.mytwitter.configuration.Configuration;
+import com.mytwitter.configuration.Configurations;
 import com.mytwitter.configuration.CoreSettings;
 import com.mytwitter.model.Comment;
 import com.mytwitter.model.FullPost;
@@ -27,9 +27,9 @@ public class MybatisDataService implements DataService {
 	private final SqlSessionPostsMapper postsMapper;
 	private final SqlSessionTagsMapper tagsMapper;
 	
-	public MybatisDataService() throws IOException {
-		InputStream inputStream = Resources.getResourceAsStream(Configuration.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
-		SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(inputStream, Configuration.getProperties());
+	public MybatisDataService(Configurations configuration) throws IOException {
+		InputStream inputStream = Resources.getResourceAsStream(configuration.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
+		SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(inputStream, configuration.getProperties());
 		usersMapper = new SqlSessionUsersMapper(factory);
 		postsMapper = new SqlSessionPostsMapper(factory);
 		tagsMapper = new SqlSessionTagsMapper(factory);

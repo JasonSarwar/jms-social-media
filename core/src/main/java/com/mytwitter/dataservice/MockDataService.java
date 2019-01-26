@@ -1,4 +1,4 @@
-package dataservice;
+package com.mytwitter.dataservice;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

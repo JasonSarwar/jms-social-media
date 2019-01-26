@@ -34,8 +34,11 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.mybatis/mybatis
 	compile group: 'org.mybatis', name: 'mybatis', version: '3.4.6'
 
-	// https://mvnrepository.com/artifact/com.fasterxml/jackson-xml-databind
-	compile group: 'com.fasterxml', name: 'jackson-xml-databind', version: '0.6.2'
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml
+	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.8'
+
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-afterburner
+	compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-afterburner', version: '2.9.8'
 
 	// https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
 	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'

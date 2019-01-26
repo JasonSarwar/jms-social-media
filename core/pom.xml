@@ -10,8 +10,7 @@
 
   <artifactId>my-social-media-core</artifactId>
   <packaging>jar</packaging>
-  
-  <name>my-twitter</name>
+  <name>my-social-media-core</name>
   <url>http://maven.apache.org</url>
   
   <dependencies>
@@ -30,10 +29,10 @@
 	    <artifactId>mybatis</artifactId>
 	</dependency>
 	
-	<dependency>
-	    <groupId>com.fasterxml</groupId>
-	    <artifactId>jackson-xml-databind</artifactId>
-	</dependency>
+	<!-- dependency>
+	    <groupId>com.fasterxml.jackson.dataformat</groupId>
+		<artifactId>jackson-dataformat-xml</artifactId>
+	</dependency-->
 		
 	<dependency>
 	    <groupId>org.jasypt</groupId>

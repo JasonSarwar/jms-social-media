@@ -14,6 +14,7 @@ import com.mytwitter.exception.FailedLoginAttemptException;
 import com.mytwitter.exception.PostNotFoundException;
 import com.mytwitter.exception.UnauthorizedEntryException;
 import com.mytwitter.exception.UnsupportedContentTypeException;
+import com.mytwitter.jwt.JWTService;
 import com.mytwitter.exception.InvalidUserLoginStateException;
 import com.mytwitter.model.Comment;
 import com.mytwitter.model.Entry;
@@ -25,9 +26,8 @@ import com.mytwitter.model.User;
 import com.mytwitter.model.UserLogin;
 import com.mytwitter.password.NonEncryptionPasswordService;
 import com.mytwitter.password.PasswordService;
-import com.mytwitter.utils.JWTUtils;
 
-import dataservice.DataService;
+import com.mytwitter.dataservice.DataService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -39,17 +39,19 @@ import spark.utils.StringUtils;
 public final class RequestHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
-	private static final String SESSION_COOKIE = "my-twitter-session";
+	private static final String SESSION_COOKIE = "my-social-media-session";
 	private static final String AUTHORIZATION = "Authorization";
 	private static final String BEARER = "Bearer ";
 	
 	private final DataService dataService;
 	private final PasswordService passwordService;
+	private final JWTService jwtService;
 	private final Gson gson;
 	
 	public RequestHandler(DataService dataService) {
 		this.dataService = dataService;
 		passwordService = new NonEncryptionPasswordService();
+		jwtService = new JWTService();
 		gson = new GsonBuilder().create();
 	}
 
@@ -128,7 +130,7 @@ public final class RequestHandler {
 			if (user != null) {
 				LoginSuccess loginSuccess = new LoginSuccess();
 				loginSuccess.setUserId(user.getUserId());
-				loginSuccess.setJwt(JWTUtils.createJWT(user.getUserId()));
+				loginSuccess.setJwt(jwtService.createJWT(user.getUserId()));
 				loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
 				return loginSuccess;
 			} else {
@@ -167,7 +169,7 @@ public final class RequestHandler {
 		response.cookie(SESSION_COOKIE, sessionKey);
 		LoginSuccess loginSuccess = new LoginSuccess();
 		loginSuccess.setUserId(user.getUserId());
-		loginSuccess.setJwt(JWTUtils.createJWT(user.getUserId()));
+		loginSuccess.setJwt(jwtService.createJWT(user.getUserId()));
 		loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
 		return loginSuccess;
 
@@ -190,14 +192,14 @@ public final class RequestHandler {
 			throw new UnauthorizedEntryException("Not authorized to Post");
 		} else {
 			String jwt = auth.substring(BEARER.length());
-			Integer userId = JWTUtils.validateJWTAndRetrieveUserId(jwt);
+			Integer userId = jwtService.validateJWTAndRetrieveUserId(jwt);
 			if (!newEntry.getUserId().equals(userId)) {
 				throw new UnauthorizedEntryException("User ID Mismatch");
 			}
 		}
 	}
 	
-	private <T> T extractBodyContent(Request request, Class<T> aClass) {
+	private <T> T extractBodyContent(Request request, Class<T> aClass) throws IOException {
 
 		if (request.contentType().toLowerCase().startsWith("application/json") 
 				|| StringUtils.isBlank(request.contentType())) {
