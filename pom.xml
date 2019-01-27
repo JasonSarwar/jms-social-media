@@ -11,13 +11,18 @@
   <url>http://maven.apache.org</url>
   
   <properties>
+	<maven.compiler.source>1.9</maven.compiler.source>
+	<maven.compiler.target>1.9</maven.compiler.target>
   	<java.version>1.11</java.version>
   	<spark-core.version>2.7.2</spark-core.version>
   	<guava.version>27.0.1-jre</guava.version>
+  	<javax-xml.version>2.3.1</javax-xml.version>
   	<gson.version>2.8.5</gson.version>
-  	<mybatis.version>3.4.6</mybatis.version>
   	<jackson.version>2.9.8</jackson.version>
+  	<mybatis.version>3.4.6</mybatis.version>
+  	<jjwt.version>0.9.1</jjwt.version>
   	<jasypt.version>1.9.2</jasypt.version>
+  	<ojdbc.version>11.2.0.3</ojdbc.version>
   	<logging.version>2.11.1</logging.version>
  	<junit.version>4.12</junit.version>
   </properties>
@@ -27,7 +32,7 @@
   	<module>api-sparkjava</module>
   </modules>
   
-  <dependencyManagement>
+	<dependencyManagement>
 	  <dependencies>
 
 	    <!-- https://mvnrepository.com/artifact/com.sparkjava/spark-core -->
@@ -58,6 +63,13 @@
 		    <version>${mybatis.version}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+		<dependency>
+		    <groupId>javax.xml.bind</groupId>
+		    <artifactId>jaxb-api</artifactId>
+		    <version>${javax-xml.version}</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
 		<dependency>
 		    <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -72,11 +84,25 @@
 		    <version>${jackson.version}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt</artifactId>
+		    <version>${jjwt.version}</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.jasypt/jasypt -->
 		<dependency>
 		    <groupId>org.jasypt</groupId>
 		    <artifactId>jasypt</artifactId>
 		    <version>${jasypt.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/oracle/ojdbc6 -->
+		<dependency>
+		    <groupId>oracle</groupId>
+		    <artifactId>ojdbc6</artifactId>
+		    <version>${ojdbc.version}</version>
 		</dependency>
 
 		<!-- For Logging -->
@@ -94,6 +120,27 @@
 	    </dependency>
 	    
 	  </dependencies>
-  </dependencyManagement>
-  
+	</dependencyManagement>
+
+	<build>
+	    <pluginManagement>
+	        <plugins>
+	            <plugin>
+	                <groupId>org.codehaus.mojo</groupId>
+	                <artifactId>exec-maven-plugin</artifactId>
+	                <version>1.6.0</version>
+	                <executions>
+	                 <execution>
+	                     <goals>
+	                         <goal>java</goal>
+	                     </goals>
+	                 </execution>
+	                </executions>
+	                <configuration>
+	        			<mainClass>com.mytwitter.app.App</mainClass>
+	        		</configuration>
+	            </plugin>
+	        </plugins>
+	    </pluginManagement>
+	</build>
 </project>

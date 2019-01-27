@@ -30,40 +30,40 @@ public class SqlSessionUsersMapperTest {
 		factory = new SqlSessionFactoryBuilder().build(inputStream, configurations.getProperties());
 	}
 	
-	@Test
-	public void testIsUsernamePresent() {
-		try(SqlSession session = factory.openSession(true)) {
-			UsersMapper mapper = session.getMapper(UsersMapper.class);
-			assertThat(mapper.isUsernamePresent("Jason1"), equalTo(0));
-			assertThat(mapper.isUsernamePresent("Jason2"), equalTo(1));
-		}	
-	}
+//	@Test
+//	public void testIsUsernamePresent() {
+//		try(SqlSession session = factory.openSession(true)) {
+//			UsersMapper mapper = session.getMapper(UsersMapper.class);
+//			assertThat(mapper.isUsernamePresent("Jason1"), equalTo(0));
+//			assertThat(mapper.isUsernamePresent("Jason2"), equalTo(1));
+//		}	
+//	}
+//	
+//	@Test
+//	public void testIsEmailPresent() {
+//		try(SqlSession session = factory.openSession(true)) {
+//			UsersMapper mapper = session.getMapper(UsersMapper.class);
+//			assertThat(mapper.isEmailPresent("jason.sarwar@gmail.com"), equalTo(1));
+//			assertThat(mapper.isEmailPresent("Jason2"), equalTo(0));
+//		}
+//		
+//	}
 	
-	@Test
-	public void testIsEmailPresent() {
-		try(SqlSession session = factory.openSession(true)) {
-			UsersMapper mapper = session.getMapper(UsersMapper.class);
-			assertThat(mapper.isEmailPresent("jason.sarwar@gmail.com"), equalTo(1));
-			assertThat(mapper.isEmailPresent("Jason2"), equalTo(0));
-		}
-		
-	}
-	
-	@Test
-	public void testAddUser() {
-		try(SqlSession session = factory.openSession(true)) {
-			UsersMapper mapper = session.getMapper(UsersMapper.class);
-			
-			AddUserDB user = new AddUserDB();
-			user.setUsername("Jason2");
-			user.setHashedPassword("12345");
-			user.setEmail("jason.sarwar@gmail.com");
-			user.setFullName("Jason Sarwar");
-			user.setBirthdate(LocalDate.of(1993, 11, 20));
-			user.setBio("HI");
-			mapper.addUser(user);
-		}
-		
-	}
+//	@Test
+//	public void testAddUser() {
+//		try(SqlSession session = factory.openSession(true)) {
+//			UsersMapper mapper = session.getMapper(UsersMapper.class);
+//			
+//			AddUserDB user = new AddUserDB();
+//			user.setUsername("Jason2");
+//			user.setHashedPassword("12345");
+//			user.setEmail("jason.sarwar@gmail.com");
+//			user.setFullName("Jason Sarwar");
+//			user.setBirthdate(LocalDate.of(1993, 11, 20));
+//			user.setBio("HI");
+//			mapper.addUser(user);
+//		}
+//		
+//	}
 
 }

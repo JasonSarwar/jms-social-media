@@ -68,4 +68,4 @@ task copyToLib(type: Copy) {
 build.dependsOn(copyToLib)
 
 // Define the main class for the application
-mainClassName = 'app.App'
+mainClassName = 'com.mytwitter.app.App'

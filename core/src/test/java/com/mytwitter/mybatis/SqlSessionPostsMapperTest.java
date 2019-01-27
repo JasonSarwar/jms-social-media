@@ -35,42 +35,42 @@ public class SqlSessionPostsMapperTest {
 	public void setUp() throws Exception {
 	}
 
-	@Test
-	public void testNumberOfPosts() {
-		try(SqlSession session = factory.openSession(true)) {
-			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			System.out.println(mapper.getNumberOfPosts());
-		}
-	}
-	
-	@Test
-	public void testGetPost() {
-		try(SqlSession session = factory.openSession(true)) {
-			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			FullPost post = mapper.getPost(1);
-			System.out.println(post.getTimestamp());
-			System.out.println(post.getFullName());
-			assertThat(post.getPostId(), equalTo(1));
-			assertThat(post.getUserId(), equalTo(1));
-			assertThat(post.getUsername(), equalTo("Jason2"));
-			assertThat(post.getFullName(), equalTo("Jason Sarwar"));
-			assertThat(post.getText(), equalTo("First post!!"));
-			assertThat(post.getPostId(), equalTo(1));
-			System.out.println(post.getTimestamp());
-		}
-	}
+//	@Test
+//	public void testNumberOfPosts() {
+//		try(SqlSession session = factory.openSession(true)) {
+//			PostsMapper mapper = session.getMapper(PostsMapper.class);
+//			System.out.println(mapper.getNumberOfPosts());
+//		}
+//	}
+//	
+//	@Test
+//	public void testGetPost() {
+//		try(SqlSession session = factory.openSession(true)) {
+//			PostsMapper mapper = session.getMapper(PostsMapper.class);
+//			FullPost post = mapper.getPost(1);
+//			System.out.println(post.getTimestamp());
+//			System.out.println(post.getFullName());
+//			assertThat(post.getPostId(), equalTo(1));
+//			assertThat(post.getUserId(), equalTo(1));
+//			assertThat(post.getUsername(), equalTo("Jason2"));
+//			assertThat(post.getFullName(), equalTo("Jason Sarwar"));
+//			assertThat(post.getText(), equalTo("First post!!"));
+//			assertThat(post.getPostId(), equalTo(1));
+//			System.out.println(post.getTimestamp());
+//		}
+//	}
 
-	@Test
-	public void testAddPost() {
-		try(SqlSession session = factory.openSession(true)) {
-			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			Post post = new Post();
-			post.setUserId(1);
-			//post.setPostId(3);
-			post.setText("Third post!!");
-			mapper.addPost(post);
-			System.out.println(post.getPostId());
-		}
-	}
+//	@Test
+//	public void testAddPost() {
+//		try(SqlSession session = factory.openSession(true)) {
+//			PostsMapper mapper = session.getMapper(PostsMapper.class);
+//			Post post = new Post();
+//			post.setUserId(1);
+//			//post.setPostId(3);
+//			post.setText("Third post!!");
+//			mapper.addPost(post);
+//			System.out.println(post.getPostId());
+//		}
+//	}
 
 }

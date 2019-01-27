@@ -2,6 +2,9 @@ package com.mytwitter.app;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mytwitter.configuration.Configurations;
 import com.mytwitter.configuration.ConfigurationsFromFile;
 import com.mytwitter.configuration.CoreSettings;
@@ -15,6 +18,8 @@ import com.mytwitter.dataservice.MybatisDataService;
 import spark.Spark;
 
 public class App {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
 	public static void main(String[] args) throws IOException {
 
@@ -34,5 +39,6 @@ public class App {
 		RouteMappings routes = new RouteMappings(dataService);
 		routes.addRouteListener(new LogRouteAdapter());
 		routes.start();
+		LOGGER.info("Starting up at localhost:{}/", Spark.port());
 	}
 }

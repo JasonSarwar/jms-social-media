@@ -27,20 +27,20 @@ public class SqlSessionTagsMapperTest {
 		factory = new SqlSessionFactoryBuilder().build(inputStream, configurations.getProperties());
 	}
 
-	@Test
-	public void testAddTags() {
-		try(SqlSession session = factory.openSession(true)) {
-			TagsMapper mapper = session.getMapper(TagsMapper.class);
-			mapper.addTags(1, List.of("tag1", "tag2"));
-		}
-	}
+//	@Test
+//	public void testAddTags() {
+//		try(SqlSession session = factory.openSession(true)) {
+//			TagsMapper mapper = session.getMapper(TagsMapper.class);
+//			mapper.addTags(1, List.of("tag1", "tag2"));
+//		}
+//	}
 
-	@Test
-	public void testGetPostTags() {
-		try(SqlSession session = factory.openSession(true)) {
-			TagsMapper mapper = session.getMapper(TagsMapper.class);
-			System.out.println(Arrays.toString(mapper.getPostTags(1).toArray()));
-		}
-	}
+//	@Test
+//	public void testGetPostTags() {
+//		try(SqlSession session = factory.openSession(true)) {
+//			TagsMapper mapper = session.getMapper(TagsMapper.class);
+//			System.out.println(Arrays.toString(mapper.getPostTags(1).toArray()));
+//		}
+//	}
 
 }
