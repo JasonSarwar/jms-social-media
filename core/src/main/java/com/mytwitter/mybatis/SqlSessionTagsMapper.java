@@ -14,10 +14,10 @@ public class SqlSessionTagsMapper implements TagsMapper {
 	}
 
 	@Override
-	public int addTags(int postId, Collection<String> tags) {
+	public Collection<String> getTags() {
 		try(SqlSession session = sessionfactory.openSession(true)) {
 			TagsMapper mapper = session.getMapper(TagsMapper.class);
-			return mapper.addTags(postId, tags);
+			return mapper.getTags();
 		}
 	}
 
@@ -28,13 +28,20 @@ public class SqlSessionTagsMapper implements TagsMapper {
 			return mapper.getPostTags(postId);
 		}
 	}
-	
+
 	@Override
-	public Collection<String> getTags() {
+	public int addTags(int postId, Collection<String> tags) {
 		try(SqlSession session = sessionfactory.openSession(true)) {
 			TagsMapper mapper = session.getMapper(TagsMapper.class);
-			return mapper.getTags();
+			return mapper.addTags(postId, tags);
 		}
 	}
 
+	@Override
+	public int removePostTags(int postId) {
+		try(SqlSession session = sessionfactory.openSession(true)) {
+			TagsMapper mapper = session.getMapper(TagsMapper.class);
+			return mapper.removePostTags(postId);
+		}
+	}
 }

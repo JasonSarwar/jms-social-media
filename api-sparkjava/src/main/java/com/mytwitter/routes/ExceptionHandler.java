@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.mytwitter.exception.BadRequestException;
 import com.mytwitter.exception.FailedLoginAttemptException;
 import com.mytwitter.exception.PostNotFoundException;
-import com.mytwitter.exception.UnauthorizedEntryException;
+import com.mytwitter.exception.UnauthorizedException;
 import com.mytwitter.exception.UnsupportedContentTypeException;
 import com.mytwitter.exception.InvalidUserLoginStateException;
 import com.mytwitter.exception.UserNotFoundException;
@@ -45,7 +45,7 @@ public class ExceptionHandler {
 			response.body(exception.getMessage());
 			response.status(401);
 		
-		} else if (exception instanceof UnauthorizedEntryException) {
+		} else if (exception instanceof UnauthorizedException) {
 			response.body(exception.getMessage());
 			response.status(401);
 			
@@ -55,12 +55,16 @@ public class ExceptionHandler {
 			
 		} else if (exception instanceof InvalidUserLoginStateException) {
 			response.body(exception.getMessage());
-			response.status(403);
-			
+			response.status(400);
+
+		} else if (exception instanceof NumberFormatException) {
+			response.body(exception.getMessage());
+			response.status(500);
+
 		} else if (exception instanceof SQLIntegrityConstraintViolationException) {
 			response.body(exception.getMessage());
 			response.status(500);
-			
+
 		} else {
 			response.body(exception.getMessage());
 			response.status(500);

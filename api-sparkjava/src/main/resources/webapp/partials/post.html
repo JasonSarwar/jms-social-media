@@ -1,7 +1,9 @@
-<div ng-include="'partials/post-template.html'"></div>
-<div> {{ post.comments.length }} Comments:</div>
-<div ng-repeat="post in post.comments">
-	<br>
+<div ng-if="post">
 	<div ng-include="'partials/post-template.html'"></div>
+	<div> {{ post.comments.length }} Comments:</div>
+	<div ng-repeat="post in post.comments">
+		<br>
+		<div ng-include="'partials/post-template.html'"></div>
+	</div>
+	<div ng-include="'partials/comment-box.html'"></div>
 </div>
-<div ng-include="'partials/comment-box.html'"></div>

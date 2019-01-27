@@ -1,6 +1,7 @@
 package com.mytwitter.routes;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -11,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.mytwitter.dataservice.DataService;
 import spark.Request;
 import spark.Response;
+import spark.ResponseTransformer;
 import spark.Spark;
 
 public class RouteMappings {
@@ -30,26 +32,34 @@ public class RouteMappings {
 		
 		Gson gson = new GsonBuilder().create();
 		ObjectWriter xmlWriter = new XmlMapper().registerModule(new AfterburnerModule()).writer();
+		Map<String, ResponseTransformer> contentWriters = Map.of("application/json", gson::toJson, 
+																"application/xml", xmlWriter::writeValueAsString);
 		
 		Spark.path("/api", () -> {
 			Spark.before("/*", this::informAllListenersOnRequest);
 			Spark.after("/*", this::informAllListenersOnResponse);
 
-			//Spark.get("/post/:id", "text/plain", requestHandler::handleGetPost, e -> e.toString());
-			Spark.get("/post/:id", "application/json", requestHandler::handleGetPost, gson::toJson);
-			Spark.get("/post/:id", "application/xml", requestHandler::handleGetPost, xmlWriter::writeValueAsString);
+			contentWriters.forEach((contentType, contentWriter) -> {
+
+				Spark.get("/posts", contentType, requestHandler::handleGetPosts, contentWriter);
+
+				Spark.get("/post/:id", contentType, requestHandler::handleGetPost, contentWriter);
+
+				Spark.post("/post/add", contentType, requestHandler::handleAddPost, contentWriter);
+
+				Spark.put("/post/:id", contentType, requestHandler::handleEditPost, contentWriter);
+
+				Spark.delete("/post/:id", contentType, requestHandler::handleDeletePost, contentWriter);
+
+				Spark.post("/comment/add", contentType, requestHandler::handleAddComment, contentWriter);
+
+				Spark.post("/retrieveSession", contentType, requestHandler::handleSessionRetrieval, contentWriter);
+
+				Spark.post("/login", contentType, requestHandler::handleLogin, contentWriter);
+
+			});
 			
-			Spark.get("/posts", "application/json", requestHandler::handleGetPosts, gson::toJson);
-			Spark.get("/posts", "application/xml", requestHandler::handleGetPosts, xmlWriter::writeValueAsString);
 			
-			Spark.post("/post/add", "application/json", requestHandler::handleAddPost, gson::toJson);
-			Spark.post("/post/add", "application/xml", requestHandler::handleAddPost, xmlWriter::writeValueAsString);
-			
-			Spark.post("/comment/add", "application/json", requestHandler::handleAddComment, gson::toJson);
-			Spark.post("/comment/add", "application/xml", requestHandler::handleAddComment, xmlWriter::writeValueAsString);
-			
-			Spark.post("/retrieveSession", "application/json", requestHandler::handleSessionRetrieval, gson::toJson);
-			Spark.post("/login", "application/json", requestHandler::handleLogin, gson::toJson);
 			Spark.post("/logout", requestHandler::handleLogout);
 		
 		});

@@ -6,9 +6,11 @@ import org.apache.ibatis.annotations.Param;
 
 public interface TagsMapper {
 
-	int addTags(@Param(value="postId") int postId, @Param(value="tags") Collection<String> tags);
-	
+	Collection<String> getTags();
+
 	Collection<String> getPostTags(int postId);
 
-	Collection<String> getTags();
+	int addTags(@Param(value="postId") int postId, @Param(value="tags") Collection<String> tags);
+	
+	int removePostTags(int postId);
 }

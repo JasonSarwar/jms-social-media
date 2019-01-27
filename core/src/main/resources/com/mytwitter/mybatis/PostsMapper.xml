@@ -54,13 +54,7 @@
         </if>
         order by timestamp desc
     </select>
-    
-    <select id="getComments" parameterType="int" resultType="comment">
-        <include refid="retrieveComments"></include>
-        where post_id = #{id} and posts_comments.user_id = users.user_id
-        order by timestamp asc
-    </select>
-    
+
     <insert id="addPost" parameterType="post" keyColumn="post_id">
     	<selectKey keyProperty="postId" resultType="int" order="BEFORE">
     		select POSTS_SEQ.nextval as postId from DUAL
@@ -69,7 +63,24 @@
             #{postId}, #{userId}, #{text}, systimestamp
         )
     </insert>
-    
+
+    <update id="editPost">
+        update posts
+        set text = #{text}
+        where post_id = #{id}
+    </update>
+
+    <delete id="deletePost" parameterType="int">
+        delete from posts
+        where post_id = #{id}
+    </delete>
+
+    <select id="getComments" parameterType="int" resultType="comment">
+        <include refid="retrieveComments"></include>
+        where post_id = #{id} and posts_comments.user_id = users.user_id
+        order by timestamp asc
+    </select>
+
 	<insert id="addComment" parameterType="comment" keyColumn="comment_id">
     	<selectKey keyProperty="commentId" resultType="int" order="BEFORE">
     		select COMMENTS_SEQ.nextval as commentId from DUAL

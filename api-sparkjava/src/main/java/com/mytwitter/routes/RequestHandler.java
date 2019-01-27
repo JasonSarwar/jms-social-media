@@ -12,7 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.mytwitter.exception.BadRequestException;
 import com.mytwitter.exception.FailedLoginAttemptException;
 import com.mytwitter.exception.PostNotFoundException;
-import com.mytwitter.exception.UnauthorizedEntryException;
+import com.mytwitter.exception.UnauthorizedException;
 import com.mytwitter.exception.UnsupportedContentTypeException;
 import com.mytwitter.jwt.JWTService;
 import com.mytwitter.exception.InvalidUserLoginStateException;
@@ -71,28 +71,6 @@ public final class RequestHandler {
 		return standardResponse;
 	}
 
-	public FullPost handleGetPost(Request request, Response response) {
-		
-		String strPostId = request.params(":id");
-		try {
-			int postId = Integer.parseInt(strPostId);
-			long start = System.currentTimeMillis();
-			FullPost post = dataService.getPost(postId);
-			long stop = System.currentTimeMillis();
-			LOGGER.info("Post Retrieved in {} ms", stop - start);
-			
-			if(post != null) {
-				response.type("application/json");
-				return post;
-			} else {
-				throw new PostNotFoundException("Post Not Found");
-			}
-		} catch (NumberFormatException e) {
-			throw new BadRequestException("Invalid Post ID");
-		}
-		
-	}
-	
 	public Collection<Post> handleGetPosts(Request request, Response response) {
 		response.type("application/json");
 		String userIdStr = request.queryParams("userId");
@@ -102,23 +80,57 @@ public final class RequestHandler {
 		String onDate = request.queryParams("on");
 		String beforeDate = request.queryParams("before");
 		String afterDate = request.queryParams("after");
-		
 		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
 	}
-	
+
+	public FullPost handleGetPost(Request request, Response response) {
+		
+		String strPostId = request.params(":id");
+		int postId = Integer.parseInt(strPostId);
+		long start = System.currentTimeMillis();
+		FullPost post = dataService.getPost(postId);
+		long stop = System.currentTimeMillis();
+		LOGGER.info("Post Retrieved in {} ms", stop - start);
+		
+		if(post != null) {
+			response.type("application/json");
+			return post;
+		} else {
+			throw new PostNotFoundException("Post Not Found");
+		}
+	}
+
 	public Boolean handleAddPost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 		
 		Post newPost = extractBodyContent(request, Post.class);
 		validateAddEntryRequest(newPost);
-		authorizeAddEntryRequest(request, newPost);
+		authorizeRequest(request, newPost.getUserId());
 		return dataService.addPost(newPost);
 	}
-	
+
+	public Boolean handleEditPost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		String strPostId = request.params(":id");
+		int postId = Integer.parseInt(strPostId);
+		Post edittedPost = extractBodyContent(request, Post.class);
+		authorizeRequest(request, edittedPost.getUserId());
+		return dataService.editPost(postId, edittedPost.getText());
+	}
+
+	public Boolean handleDeletePost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		String strPostId = request.params(":id");
+		int postId = Integer.parseInt(strPostId);
+		Post deletedPost = extractBodyContent(request, Post.class);
+		authorizeRequest(request, deletedPost.getUserId());
+		return dataService.deletePost(postId);
+	}
+
 	public Boolean handleAddComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 		
 		Comment newComment = extractBodyContent(request, Comment.class);
 		validateAddEntryRequest(newComment);
-		authorizeAddEntryRequest(request, newComment);
+		authorizeRequest(request, newComment.getUserId());
 		return dataService.addComment(newComment);
 	}
 	
@@ -187,16 +199,16 @@ public final class RequestHandler {
 		return "ok";
 	}
 	
-	private void authorizeAddEntryRequest(Request request, Entry newEntry) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	private void authorizeRequest(Request request, Integer userIdFromRequest) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 		
 		String auth = request.headers(AUTHORIZATION);
 		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
-			throw new UnauthorizedEntryException("Not authorized to Post");
+			throw new UnauthorizedException("Not authorized to Post");
 		} else {
 			String jwt = auth.substring(BEARER.length());
-			Integer userId = jwtService.validateJWTAndRetrieveUserId(jwt);
-			if (!newEntry.getUserId().equals(userId)) {
-				throw new UnauthorizedEntryException("User ID Mismatch");
+			Integer userIdFromJWT = jwtService.validateJWTAndRetrieveUserId(jwt);
+			if (!userIdFromRequest.equals(userIdFromJWT)) {
+				throw new UnauthorizedException("User ID Mismatch");
 			}
 		}
 	}

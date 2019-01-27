@@ -63,6 +63,12 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
+	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate,
+			String afterDate) {
+		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+	}
+
+	@Override
 	public FullPost getPost(int postId) {
 		FullPost post = getPostFromCache(postId);
 		if (post == null) {
@@ -71,21 +77,27 @@ abstract class CachingDataService implements DataService {
 		}
 		return post;
 	}
+	
+	@Override
+	public boolean addPost(Post post) {
+		return dataService.addPost(post);
+	}
+	
+	@Override
+	public boolean editPost(int postId, String postText) {
+		removePostFromCache(postId);
+		return dataService.editPost(postId, postText);
+	}
 
 	@Override
-	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate,
-			String afterDate) {
-		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+	public boolean deletePost(int postId) {
+		removePostFromCache(postId);
+		return dataService.deletePost(postId);
 	}
 	
 	@Override
 	public Collection<Comment> getComments(int postId) {
 		return dataService.getComments(postId);
-	}
-	
-	@Override
-	public boolean addPost(Post post) {
-		return dataService.addPost(post);
 	}
 
 	@Override

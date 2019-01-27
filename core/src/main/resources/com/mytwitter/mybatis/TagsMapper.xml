@@ -3,13 +3,22 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mytwitter.mybatis.TagsMapper">
-    
+
     <!-- insert id="addTags">
     	insert into posts_tags (post_id, tag) values
     	<foreach item="tag" collection="tags" separator=",">
     		(#{postId}, #{tag})
     	</foreach>
     </insert-->
+
+	<select id="getTags" resultType="String">
+        select distinct tag from posts_tags
+    </select>
+
+    <select id="getPostTags" parameterType="int" resultType="String">
+        select tag from posts_tags
+        where post_id = #{id}
+    </select>
 
     <insert id="addTags">
     	insert all
@@ -19,14 +28,10 @@
     	</foreach>
     	select * from dual
     </insert>
-        
-    <select id="getPostTags" parameterType="int" resultType="String">
-        select tag from posts_tags
-        where post_id = #{id}
-    </select>
 
-	<select id="getTags" resultType="String">
-        select distinct tag from posts_tags
-    </select>
-    
+	<delete id="removePostTags">
+		delete from posts_tags
+		where post_id = #{id}
+	</delete>
+
 </mapper>

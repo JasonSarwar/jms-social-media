@@ -42,7 +42,7 @@ public class SqlSessionPostsMapper implements PostsMapper {
 			return mapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
 		}
 	}
-	
+
 	@Override
 	public int addPost(Post post) {
 		try(SqlSession session = sessionfactory.openSession(true)) {
@@ -50,7 +50,23 @@ public class SqlSessionPostsMapper implements PostsMapper {
 			return mapper.addPost(post);
 		}
 	}
-	
+
+	@Override
+	public int editPost(int postId, String postText) {
+		try(SqlSession session = sessionfactory.openSession(true)) {
+			PostsMapper mapper = session.getMapper(PostsMapper.class);
+			return mapper.editPost(postId, postText);
+		}
+	}
+
+	@Override
+	public int deletePost(int postId) {
+		try(SqlSession session = sessionfactory.openSession(true)) {
+			PostsMapper mapper = session.getMapper(PostsMapper.class);
+			return mapper.deletePost(postId);
+		}
+	}
+
 	@Override
 	public int addComment(Comment comment) {
 		try(SqlSession session = sessionfactory.openSession(true)) {

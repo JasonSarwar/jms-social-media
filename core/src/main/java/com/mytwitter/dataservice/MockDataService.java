@@ -54,6 +54,28 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
+	public User getUserLoginInfo(String username) {
+		return usersById.values().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
+	}
+
+	@Override
+	public boolean addUserSession(int userId, String sessionKey) {
+		return true;
+	}
+
+	@Override
+	public User getUserBySessionKey(String sessionKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeSessionKey(String sessionKey) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
 		return postsById.values();
 	}
@@ -75,25 +97,15 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public User getUserLoginInfo(String username) {
-		return usersById.values().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
-	}
-
-	@Override
-	public boolean addUserSession(int userId, String sessionKey) {
+	public boolean editPost(int postId, String postText) {
+		postsById.get(postId).setText(postText);
 		return true;
 	}
 
 	@Override
-	public User getUserBySessionKey(String sessionKey) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void removeSessionKey(String sessionKey) {
-		// TODO Auto-generated method stub
-		
+	public boolean deletePost(int postId) {
+		commentsByPostId.removeAll(postId);
+		return postsById.remove(postId) != null;
 	}
 
 	@Override

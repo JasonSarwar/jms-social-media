@@ -80,12 +80,12 @@
 		};
 	};
 
-	var AddPostController = function($scope, $location, dataService, alertService) {
+	var AddPostController = function($scope, $route, dataService, alertService) {
 		
 		$scope.addPost = function (userId, postText, jwt) {
 			dataService.addPost(userId, postText, jwt)
 				.then(function (data) {
-					$location.path("/home");
+					$route.reload();
 				}, function (error) {
 					alertService.error(error.data);
 				});

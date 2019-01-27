@@ -65,37 +65,6 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public FullPost getPost(int postId) {
-		FullPost post = postsMapper.getPost(postId);
-		post.setComments(postsMapper.getComments(postId));
-		return post;
-	}
-
-	@Override
-	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
-		return postsMapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
-	}
-
-	@Override
-	public Collection<Comment> getComments(int postId) {
-		return postsMapper.getComments(postId);
-	}
-
-	@Override
-	public boolean addPost(Post post) {
-		List<String> tags = TagsUtils.extractTagsFromPost(post);
-		boolean addedPost = postsMapper.addPost(post) != 0;
-		boolean addedTags = tags.isEmpty() ? true : 
-			tagsMapper.addTags(post.getPostId(), tags) == tags.size();
-		return addedPost && addedTags;
-	}
-	
-	@Override
-	public boolean addComment(Comment comment) {
-		return postsMapper.addComment(comment) != 0;
-	}
-	
-	@Override
 	public boolean addUserSession(int userId, String sessionKey) {
 		return usersMapper.addUserSession(userId, sessionKey) == 1;
 	}
@@ -109,4 +78,52 @@ public class MybatisDataService implements DataService {
 	public void removeSessionKey(String sessionKey) {
 		usersMapper.removeSessionKey(sessionKey);
 	}
+
+	@Override
+	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
+		return postsMapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+	}
+
+	@Override
+	public FullPost getPost(int postId) {
+		FullPost post = postsMapper.getPost(postId);
+		if (post != null) {
+			post.setComments(getComments(postId));
+		}
+		return post;
+	}
+
+	@Override
+	public boolean addPost(Post post) {
+		List<String> tags = TagsUtils.extractTagsFromPost(post);
+		boolean addedPost = postsMapper.addPost(post) == 1;
+		boolean addedTags = tags.isEmpty() ? true : 
+			tagsMapper.addTags(post.getPostId(), tags) == tags.size();
+		return addedPost && addedTags;
+	}
+
+	@Override
+	public boolean editPost(int postId, String postText) {
+		tagsMapper.removePostTags(postId);
+		List<String> tags = TagsUtils.extractTags(postText);
+		boolean addedTags = tags.isEmpty() ? true : 
+			tagsMapper.addTags(postId, tags) == tags.size();
+		return postsMapper.editPost(postId, postText) == 1 && addedTags;
+	}
+
+	@Override
+	public boolean deletePost(int postId) {
+		return postsMapper.deletePost(postId) == 1;
+	}
+
+	@Override
+	public Collection<Comment> getComments(int postId) {
+		return postsMapper.getComments(postId);
+	}
+
+	@Override
+	public boolean addComment(Comment comment) {
+		return postsMapper.addComment(comment) == 1;
+	}
+
 }

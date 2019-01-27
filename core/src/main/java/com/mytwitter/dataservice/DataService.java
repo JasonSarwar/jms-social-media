@@ -11,28 +11,34 @@ import com.mytwitter.model.UserObject;
 public interface DataService {
 
 	UserObject getUser(String username);
-	
+
 	User getUserLoginInfo(String username);
-	
+
 	String getUsers();
-	
+
 	String getUsersCount();
-	
+
 	String createUser();
-	
+
 	boolean addUserSession(int userId, String sessionKey);
-	
+
 	User getUserBySessionKey(String sessionKey);
-	
+
 	void removeSessionKey(String sessionKey);
-	
-	FullPost getPost(int postId);
-	
+
 	Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate);
-	
-	Collection<Comment> getComments(int postId);
-	
+
+	FullPost getPost(int postId);
+
 	boolean addPost(Post post);
-	
+
+	boolean editPost(int postId, String postText);
+
+	boolean deletePost(int postId);
+
+	Collection<Comment> getComments(int postId);
+
 	boolean addComment(Comment comment);
+	
+	
 }
