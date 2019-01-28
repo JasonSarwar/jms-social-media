@@ -75,19 +75,4 @@
         where post_id = #{id}
     </delete>
 
-    <select id="getComments" parameterType="int" resultType="comment">
-        <include refid="retrieveComments"></include>
-        where post_id = #{id} and posts_comments.user_id = users.user_id
-        order by timestamp asc
-    </select>
-
-	<insert id="addComment" parameterType="comment" keyColumn="comment_id">
-    	<selectKey keyProperty="commentId" resultType="int" order="BEFORE">
-    		select COMMENTS_SEQ.nextval as commentId from DUAL
-    	</selectKey>
-        insert into posts_comments (comment_id, post_id, user_id, text, timestamp) values (
-            #{commentId}, #{postId}, #{userId}, #{text}, systimestamp
-        )
-    </insert>
-    
 </mapper>

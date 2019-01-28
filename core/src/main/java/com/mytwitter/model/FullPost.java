@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import com.google.common.base.MoreObjects;
 
-public class FullPost extends Entry {
+public class FullPost extends Post {
 
 	private Collection<Comment> comments;
 	

@@ -7,11 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import com.mytwitter.exception.BadRequestException;
 import com.mytwitter.exception.FailedLoginAttemptException;
-import com.mytwitter.exception.PostNotFoundException;
+import com.mytwitter.exception.NotFoundException;
 import com.mytwitter.exception.UnauthorizedException;
 import com.mytwitter.exception.UnsupportedContentTypeException;
 import com.mytwitter.exception.InvalidUserLoginStateException;
-import com.mytwitter.exception.UserNotFoundException;
 import spark.Request;
 import spark.Response;
 
@@ -33,14 +32,10 @@ public class ExceptionHandler {
 			response.body(exception.getMessage());
 			response.status(400);
 			
-		} else if (exception instanceof PostNotFoundException) {
-			response.body("Post Not Found");
+		} else if (exception instanceof NotFoundException) {
+			response.body(exception.getMessage());
 			response.status(404);
-			
-		} else if (exception instanceof UserNotFoundException) {
-			response.body("User Not Found");
-			response.status(404);
-			
+
 		} else if (exception instanceof FailedLoginAttemptException) {
 			response.body(exception.getMessage());
 			response.status(401);

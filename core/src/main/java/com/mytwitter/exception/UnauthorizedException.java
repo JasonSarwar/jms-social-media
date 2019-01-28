@@ -2,6 +2,11 @@ package com.mytwitter.exception;
 
 public class UnauthorizedException extends MyTwitterException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5722219434446589675L;
+
 	public UnauthorizedException() {
 		// TODO Auto-generated constructor stub
 	}

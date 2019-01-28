@@ -30,6 +30,7 @@ public class MockDataService implements DataService {
 		commentsByPostId = TreeMultimap.create(Ordering.natural(), (a, b) -> a.getCommentId().compareTo(b.getCommentId()));
 		setupUsers();
 		setupPosts();
+		setupComments();
 	}
 	
 	@Override
@@ -81,7 +82,12 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public FullPost getPost(int postId) {
+	public Post getPost(int postId) {
+		return postsById.get(postId);
+	}
+	
+	@Override
+	public FullPost getPostWithComments(int postId) {
 		Post post = postsById.get(postId);
 		FullPost fullPost = new FullPost(post.getPostId(), post.getUserId(), post.getUsername(), post.getFullName(), post.getText(), post.getTimestamp());
 		fullPost.setComments(getComments(postId));
@@ -90,8 +96,10 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean addPost(Post post) {
-		post.setPostId(postsById.size());
-		post.setTimestamp(LocalDateTime.now());
+		post.setPostId(postsById.size() + 1);
+		if (post.getTimestamp() == null) {
+			post.setTimestamp(LocalDateTime.now());
+		}
 		setCreatorOfEntry(post, usersById.get(post.getUserId()));
 		return postsById.put(post.getPostId(), post) == null;
 	}
@@ -114,11 +122,35 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
+	public Comment getComment(int commentId) {
+		return commentsByPostId.values().stream()
+				.filter(comment -> comment.getCommentId().intValue() == commentId).findAny().orElse(null);
+	}
+
+	@Override
 	public boolean addComment(Comment comment) {
-		comment.setCommentId(commentsByPostId.size());
-		comment.setTimestamp(LocalDateTime.now());
+		comment.setCommentId(commentsByPostId.size() + 1);
+		if (comment.getTimestamp() == null) {
+			comment.setTimestamp(LocalDateTime.now());
+		}
 		setCreatorOfEntry(comment, usersById.get(comment.getUserId()));
 		return commentsByPostId.put(comment.getPostId(), comment);
+	}
+
+	@Override
+	public boolean editComment(int commentId, String commentText) {
+		Comment comment = getComment(commentId);
+		if (comment == null) {
+			return false;
+		}
+		comment.setText(commentText);
+		return true;
+	}
+
+	@Override
+	public boolean deleteComment(int commentId) {
+		Comment comment = getComment(commentId);
+		return comment == null ? false : commentsByPostId.remove(comment.getPostId(), comment);
 	}
 
 	private void setupUsers() {
@@ -140,9 +172,22 @@ public class MockDataService implements DataService {
 			setCreatorOfEntry(post, user);
 			addPost(post);
 		}
-		
 	}
-	
+
+	private void setupComments() {
+		
+		User user = usersById.get(2);
+		Comment firstComment = new Comment(1, 1, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 0));
+		Comment secondComment = new Comment(2, 2, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 1));
+		Comment thirdComment = new Comment(3, 3, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 2));
+		
+		Collection<Comment> comments = Arrays.asList(firstComment, secondComment, thirdComment);
+		for (Comment comment: comments) {
+			setCreatorOfEntry(comment, user);
+			addComment(comment);
+		}
+	}
+
 	private void setCreatorOfEntry(Entry entry, User user) {
 		entry.setUserId(user.getUserId());
 		entry.setUsername(user.getUsername());

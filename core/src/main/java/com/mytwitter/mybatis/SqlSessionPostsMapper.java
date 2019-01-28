@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.mytwitter.model.Comment;
 import com.mytwitter.model.FullPost;
 import com.mytwitter.model.Post;
 
@@ -24,14 +23,6 @@ public class SqlSessionPostsMapper implements PostsMapper {
 			return mapper.getNumberOfPosts();
 		}
 	}
-	
-	@Override
-	public FullPost getPost(int postId) {
-		try(SqlSession session = sessionfactory.openSession(true)) {
-			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			return mapper.getPost(postId);
-		}
-	}
 
 	@Override
 	public Collection<Post> getPosts(Integer userId, String username, 
@@ -40,6 +31,14 @@ public class SqlSessionPostsMapper implements PostsMapper {
 		try(SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
 			return mapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+		}
+	}
+
+	@Override
+	public FullPost getPost(int postId) {
+		try(SqlSession session = sessionfactory.openSession(true)) {
+			PostsMapper mapper = session.getMapper(PostsMapper.class);
+			return mapper.getPost(postId);
 		}
 	}
 
@@ -66,21 +65,4 @@ public class SqlSessionPostsMapper implements PostsMapper {
 			return mapper.deletePost(postId);
 		}
 	}
-
-	@Override
-	public int addComment(Comment comment) {
-		try(SqlSession session = sessionfactory.openSession(true)) {
-			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			return mapper.addComment(comment);
-		}
-	}
-	
-	@Override
-	public Collection<Comment> getComments(int postId) {
-		try(SqlSession session = sessionfactory.openSession(true)) {
-			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			return mapper.getComments(postId);
-		}
-	}
-
 }

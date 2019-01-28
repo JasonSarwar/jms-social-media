@@ -2,6 +2,11 @@ package com.mytwitter.exception;
 
 public class MyTwitterException extends RuntimeException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3127010441542891315L;
+
 	public MyTwitterException() {
 		// TODO Auto-generated constructor stub
 	}

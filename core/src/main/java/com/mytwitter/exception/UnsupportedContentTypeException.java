@@ -2,6 +2,11 @@ package com.mytwitter.exception;
 
 public class UnsupportedContentTypeException extends MyTwitterException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3230595786387229611L;
+
 	public UnsupportedContentTypeException() {
 		// TODO Auto-generated constructor stub
 	}

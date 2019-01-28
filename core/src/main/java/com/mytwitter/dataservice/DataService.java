@@ -28,7 +28,9 @@ public interface DataService {
 
 	Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate);
 
-	FullPost getPost(int postId);
+	Post getPost(int postId);
+
+	FullPost getPostWithComments(int postId);
 
 	boolean addPost(Post post);
 
@@ -38,7 +40,12 @@ public interface DataService {
 
 	Collection<Comment> getComments(int postId);
 
+	Comment getComment(int commentId);
+
 	boolean addComment(Comment comment);
-	
-	
+
+	boolean editComment(int commentId, String commentText);
+
+	boolean deleteComment(int commentId);
+
 }

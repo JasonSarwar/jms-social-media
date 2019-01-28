@@ -2,6 +2,11 @@ package com.mytwitter.exception;
 
 public class InvalidUserLoginStateException extends MyTwitterException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1515590300230959129L;
+
 	public InvalidUserLoginStateException() {
 		// TODO Auto-generated constructor stub
 	}

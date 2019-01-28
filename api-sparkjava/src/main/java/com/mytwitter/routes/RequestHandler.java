@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mytwitter.exception.BadRequestException;
 import com.mytwitter.exception.FailedLoginAttemptException;
-import com.mytwitter.exception.PostNotFoundException;
+import com.mytwitter.exception.NotFoundException;
 import com.mytwitter.exception.UnauthorizedException;
 import com.mytwitter.exception.UnsupportedContentTypeException;
 import com.mytwitter.jwt.JWTService;
@@ -83,20 +83,32 @@ public final class RequestHandler {
 		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
 	}
 
-	public FullPost handleGetPost(Request request, Response response) {
+	public Post handleGetPost(Request request, Response response) {
+		
+		String strPostId = request.params(":id");
+		int postId = Integer.parseInt(strPostId);
+		Post post = dataService.getPost(postId);
+
+		if(post != null) {
+			return post;
+		} else {
+			throw new NotFoundException("Post Not Found");
+		}
+	}
+
+	public FullPost handleGetPostWithComments(Request request, Response response) {
 		
 		String strPostId = request.params(":id");
 		int postId = Integer.parseInt(strPostId);
 		long start = System.currentTimeMillis();
-		FullPost post = dataService.getPost(postId);
+		FullPost post = dataService.getPostWithComments(postId);
 		long stop = System.currentTimeMillis();
 		LOGGER.info("Post Retrieved in {} ms", stop - start);
 		
 		if(post != null) {
-			response.type("application/json");
 			return post;
 		} else {
-			throw new PostNotFoundException("Post Not Found");
+			throw new NotFoundException("Post Not Found");
 		}
 	}
 
@@ -112,28 +124,82 @@ public final class RequestHandler {
 
 		String strPostId = request.params(":id");
 		int postId = Integer.parseInt(strPostId);
-		Post edittedPost = extractBodyContent(request, Post.class);
-		authorizeRequest(request, edittedPost.getUserId());
-		return dataService.editPost(postId, edittedPost.getText());
+		Entry body = extractBodyContent(request, Post.class);
+		authorizeRequest(request, body.getUserId());
+		if (!dataService.editPost(postId, body.getText())) {
+			throw new NotFoundException("Post Not Found");
+		}
+		return true;
 	}
 
 	public Boolean handleDeletePost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 
 		String strPostId = request.params(":id");
 		int postId = Integer.parseInt(strPostId);
-		Post deletedPost = extractBodyContent(request, Post.class);
-		authorizeRequest(request, deletedPost.getUserId());
-		return dataService.deletePost(postId);
+		Entry body = extractBodyContent(request, Post.class);
+		authorizeRequest(request, body.getUserId());
+		if (!dataService.deletePost(postId)) {
+			throw new NotFoundException("Post Not Found");
+		}
+		return true;
+	}
+
+	public Collection<Comment> handleGetComments(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		String strPostId = request.params(":id");
+		int postId = Integer.parseInt(strPostId);
+		return dataService.getComments(postId);
+	}
+	
+	public Comment handleGetComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		String strCommentId = request.params(":id");
+		int commentId = Integer.parseInt(strCommentId);
+		Comment comment = dataService.getComment(commentId);
+		if(comment != null) {
+			return comment;
+		} else {
+			throw new NotFoundException("Comment Not Found");
+		}
 	}
 
 	public Boolean handleAddComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 		
 		Comment newComment = extractBodyContent(request, Comment.class);
+		String strPostId = request.params(":id");
+		if (strPostId != null) {
+			int postId = Integer.parseInt(strPostId);
+			newComment.setPostId(postId);
+		}
 		validateAddEntryRequest(newComment);
 		authorizeRequest(request, newComment.getUserId());
 		return dataService.addComment(newComment);
 	}
-	
+
+	public Boolean handleEditComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		String strCommentId = request.params(":id");
+		int commentId = Integer.parseInt(strCommentId);
+		Entry body = extractBodyContent(request, Comment.class);
+		authorizeRequest(request, body.getUserId());
+		if (!dataService.editComment(commentId, body.getText())) {
+			throw new NotFoundException("Comment Not Found");
+		}
+		return true;
+	}
+
+	public Boolean handleDeleteComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		String strCommentId = request.params(":id");
+		int commentId = Integer.parseInt(strCommentId);
+		Entry body = extractBodyContent(request, Comment.class);
+		authorizeRequest(request, body.getUserId());
+		if (!dataService.deleteComment(commentId)) {
+			throw new NotFoundException("Comment Not Found");
+		}
+		return true;
+	}
+
 	public LoginSuccess handleSessionRetrieval(Request request, Response response) throws IOException {
 		
 		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
@@ -159,8 +225,7 @@ public final class RequestHandler {
 	public LoginSuccess handleLogin(Request request, Response response) throws IOException {
 
 		if (request.cookie(SESSION_COOKIE) != null) {
-			throw new InvalidUserLoginStateException("A User is already logged in");
-			//System.err.println("Cookie: " + request.cookie(SESSION_COOKIE));
+			//throw new InvalidUserLoginStateException("A User is already logged in");
 		}
 		
 		UserLogin userLogin = extractBodyContent(request, UserLogin.class);

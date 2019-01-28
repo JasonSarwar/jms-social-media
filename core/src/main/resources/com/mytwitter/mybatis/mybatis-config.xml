@@ -30,6 +30,7 @@
   <mappers>
     <mapper resource="com/mytwitter/mybatis/UsersMapper.xml"/>
     <mapper resource="com/mytwitter/mybatis/PostsMapper.xml"/>
+    <mapper resource="com/mytwitter/mybatis/CommentsMapper.xml"/>
     <mapper resource="com/mytwitter/mybatis/TagsMapper.xml"/>
   </mappers>
 </configuration>

@@ -11,7 +11,11 @@ public class Comment extends Entry {
 	public Comment() {
 	}
 	
-	public Comment(Integer postId, Integer userId, Integer commentId, String username, String fullName, String text, LocalDateTime timestamp) {
+	public Comment(Integer commentId, Integer postId, String text, LocalDateTime timestamp) {
+		this(commentId, postId, null, null, null, text, timestamp);
+	}
+
+	public Comment(Integer commentId, Integer postId, Integer userId, String username, String fullName, String text, LocalDateTime timestamp) {
 		super(postId, userId, username, fullName, text, timestamp);
 		this.commentId = commentId;
 	}

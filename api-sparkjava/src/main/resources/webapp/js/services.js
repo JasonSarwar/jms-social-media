@@ -3,7 +3,7 @@
   var dataService = function($http, $location) {
 
     var getPost = function (postId) {
-    	return $http.get("/api/post/" + postId)
+    	return $http.get("/api/post/" + postId + "/full")
               .then(function(response) {
             	  return response.data;
               });

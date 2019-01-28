@@ -2,6 +2,11 @@ package com.mytwitter.exception;
 
 public class BadRequestException extends MyTwitterException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6884929539018383333L;
+
 	public BadRequestException() {
 		// TODO Auto-generated constructor stub
 	}

@@ -44,14 +44,24 @@ public class RouteMappings {
 				Spark.get("/posts", contentType, requestHandler::handleGetPosts, contentWriter);
 
 				Spark.get("/post/:id", contentType, requestHandler::handleGetPost, contentWriter);
-
+				Spark.get("/post/:id/full", contentType, requestHandler::handleGetPostWithComments, contentWriter);
+				
 				Spark.post("/post/add", contentType, requestHandler::handleAddPost, contentWriter);
 
 				Spark.put("/post/:id", contentType, requestHandler::handleEditPost, contentWriter);
 
 				Spark.delete("/post/:id", contentType, requestHandler::handleDeletePost, contentWriter);
 
+				Spark.get("/post/:id/comments", contentType, requestHandler::handleGetComments, contentWriter);
+
+				Spark.get("/comment/:id", contentType, requestHandler::handleGetComment, contentWriter);
+				
 				Spark.post("/comment/add", contentType, requestHandler::handleAddComment, contentWriter);
+				Spark.post("/post/:id/comment/add", contentType, requestHandler::handleAddComment, contentWriter);
+				
+				Spark.put("/comment/:id", contentType, requestHandler::handleEditComment, contentWriter);
+
+				Spark.delete("/comment/:id", contentType, requestHandler::handleDeleteComment, contentWriter);
 
 				Spark.post("/retrieveSession", contentType, requestHandler::handleSessionRetrieval, contentWriter);
 
