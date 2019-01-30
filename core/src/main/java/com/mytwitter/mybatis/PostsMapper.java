@@ -17,6 +17,8 @@ public interface PostsMapper {
 
 	FullPost getPost(int postId);
 
+	Integer getUserIdFromPostId(int postId);
+
 	int addPost(Post post);
 
 	int editPost(@Param(value="id") int postId, @Param(value="text") String postText);

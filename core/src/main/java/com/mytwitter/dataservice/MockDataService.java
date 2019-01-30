@@ -95,6 +95,11 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
+	public Integer getUserIdFromPostId(int postId) {
+		return getPost(postId).getUserId();
+	}
+
+	@Override
 	public boolean addPost(Post post) {
 		post.setPostId(postsById.size() + 1);
 		if (post.getTimestamp() == null) {
@@ -125,6 +130,11 @@ public class MockDataService implements DataService {
 	public Comment getComment(int commentId) {
 		return commentsByPostId.values().stream()
 				.filter(comment -> comment.getCommentId().intValue() == commentId).findAny().orElse(null);
+	}
+
+	@Override
+	public Integer getUserIdFromCommentId(int commentId) {
+		return getComment(commentId).getUserId();
 	}
 
 	@Override

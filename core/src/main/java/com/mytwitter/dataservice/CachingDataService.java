@@ -22,6 +22,8 @@ abstract class CachingDataService implements DataService {
 	
 	protected abstract void removePostFromCache(int postId);
 	
+	protected abstract void removePostFromCacheUsingCommentId(int commentId);
+	
 	@Override
 	public UserObject getUser(String username) {
 		return dataService.getUser(username);
@@ -67,7 +69,7 @@ abstract class CachingDataService implements DataService {
 			String afterDate) {
 		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
 	}
-	
+
 	@Override
 	public Post getPost(int postId) {
 		Post post = getPostFromCache(postId);
@@ -83,7 +85,16 @@ abstract class CachingDataService implements DataService {
 		}
 		return post;
 	}
-	
+
+	@Override
+	public Integer getUserIdFromPostId(int postId) {
+		FullPost post = getPostFromCache(postId);
+		if (post != null) {
+			return post.getUserId();
+		}
+		return dataService.getUserIdFromPostId(postId);
+	}
+
 	@Override
 	public boolean addPost(Post post) {
 		return dataService.addPost(post);
@@ -112,6 +123,11 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
+	public Integer getUserIdFromCommentId(int commentId) {
+		return dataService.getUserIdFromCommentId(commentId);
+	}
+
+	@Override
 	public boolean addComment(Comment comment) {
 		removePostFromCache(comment.getPostId());
 		return dataService.addComment(comment);
@@ -119,15 +135,13 @@ abstract class CachingDataService implements DataService {
 	
 	@Override
 	public boolean editComment(int commentId, String commentText) {
-		int postId = getComment(commentId).getPostId();
-		removePostFromCache(postId);
+		removePostFromCacheUsingCommentId(commentId);
 		return dataService.editComment(commentId, commentText);
 	}
 
 	@Override
 	public boolean deleteComment(int commentId) {
-		int postId = getComment(commentId).getPostId();
-		removePostFromCache(postId);
+		removePostFromCacheUsingCommentId(commentId);
 		return dataService.deleteComment(commentId);
 	}
 }

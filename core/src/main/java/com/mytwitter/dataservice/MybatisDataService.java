@@ -106,6 +106,11 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
+	public Integer getUserIdFromPostId(int postId) {
+		return postsMapper.getUserIdFromPostId(postId);
+	}
+
+	@Override
 	public boolean addPost(Post post) {
 		List<String> tags = TagsUtils.extractTagsFromPost(post);
 		boolean addedPost = postsMapper.addPost(post) == 1;
@@ -139,6 +144,11 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
+	public Integer getUserIdFromCommentId(int commentId) {
+		return commentsMapper.getUserIdFromCommentId(commentId);
+	}
+
+	@Override
 	public boolean addComment(Comment comment) {
 		return commentsMapper.addComment(comment) == 1;
 	}
@@ -152,5 +162,4 @@ public class MybatisDataService implements DataService {
 	public boolean deleteComment(int commentId) {
 		return commentsMapper.deleteComment(commentId) == 1;
 	}
-
 }

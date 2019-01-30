@@ -40,6 +40,14 @@ public class SqlSessionCommentsMapper implements CommentsMapper {
 	}
 
 	@Override
+	public Integer getUserIdFromCommentId(int commentId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			CommentsMapper mapper = session.getMapper(CommentsMapper.class);
+			return mapper.getUserIdFromCommentId(commentId);
+		}
+	}
+
+	@Override
 	public int addComment(Comment comment) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			CommentsMapper mapper = session.getMapper(CommentsMapper.class);

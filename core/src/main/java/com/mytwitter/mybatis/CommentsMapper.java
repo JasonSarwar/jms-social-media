@@ -14,6 +14,8 @@ public interface CommentsMapper {
 
 	Comment getComment(int commentId);
 
+	Integer getUserIdFromCommentId(int commentId);
+
 	int addComment(Comment comment);
 	
 	int editComment(@Param(value="id") int commentId, @Param(value="text") String commentText);

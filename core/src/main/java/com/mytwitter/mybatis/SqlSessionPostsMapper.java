@@ -43,6 +43,14 @@ public class SqlSessionPostsMapper implements PostsMapper {
 	}
 
 	@Override
+	public Integer getUserIdFromPostId(int postId) {
+		try(SqlSession session = sessionfactory.openSession(true)) {
+			PostsMapper mapper = session.getMapper(PostsMapper.class);
+			return mapper.getUserIdFromPostId(postId);
+		}
+	}
+
+	@Override
 	public int addPost(Post post) {
 		try(SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);

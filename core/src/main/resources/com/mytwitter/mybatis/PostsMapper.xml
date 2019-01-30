@@ -9,13 +9,7 @@
         profile_picture_link, text, timestamp
         from posts, users    
     </sql>
-    
-    <sql id="retrieveComments">
-		select post_id, posts_comments.user_id as user_id,
-		comment_id, full_name, username, profile_picture_link, text, timestamp
-        from posts_comments, users    
-    </sql>
-    
+
     <select id="getNumberOfPosts" resultType="int">
         select count(1) from posts
     </select>
@@ -55,6 +49,11 @@
         order by timestamp desc
     </select>
 
+	<select id="getUserIdFromPostId" parameterType="int" resultType="Integer">
+        select user_id from posts
+        where post_id = #{id}
+    </select>
+    
     <insert id="addPost" parameterType="post" keyColumn="post_id">
     	<selectKey keyProperty="postId" resultType="int" order="BEFORE">
     		select POSTS_SEQ.nextval as postId from DUAL

@@ -53,7 +53,7 @@ public class ExceptionHandler {
 			response.status(400);
 
 		} else if (exception instanceof NumberFormatException) {
-			response.body(exception.getMessage());
+			response.body(exception.getMessage().replace("For input string:", "Invalid ID"));
 			response.status(500);
 
 		} else if (exception instanceof SQLIntegrityConstraintViolationException) {

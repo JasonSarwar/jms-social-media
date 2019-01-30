@@ -32,6 +32,8 @@ public interface DataService {
 
 	FullPost getPostWithComments(int postId);
 
+	Integer getUserIdFromPostId(int postId);
+
 	boolean addPost(Post post);
 
 	boolean editPost(int postId, String postText);
@@ -41,6 +43,8 @@ public interface DataService {
 	Collection<Comment> getComments(int postId);
 
 	Comment getComment(int commentId);
+
+	Integer getUserIdFromCommentId(int commentId);
 
 	boolean addComment(Comment comment);
 

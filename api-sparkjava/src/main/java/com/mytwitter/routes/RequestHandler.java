@@ -116,7 +116,7 @@ public final class RequestHandler {
 		
 		Post newPost = extractBodyContent(request, Post.class);
 		validateAddEntryRequest(newPost);
-		authorizeRequest(request, newPost.getUserId());
+		authorizeRequest(request, newPost.getUserId(), "Add Post");
 		return dataService.addPost(newPost);
 	}
 
@@ -125,7 +125,7 @@ public final class RequestHandler {
 		String strPostId = request.params(":id");
 		int postId = Integer.parseInt(strPostId);
 		Entry body = extractBodyContent(request, Post.class);
-		authorizeRequest(request, body.getUserId());
+		authorizeRequest(request, dataService.getUserIdFromPostId(postId), "Edit Post");
 		if (!dataService.editPost(postId, body.getText())) {
 			throw new NotFoundException("Post Not Found");
 		}
@@ -136,8 +136,7 @@ public final class RequestHandler {
 
 		String strPostId = request.params(":id");
 		int postId = Integer.parseInt(strPostId);
-		Entry body = extractBodyContent(request, Post.class);
-		authorizeRequest(request, body.getUserId());
+		authorizeRequest(request, dataService.getUserIdFromPostId(postId), "Delete Post");
 		if (!dataService.deletePost(postId)) {
 			throw new NotFoundException("Post Not Found");
 		}
@@ -172,7 +171,7 @@ public final class RequestHandler {
 			newComment.setPostId(postId);
 		}
 		validateAddEntryRequest(newComment);
-		authorizeRequest(request, newComment.getUserId());
+		authorizeRequest(request, newComment.getUserId(), "Add Comment");
 		return dataService.addComment(newComment);
 	}
 
@@ -181,7 +180,7 @@ public final class RequestHandler {
 		String strCommentId = request.params(":id");
 		int commentId = Integer.parseInt(strCommentId);
 		Entry body = extractBodyContent(request, Comment.class);
-		authorizeRequest(request, body.getUserId());
+		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), "Edit Comment");
 		if (!dataService.editComment(commentId, body.getText())) {
 			throw new NotFoundException("Comment Not Found");
 		}
@@ -192,8 +191,7 @@ public final class RequestHandler {
 
 		String strCommentId = request.params(":id");
 		int commentId = Integer.parseInt(strCommentId);
-		Entry body = extractBodyContent(request, Comment.class);
-		authorizeRequest(request, body.getUserId());
+		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), "Edit Comment");
 		if (!dataService.deleteComment(commentId)) {
 			throw new NotFoundException("Comment Not Found");
 		}
@@ -264,16 +262,16 @@ public final class RequestHandler {
 		return "ok";
 	}
 	
-	private void authorizeRequest(Request request, Integer userIdFromRequest) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	private void authorizeRequest(Request request, Integer userIdFromRequest, String action) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 		
 		String auth = request.headers(AUTHORIZATION);
 		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
-			throw new UnauthorizedException("Not authorized to Post");
+			throw new UnauthorizedException("Not authorized to " + action);
 		} else {
 			String jwt = auth.substring(BEARER.length());
 			Integer userIdFromJWT = jwtService.validateJWTAndRetrieveUserId(jwt);
 			if (!userIdFromRequest.equals(userIdFromJWT)) {
-				throw new UnauthorizedException("User ID Mismatch");
+				throw new UnauthorizedException("User not authorized to " + action);
 			}
 		}
 	}
