@@ -35,21 +35,14 @@
 	</dependency>
 
 	<dependency>
-	    <groupId>org.mybatis</groupId>
-	    <artifactId>mybatis</artifactId>
+	    <groupId>org.springframework.security</groupId>
+	    <artifactId>spring-security-crypto</artifactId>
 	</dependency>
 
 	<dependency>
-	    <groupId>org.jasypt</groupId>
-	    <artifactId>jasypt</artifactId>
+	    <groupId>org.mybatis</groupId>
+	    <artifactId>mybatis</artifactId>
 	</dependency>
-	<!-- For Logging -->
-	<!-- dependency>
-	    <groupId>org.slf4j</groupId>
-	    <artifactId>slf4j-simple</artifactId>
-	    <version>1.7.25</version>
-	</dependency-->
-	<!-- For Logging -->
 
 	<dependency>
 	    <groupId>oracle</groupId>

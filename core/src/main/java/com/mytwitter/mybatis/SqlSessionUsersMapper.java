@@ -39,10 +39,26 @@ public class SqlSessionUsersMapper implements UsersMapper {
 	}
 
 	@Override
-	public User getUserLoginInfo(String username) {
+	public User getUserLoginInfoByName(String username) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			UsersMapper mapper = session.getMapper(UsersMapper.class);
-			return mapper.getUserLoginInfo(username);
+			return mapper.getUserLoginInfoByName(username);
+		}
+	}
+
+	@Override
+	public User getHashedPasswordByUserId(Integer userId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			UsersMapper mapper = session.getMapper(UsersMapper.class);
+			return mapper.getHashedPasswordByUserId(userId);
+		}
+	}
+
+	@Override
+	public int editPassword(Integer userId, String hashedPassword) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			UsersMapper mapper = session.getMapper(UsersMapper.class);
+			return mapper.editPassword(userId, hashedPassword);
 		}
 	}
 
@@ -69,5 +85,4 @@ public class SqlSessionUsersMapper implements UsersMapper {
 			mapper.removeSessionKey(sessionKey);
 		}
 	}
-
 }

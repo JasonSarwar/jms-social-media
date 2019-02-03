@@ -43,24 +43,22 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public User getUserLoginInfo(String username) {
-		return usersMapper.getUserLoginInfo(username);
+	public User getUserLoginInfoByName(String username) {
+		return usersMapper.getUserLoginInfoByName(username);
 	}
-	
+
+	@Override
+	public User getHashedPasswordByUserId(Integer userId) {
+		return usersMapper.getHashedPasswordByUserId(userId);
+	}
+
+	@Override
+	public boolean editPassword(Integer userId, String hashedPassword) {
+		return usersMapper.editPassword(userId, hashedPassword) == 1;
+	}
+
 	@Override
 	public UserObject getUser(String username) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getUsers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getUsersCount() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -162,4 +160,5 @@ public class MybatisDataService implements DataService {
 	public boolean deleteComment(int commentId) {
 		return commentsMapper.deleteComment(commentId) == 1;
 	}
+
 }

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mytwitter.dataservice.DataService;
+import com.mytwitter.password.PasswordService;
+
 import spark.Request;
 import spark.Response;
 import spark.ResponseTransformer;
@@ -17,17 +19,19 @@ import spark.Spark;
 
 public class RouteMappings {
 	
-	private DataService dataService;
+	private final DataService dataService;
+	private final PasswordService passwordService;
 	private Set<RouteListener> routeListeners;
 
-	public RouteMappings(DataService dataService) {
+	public RouteMappings(DataService dataService, PasswordService passwordService) {
 		this.dataService = dataService;
+		this.passwordService = passwordService;
 		routeListeners = new HashSet<>();
 	}
 	
 	public final void start() {
 		
-		RequestHandler requestHandler = new RequestHandler(dataService);
+		RequestHandler requestHandler = new RequestHandler(dataService, passwordService);
 		ExceptionHandler exceptionHandler = new ExceptionHandler();
 		
 		Gson gson = new GsonBuilder().create();
@@ -63,6 +67,8 @@ public class RouteMappings {
 
 				Spark.delete("/comment/:id", contentType, requestHandler::handleDeleteComment, contentWriter);
 
+				Spark.put("/user/password", contentType, requestHandler::handleEditUserPassword, contentWriter);
+				
 				Spark.post("/retrieveSession", contentType, requestHandler::handleSessionRetrieval, contentWriter);
 
 				Spark.post("/login", contentType, requestHandler::handleLogin, contentWriter);

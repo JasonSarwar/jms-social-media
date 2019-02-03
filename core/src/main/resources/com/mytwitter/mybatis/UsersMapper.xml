@@ -25,10 +25,21 @@
         )
     </insert>
  
-    <select id="getUserLoginInfo" parameterType="String" resultType="user">
+    <select id="getUserLoginInfoByName" parameterType="String" resultType="user">
         select user_id, full_name, hashed_password from users 
         where lower(username) = lower(#{id}) or lower(email) = lower(#{id})
     </select>
+
+    <select id="getHashedPasswordByUserId" parameterType="Integer" resultType="user">
+        select hashed_password from users 
+        where user_id = #{id}
+    </select>
+
+	<update id="editPassword">
+        update users
+        set hashed_password = #{hashedPassword}
+        where user_id = #{id}
+    </update>
     
     <insert id="addUserSession">
         insert into user_sessions (user_id, session_key, timestamp) values (

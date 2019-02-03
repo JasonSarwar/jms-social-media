@@ -1,6 +1,6 @@
 (function(){
   
-  var dataService = function($http, $location) {
+  var postsService = function($http, $location) {
 
     var getPost = function (postId) {
     	return $http.get("/api/post/" + postId + "/full")
@@ -61,6 +61,31 @@
     };
   };
 
+  var usersService = function($http) {
+
+    var editPassword = function (userId, oldPassword, newPassword, jwt) {
+    	var data = {
+    		userId: userId,
+    		oldPassword: oldPassword,
+    		newPassword: newPassword
+    	};
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + jwt
+    		}
+    	};
+    	return $http.put("/api/user/password", data, configs)
+        	.then(function (response) {
+        		return response.data;
+        });
+    };
+
+    
+	return {
+    	editPassword: editPassword
+	};
+  };
+
   var loginService = function($http) {
 
     var attemptLogin = function (user, password) {
@@ -111,7 +136,8 @@
 
 	  
   angular.module("mytwitter")
-  	.factory("dataService", dataService)
+  	.factory("postsService", postsService)
+  	.factory("usersService", usersService)
   	.factory("loginService", loginService)
   	.factory("alertService", alertService);
 }());

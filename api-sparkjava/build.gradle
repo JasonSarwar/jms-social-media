@@ -43,9 +43,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
 	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
 
-	// https://mvnrepository.com/artifact/org.jasypt/jasypt
-	compile group: 'org.jasypt', name: 'jasypt', version: '1.9.2'
-
 	// https://mvnrepository.com/artifact/org.springframework/spring-web
 	//compile group: 'org.springframework', name: 'spring-web', version: '5.1.0.RELEASE'
 

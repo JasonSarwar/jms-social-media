@@ -30,18 +30,18 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
-	public User getUserLoginInfo(String username) {
-		return dataService.getUserLoginInfo(username);
+	public User getUserLoginInfoByName(String username) {
+		return dataService.getUserLoginInfoByName(username);
 	}
 
 	@Override
-	public String getUsers() {
-		return dataService.getUsers();
+	public User getHashedPasswordByUserId(Integer userId) {
+		return dataService.getHashedPasswordByUserId(userId);
 	}
 
 	@Override
-	public String getUsersCount() {
-		return dataService.getUsersCount();
+	public boolean editPassword(Integer userId, String hashedPassword) {
+		return dataService.editPassword(userId, hashedPassword);
 	}
 
 	@Override

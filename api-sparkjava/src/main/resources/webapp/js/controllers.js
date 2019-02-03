@@ -52,10 +52,10 @@
 		$scope.logout();
 	};
 	
-	var PostController = function($scope, $routeParams, dataService, alertService) {
+	var PostController = function($scope, $routeParams, postsService, alertService) {
 		
 		var postId = $routeParams.postId;
-		dataService.getPost(postId)
+		postsService.getPost(postId)
 			.then(function(data) {
 				$scope.post = data;
 		  	}, function(error) {
@@ -65,10 +65,10 @@
 		
 	};
 
-	var PostsController = function($scope, $location, dataService, alertService) {
+	var PostsController = function($scope, $location, postsService, alertService) {
 
 		var queryParamsString = $location.url().split("?")[1];
-		dataService.getPosts(queryParamsString)
+		postsService.getPosts(queryParamsString)
 			.then(function (data) {
 				$scope.posts = data;
 		  	}, function (error) {
@@ -80,10 +80,10 @@
 		};
 	};
 
-	var AddPostController = function($scope, $route, dataService, alertService) {
+	var AddPostController = function($scope, $route, postsService, alertService) {
 		
 		$scope.addPost = function (userId, postText, jwt) {
-			dataService.addPost(userId, postText, jwt)
+			postsService.addPost(userId, postText, jwt)
 				.then(function (data) {
 					$route.reload();
 				}, function (error) {
@@ -92,15 +92,33 @@
 		};
 	};
 
-	var AddCommentController = function($scope, $route, dataService, alertService) {
+	var AddCommentController = function($scope, $route, postsService, alertService) {
 		
 		$scope.addComment = function (userId, postId, commentText, jwt) {
-			dataService.addComment(userId, postId, commentText, jwt)
+			postsService.addComment(userId, postId, commentText, jwt)
 				.then(function (data) {
 					$route.reload();
 				}, function (error) {
 					alertService.error(error.data);
 				});
+		};
+	};
+
+	var EditPasswordController = function($scope, $location, usersService) {
+		
+		$scope.editPassword = function (currentPassword, newPassword1, newPassword2) {
+
+			if (newPassword1 != newPassword2) {
+				$scope.errorText = 'New Passwords Do Not Match';
+			} else {
+				usersService.editPassword($scope.userId, currentPassword, newPassword1, $scope.jwt)
+					.then(function (data) {
+						alert("Password Changed Successfully")
+						$location.path("/home");
+					}, function (error) {
+						$scope.errorText = error.data;
+					});
+			}
 		};
 	};
 
@@ -110,6 +128,7 @@
 		.controller("PostController", PostController)
 		.controller("PostsController", PostsController)
 		.controller("AddPostController", AddPostController)
-		.controller("AddCommentController", AddCommentController);
+		.controller("AddCommentController", AddCommentController)
+		.controller("EditPasswordController", EditPasswordController);
 	
 }());

@@ -15,6 +15,10 @@ import com.mytwitter.dataservice.DataService;
 import com.mytwitter.dataservice.GuavaCachingDataService;
 import com.mytwitter.dataservice.MockDataService;
 import com.mytwitter.dataservice.MybatisDataService;
+import com.mytwitter.password.BcryptPasswordService;
+import com.mytwitter.password.NonEncryptionPasswordService;
+import com.mytwitter.password.PasswordService;
+
 import spark.Spark;
 
 public class App {
@@ -28,15 +32,21 @@ public class App {
 		Spark.port(configurations.get(CoreSettings.PORT));
 
 		DataService dataService;
+		PasswordService passwordService;
 		if (configurations.get(CoreSettings.USE_MOCK_DATA_SERVICE)) {
 			dataService = new MockDataService();
-		} else if (configurations.get(CoreSettings.USE_CACHING)) {
-			dataService = new GuavaCachingDataService(new MybatisDataService(configurations));
+			passwordService = new NonEncryptionPasswordService();
 		} else {
-			dataService = new MybatisDataService(configurations);
+			passwordService = new BcryptPasswordService();
+			if (configurations.get(CoreSettings.USE_CACHING)) {
+				dataService = new GuavaCachingDataService(new MybatisDataService(configurations));
+				
+			} else {
+				dataService = new MybatisDataService(configurations);
+			}
 		}
 
-		RouteMappings routes = new RouteMappings(dataService);
+		RouteMappings routes = new RouteMappings(dataService, passwordService);
 		routes.addRouteListener(new LogRouteAdapter());
 		routes.start();
 		LOGGER.info("Starting up at localhost:{}/", Spark.port());

@@ -20,12 +20,14 @@ import com.mytwitter.model.UserObject;
 public class MockDataService implements DataService {
 
 	private final Map<Integer, User> usersById;
+	private final Map<String, Integer> userSessionKeys;
 	private final Map<Integer, Post> postsById;
 	private final Multimap<Integer, Comment> commentsByPostId;
 	
 	public MockDataService() {
 
 		usersById = new HashMap<>();
+		userSessionKeys = new HashMap<>();
 		postsById = new TreeMap<>();
 		commentsByPostId = TreeMultimap.create(Ordering.natural(), (a, b) -> a.getCommentId().compareTo(b.getCommentId()));
 		setupUsers();
@@ -39,35 +41,37 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public String getUsers() {
-		return null;
-	}
-	
-	@Override
-	public String getUsersCount() {
-		return "{\"userCount\": " + Integer.toString(usersById.size()) + "}";
-	}
-	
-	@Override
 	public String createUser() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public User getUserLoginInfo(String username) {
+	public User getUserLoginInfoByName(String username) {
 		return usersById.values().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
 	}
 
 	@Override
+	public User getHashedPasswordByUserId(Integer userId) {
+		return usersById.values().stream().filter(user -> user.getUserId().equals(userId)).findFirst().orElse(null);
+
+	}
+
+	@Override
+	public boolean editPassword(Integer userId, String hashedPassword) {
+		usersById.get(userId).setHashedPassword(hashedPassword);
+		return true;
+	}
+
+	@Override
 	public boolean addUserSession(int userId, String sessionKey) {
+		userSessionKeys.put(sessionKey, userId);
 		return true;
 	}
 
 	@Override
 	public User getUserBySessionKey(String sessionKey) {
-		// TODO Auto-generated method stub
-		return null;
+		return usersById.get(userSessionKeys.get(sessionKey));
 	}
 
 	@Override

@@ -6,7 +6,7 @@ public class UserLogin {
 	private String password;
 	
 	public UserLogin() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public final String getUser() {

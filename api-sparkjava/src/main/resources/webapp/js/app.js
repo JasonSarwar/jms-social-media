@@ -23,6 +23,10 @@
 					templateUrl: "partials/posts.html",
 					controller: "PostsController"
 				})
+				.when("/editpassword", {
+					templateUrl: "partials/edit-password.html",
+					controller: "EditPasswordController"
+				})
 				.otherwise({redirectTo: "/home"});
 	});
 }());

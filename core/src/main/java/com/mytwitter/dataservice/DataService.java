@@ -12,11 +12,11 @@ public interface DataService {
 
 	UserObject getUser(String username);
 
-	User getUserLoginInfo(String username);
+	User getUserLoginInfoByName(String username);
 
-	String getUsers();
-
-	String getUsersCount();
+	User getHashedPasswordByUserId(Integer userId);
+	
+	boolean editPassword(Integer userId, String hashedPassword);
 
 	String createUser();
 

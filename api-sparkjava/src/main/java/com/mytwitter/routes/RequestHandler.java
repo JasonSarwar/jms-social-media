@@ -16,15 +16,14 @@ import com.mytwitter.exception.UnauthorizedException;
 import com.mytwitter.exception.UnsupportedContentTypeException;
 import com.mytwitter.jwt.JWTService;
 import com.mytwitter.exception.InvalidUserLoginStateException;
+import com.mytwitter.model.ChangePassword;
 import com.mytwitter.model.Comment;
 import com.mytwitter.model.Entry;
 import com.mytwitter.model.FullPost;
 import com.mytwitter.model.LoginSuccess;
 import com.mytwitter.model.Post;
-import com.mytwitter.model.StandardResponse;
 import com.mytwitter.model.User;
 import com.mytwitter.model.UserLogin;
-import com.mytwitter.password.NonEncryptionPasswordService;
 import com.mytwitter.password.PasswordService;
 
 import com.mytwitter.dataservice.DataService;
@@ -48,9 +47,9 @@ public final class RequestHandler {
 	private final JWTService jwtService;
 	private final Gson gson;
 	
-	public RequestHandler(DataService dataService) {
+	public RequestHandler(DataService dataService, PasswordService passwordService) {
 		this.dataService = dataService;
-		passwordService = new NonEncryptionPasswordService();
+		this.passwordService = passwordService;
 		jwtService = new JWTService();
 		gson = new GsonBuilder().create();
 	}
@@ -59,16 +58,12 @@ public final class RequestHandler {
 		return "pong";
 	}
 	
-	public StandardResponse handleGetUser(Request request, Response response) {
-		StandardResponse standardResponse = new StandardResponse();
-		
-		return standardResponse;
+	public Object handleGetUser(Request request, Response response) {
+		return null;
 	}
 	
-	public StandardResponse handleGetUsers(Request request, Response response) {
-		StandardResponse standardResponse = new StandardResponse();
-		
-		return standardResponse;
+	public Object handleGetUsers(Request request, Response response) {
+		return null;
 	}
 
 	public Collection<Post> handleGetPosts(Request request, Response response) {
@@ -198,6 +193,29 @@ public final class RequestHandler {
 		return true;
 	}
 
+	public Boolean handleEditUserPassword(Request request, Response response) throws IOException {
+		ChangePassword changePassword = extractBodyContent(request, ChangePassword.class);
+		
+		authorizeRequest(request, changePassword.getUserId(), "Edit Password");
+		
+		User user = dataService.getHashedPasswordByUserId(changePassword.getUserId());
+		if (!passwordService.checkPassword(changePassword, user)) {
+			throw new BadRequestException("Incorrect Old Password");
+		}
+
+		int len = changePassword.getNewPassword().length();
+		if (len < 5) {
+			throw new BadRequestException("New Password Too Short");
+		}
+		if (len > 50) {
+			throw new BadRequestException("New Password Too Long");
+		}
+		
+		dataService.editPassword(changePassword.getUserId(), 
+				passwordService.encryptPassword(changePassword.getNewPassword()));
+		return true;
+	}
+	
 	public LoginSuccess handleSessionRetrieval(Request request, Response response) throws IOException {
 		
 		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
@@ -223,22 +241,21 @@ public final class RequestHandler {
 	public LoginSuccess handleLogin(Request request, Response response) throws IOException {
 
 		if (request.cookie(SESSION_COOKIE) != null) {
-			//throw new InvalidUserLoginStateException("A User is already logged in");
+			throw new InvalidUserLoginStateException("A User is already logged in");
 		}
 		
 		UserLogin userLogin = extractBodyContent(request, UserLogin.class);
 
-		User user = dataService.getUserLoginInfo(userLogin.getUser());
+		User user = dataService.getUserLoginInfoByName(userLogin.getUser());
 
 		if (user == null) {
 			throw new FailedLoginAttemptException("Incorrect Username or Password");
 		}
-		
-		String hashedPasswordFromLogin = passwordService.encryptPassword(userLogin.getPassword());
-		if (!user.getHashedPassword().equals(hashedPasswordFromLogin)) {
+
+		if (!passwordService.checkPassword(userLogin, user)) {
 			throw new FailedLoginAttemptException("Incorrect Username or Password");
 		}
-		
+
 		String sessionKey = UUID.randomUUID().toString();
 		if (!dataService.addUserSession(user.getUserId(), sessionKey)) {
 			throw new InvalidUserLoginStateException("Cannot create user session");
