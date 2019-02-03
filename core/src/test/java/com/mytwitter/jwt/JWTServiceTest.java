@@ -7,7 +7,7 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 
-import com.mytwitter.jwt.JWTService;
+import com.jms.socialmedia.jwt.JWTService;
 
 public class JWTServiceTest {
 

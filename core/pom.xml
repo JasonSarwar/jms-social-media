@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
-  	<groupId>com.socialmedia</groupId>
-  	<artifactId>my-social-media</artifactId>
+  	<groupId>com.jms.socialmedia</groupId>
+  	<artifactId>jms-social-media</artifactId>
   	<version>1.0-SNAPSHOT</version>
   </parent>
 

@@ -11,11 +11,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.mytwitter.configuration.Configurations;
-import com.mytwitter.configuration.ConfigurationsFromFile;
-import com.mytwitter.configuration.CoreSettings;
-import com.mytwitter.model.FullPost;
-import com.mytwitter.model.Post;
+import com.jms.socialmedia.configuration.Configurations;
+import com.jms.socialmedia.configuration.ConfigurationsFromFile;
+import com.jms.socialmedia.configuration.CoreSettings;
+import com.jms.socialmedia.model.FullPost;
+import com.jms.socialmedia.model.Post;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;

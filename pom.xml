@@ -2,12 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <groupId>com.socialmedia</groupId>
-  <artifactId>my-social-media</artifactId>
+  <groupId>com.jms.socialmedia</groupId>
+  <artifactId>jms-social-media</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   
-  <name>my-twitter</name>
+  <name>jms-social-media</name>
   <url>http://maven.apache.org</url>
   
   <properties>
@@ -137,7 +137,7 @@
 	                 </execution>
 	                </executions>
 	                <configuration>
-	        			<mainClass>com.mytwitter.app.App</mainClass>
+	        			<mainClass>com.jms.socialmedia.app.App</mainClass>
 	        		</configuration>
 	            </plugin>
 	        </plugins>

@@ -5,6 +5,9 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 
 import org.junit.Test;
+
+import com.jms.socialmedia.utils.TagsUtils;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 

@@ -8,6 +8,10 @@ import org.junit.runners.Parameterized.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jms.socialmedia.password.BcryptPasswordService;
+import com.jms.socialmedia.password.NonEncryptionPasswordService;
+import com.jms.socialmedia.password.PasswordService;
+
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 

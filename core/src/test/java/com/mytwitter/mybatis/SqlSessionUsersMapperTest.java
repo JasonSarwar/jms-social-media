@@ -11,10 +11,10 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.mytwitter.configuration.Configurations;
-import com.mytwitter.configuration.ConfigurationsFromFile;
-import com.mytwitter.configuration.CoreSettings;
-import com.mytwitter.model.AddUserDB;
+import com.jms.socialmedia.configuration.Configurations;
+import com.jms.socialmedia.configuration.ConfigurationsFromFile;
+import com.jms.socialmedia.configuration.CoreSettings;
+import com.jms.socialmedia.model.AddUserDB;
 
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;

@@ -1,0 +1,60 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jms.socialmedia.mybatis.UsersMapper">
+
+	<select id="getNumberOfUsers" resultType="int">
+        select count(*) from users
+    </select>
+    
+    <select id="isUsernamePresent" parameterType="String" resultType="int">
+        select count(*) from users where username = #{username}
+    </select>    
+    
+    <select id="isEmailPresent" parameterType="String" resultType="int">
+        select count(*) from users where email = #{email}
+    </select>
+    
+    <insert id="addUser" parameterType="adduserdb" keyColumn="user_id">
+    	<selectKey keyProperty="userId" resultType="int" order="BEFORE">
+    		select USERS_SEQ.nextval as userId from DUAL
+    	</selectKey>
+        insert into users (user_id, username, hashed_password, full_name, email, bio, birthdate, date_time_joined) values (
+            #{userId}, #{username}, #{hashedPassword}, #{fullName}, #{email}, #{bio}, #{birthdate}, systimestamp
+        )
+    </insert>
+ 
+    <select id="getUserLoginInfoByName" parameterType="String" resultType="user">
+        select user_id, full_name, hashed_password from users 
+        where lower(username) = lower(#{id}) or lower(email) = lower(#{id})
+    </select>
+
+    <select id="getHashedPasswordByUserId" parameterType="Integer" resultType="user">
+        select hashed_password from users 
+        where user_id = #{id}
+    </select>
+
+	<update id="editPassword">
+        update users
+        set hashed_password = #{hashedPassword}
+        where user_id = #{id}
+    </update>
+    
+    <insert id="addUserSession">
+        insert into user_sessions (user_id, session_key, timestamp) values (
+            #{userId}, #{sessionKey}, systimestamp
+        )
+    </insert>
+    
+    <select id="getUserBySessionKey" parameterType="String" resultType="user">
+        select user_sessions.user_id as user_id, full_name from user_sessions, users 
+        where session_key = #{id} and user_sessions.user_id = users.user_id
+    </select>
+
+	<delete id="removeSessionKey" parameterType="String">
+		delete from user_sessions
+		where session_key = #{id}
+	</delete>
+
+</mapper>
