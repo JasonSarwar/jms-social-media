@@ -16,7 +16,7 @@
               });
     };
     
-    var addPost = function (userId, text, jwt) {
+    var addPost = function (userId, text, token) {
     	var data = {
 			userId: userId,
 			text: text
@@ -24,7 +24,7 @@
 
     	var configs = {
     		headers: {
-    			"Authorization": "Bearer " + jwt
+    			"Authorization": "Bearer " + token
     		}
     	};
 
@@ -34,7 +34,7 @@
         });
     };
 
-    var addComment = function (userId, postId, text, jwt) {
+    var addComment = function (userId, postId, text, token) {
     	var data = {
 			userId: userId,
 			postId: postId,
@@ -43,7 +43,7 @@
 
     	var configs = {
     		headers: {
-    			"Authorization": "Bearer " + jwt
+    			"Authorization": "Bearer " + token
     		}
     	};
 
@@ -63,7 +63,7 @@
 
   var usersService = function($http) {
 
-    var editPassword = function (userId, oldPassword, newPassword, jwt) {
+    var editPassword = function (userId, oldPassword, newPassword, token) {
     	var data = {
     		userId: userId,
     		oldPassword: oldPassword,
@@ -71,7 +71,7 @@
     	};
     	var configs = {
     		headers: {
-    			"Authorization": "Bearer " + jwt
+    			"Authorization": "Bearer " + token
     		}
     	};
     	return $http.put("/api/user/password", data, configs)

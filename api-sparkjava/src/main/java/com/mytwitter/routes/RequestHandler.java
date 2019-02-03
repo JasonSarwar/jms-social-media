@@ -226,7 +226,7 @@ public final class RequestHandler {
 			if (user != null) {
 				LoginSuccess loginSuccess = new LoginSuccess();
 				loginSuccess.setUserId(user.getUserId());
-				loginSuccess.setJwt(jwtService.createJWT(user.getUserId()));
+				loginSuccess.setToken(jwtService.createJWT(user.getUserId()));
 				loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
 				return loginSuccess;
 			} else {
@@ -263,7 +263,7 @@ public final class RequestHandler {
 		response.cookie(SESSION_COOKIE, sessionKey);
 		LoginSuccess loginSuccess = new LoginSuccess();
 		loginSuccess.setUserId(user.getUserId());
-		loginSuccess.setJwt(jwtService.createJWT(user.getUserId()));
+		loginSuccess.setToken(jwtService.createJWT(user.getUserId()));
 		loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
 		return loginSuccess;
 

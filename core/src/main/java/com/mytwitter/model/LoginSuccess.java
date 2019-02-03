@@ -4,7 +4,7 @@ public class LoginSuccess {
 
 	private Integer userId;
 	private String firstname;
-	private String jwt;
+	private String token;
 
 	public LoginSuccess() {
 		
@@ -26,12 +26,12 @@ public class LoginSuccess {
 		this.firstname = firstname;
 	}
 
-	public final String getJwt() {
-		return jwt;
+	public final String getToken() {
+		return token;
 	}
 
-	public final void setJwt(String jwt) {
-		this.jwt = jwt;
+	public final void setToken(String token) {
+		this.token = token;
 	}
 
 }

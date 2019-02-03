@@ -12,7 +12,7 @@
 					$scope.password = null;
 					$scope.userId = data.userId;
 					$scope.firstname = data.firstname;
-					$scope.jwt = data.jwt;
+					$scope.token = data.token;
 
 					if ($location.path() == "/login") {
 						$location.path("/home");
@@ -32,7 +32,7 @@
 				});
 			$scope.userId = null;
 			$scope.firstname = null;
-			$scope.jwt = null;
+			$scope.token = null;
 			$location.path("/home");
 		};
 		
@@ -41,7 +41,7 @@
 				if (data) {
 					$scope.userId = data.userId;
 					$scope.firstname = data.firstname;
-					$scope.jwt = data.jwt;
+					$scope.token = data.token;
 				}
 		  	}, function (error) {
 
@@ -82,8 +82,8 @@
 
 	var AddPostController = function($scope, $route, postsService, alertService) {
 		
-		$scope.addPost = function (userId, postText, jwt) {
-			postsService.addPost(userId, postText, jwt)
+		$scope.addPost = function (userId, postText) {
+			postsService.addPost(userId, postText, $scope.token)
 				.then(function (data) {
 					$route.reload();
 				}, function (error) {
@@ -94,8 +94,8 @@
 
 	var AddCommentController = function($scope, $route, postsService, alertService) {
 		
-		$scope.addComment = function (userId, postId, commentText, jwt) {
-			postsService.addComment(userId, postId, commentText, jwt)
+		$scope.addComment = function (userId, postId, commentText) {
+			postsService.addComment(userId, postId, commentText, $scope.token)
 				.then(function (data) {
 					$route.reload();
 				}, function (error) {
@@ -111,7 +111,7 @@
 			if (newPassword1 != newPassword2) {
 				$scope.errorText = 'New Passwords Do Not Match';
 			} else {
-				usersService.editPassword($scope.userId, currentPassword, newPassword1, $scope.jwt)
+				usersService.editPassword($scope.userId, currentPassword, newPassword1, $scope.token)
 					.then(function (data) {
 						alert("Password Changed Successfully")
 						$location.path("/home");
