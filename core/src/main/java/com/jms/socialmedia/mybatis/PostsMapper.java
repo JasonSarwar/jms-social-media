@@ -25,7 +25,7 @@ public interface PostsMapper {
 
 	int deletePost(int postId);
 
-	Collection<Integer> getLikesOfPost(int postId);
+	Collection<Integer> getPostLikes(int postId);
 
 	int likePost(@Param(value="postId") int postId, @Param(value="userId") int userId);
 

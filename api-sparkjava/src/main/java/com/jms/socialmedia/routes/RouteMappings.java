@@ -72,6 +72,12 @@ public class RouteMappings {
 				Spark.put("/comment/:id", contentType, requestHandler::handleEditComment, contentWriter);
 
 				Spark.delete("/comment/:id", contentType, requestHandler::handleDeleteComment, contentWriter);
+				
+				Spark.get("/comment/:id/likes", contentType, requestHandler::handleGetCommentLikes, contentWriter);
+
+				Spark.post("/comment/:commentid/like/:userid", contentType, requestHandler::handleLikeComment, contentWriter);
+
+				Spark.delete("/comment/:commentid/unlike/:userid", contentType, requestHandler::handleUnlikeComment, contentWriter);
 
 				Spark.put("/user/password", contentType, requestHandler::handleEditUserPassword, contentWriter);
 				

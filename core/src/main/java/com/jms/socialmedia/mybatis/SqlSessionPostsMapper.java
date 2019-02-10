@@ -75,10 +75,10 @@ public class SqlSessionPostsMapper implements PostsMapper {
 	}
 
 	@Override
-	public Collection<Integer> getLikesOfPost(int postId) {
+	public Collection<Integer> getPostLikes(int postId) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			return mapper.getLikesOfPost(postId);
+			return mapper.getPostLikes(postId);
 		}
 	}
 

@@ -92,7 +92,7 @@ public class MybatisDataService implements DataService {
 	@Override
 	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
 		Collection<Post> posts = postsMapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
-		posts.forEach(post -> post.setLikes(getLikesOfPost(post.getPostId())));
+		posts.forEach(post -> post.setLikes(getPostLikes(post.getPostId())));
 		return posts;
 	}
 
@@ -100,7 +100,7 @@ public class MybatisDataService implements DataService {
 	public Post getPost(int postId) {
 		Post post = postsMapper.getPost(postId);
 		if (post != null) {
-			post.setLikes(getLikesOfPost(postId));
+			post.setLikes(getPostLikes(postId));
 		}
 		return post;
 	}
@@ -109,7 +109,7 @@ public class MybatisDataService implements DataService {
 	public FullPost getPostWithComments(int postId) {
 		FullPost post = postsMapper.getPost(postId);
 		if (post != null) {
-			post.setLikes(getLikesOfPost(postId));
+			post.setLikes(getPostLikes(postId));
 			post.setComments(getComments(postId));
 		}
 		return post;
@@ -144,8 +144,8 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getLikesOfPost(int postId) {
-		return postsMapper.getLikesOfPost(postId);
+	public Collection<Integer> getPostLikes(int postId) {
+		return postsMapper.getPostLikes(postId);
 	}
 
 	@Override
@@ -160,12 +160,18 @@ public class MybatisDataService implements DataService {
 
 	@Override
 	public Collection<Comment> getComments(int postId) {
-		return commentsMapper.getComments(postId);
+		Collection<Comment> comments = commentsMapper.getComments(postId);
+		comments.forEach(comment -> comment.setLikes(getCommentLikes(comment.getCommentId())));
+		return comments;
 	}
 
 	@Override
 	public Comment getComment(int commentId) {
-		return commentsMapper.getComment(commentId);
+		Comment comment = commentsMapper.getComment(commentId);
+		if (comment != null) {
+			comment.setLikes(getCommentLikes(commentId));
+		}
+		return comment;
 	}
 
 	@Override
@@ -186,5 +192,20 @@ public class MybatisDataService implements DataService {
 	@Override
 	public boolean deleteComment(int commentId) {
 		return commentsMapper.deleteComment(commentId) == 1;
+	}
+	
+	@Override
+	public Collection<Integer> getCommentLikes(int commentId) {
+		return commentsMapper.getCommentLikes(commentId);
+	}
+
+	@Override
+	public boolean likeComment(int commentId, int userId) {
+		return commentsMapper.likeComment(commentId, userId) == 1;
+	}
+
+	@Override
+	public boolean unlikeComment(int commentId, int userId) {
+		return commentsMapper.unlikeComment(commentId, userId) == 1;
 	}
 }

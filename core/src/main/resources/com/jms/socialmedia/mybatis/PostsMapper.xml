@@ -74,7 +74,7 @@
         where post_id = #{id}
     </delete>
 
-	<select id="getLikesOfPost" parameterType="int" resultType="Integer">
+	<select id="getPostLikes" parameterType="int" resultType="Integer">
 		select user_id from posts_likes
 		where post_id = #{id}
 	</select>

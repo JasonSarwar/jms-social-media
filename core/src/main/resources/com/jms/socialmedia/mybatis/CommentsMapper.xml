@@ -51,4 +51,20 @@
         where comment_id = #{id}
     </delete>
 
+    <select id="getCommentLikes" parameterType="int" resultType="Integer">
+		select user_id from comments_likes
+		where comment_id = #{id}
+	</select>
+
+	<insert id="likeComment">
+		insert into comments_likes (comment_id, user_id, timestamp) values (
+            #{commentId}, #{userId}, systimestamp
+        )
+	</insert>
+
+	<delete id="unlikeComment">
+        delete from comments_likes
+        where comment_id = #{commentId} and user_id = #{userId}
+    </delete>
+
 </mapper>

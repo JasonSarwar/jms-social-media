@@ -149,24 +149,49 @@
 			}
 		};
 		
-		$scope.likeEntry = function (post) {
-			postsService.likePost(post.postId, $scope.userId, $scope.token)
-				.then(function (data) {
-					post.likes.push($scope.userId);
-				}, function (error) {
-					alertService.error(error.data);
-				});
+		let removeLikeFromEntry = function (entry) {
+			let index = entry.likes.indexOf($scope.userId);
+			if (index > -1) {
+				entry.likes.splice(index, 1);
+			}
 		};
 		
-		$scope.unlikeEntry = function (post) {
-			postsService.unlikePost(post.postId, $scope.userId, $scope.token)
-				.then(function (data) {
-					let index = post.likes.indexOf($scope.userId);
-					if (index > -1)
-						post.likes.splice(index, 1);
-				}, function (error) {
-					alertService.error(error.data);
-				});
+		$scope.likeEntry = function (entry) {
+			
+			if (entry.commentId) {
+				postsService.likeComment(entry.commentId, $scope.userId, $scope.token)
+					.then(function (data) {
+						entry.likes.push($scope.userId);
+					}, function (error) {
+						alertService.error(error.data);
+					});
+			} else {
+				postsService.likePost(entry.postId, $scope.userId, $scope.token)
+					.then(function (data) {
+						entry.likes.push($scope.userId);
+					}, function (error) {
+						alertService.error(error.data);
+					});
+			}
+		};
+		
+		$scope.unlikeEntry = function (entry) {
+
+			if (entry.commentId) {
+				postsService.unlikeComment(entry.commentId, $scope.userId, $scope.token)
+					.then(function (data) {
+						removeLikeFromEntry(entry);
+					}, function (error) {
+						alertService.error(error.data);
+					});
+			} else {
+				postsService.unlikePost(entry.postId, $scope.userId, $scope.token)
+					.then(function (data) {
+						removeLikeFromEntry(entry);
+					}, function (error) {
+						alertService.error(error.data);
+					});
+			}
 		};
 	};
 

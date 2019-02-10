@@ -42,7 +42,7 @@ public interface DataService {
 
 	boolean deletePost(int postId);
 
-	Collection<Integer> getLikesOfPost(int postId);
+	Collection<Integer> getPostLikes(int postId);
 
 	boolean likePost(int postId, int userId);
 
@@ -59,5 +59,11 @@ public interface DataService {
 	boolean editComment(int commentId, String commentText);
 
 	boolean deleteComment(int commentId);
+
+	Collection<Integer> getCommentLikes(int commentId);
+
+	boolean likeComment(int commentId, int userId);
+
+	boolean unlikeComment(int commentId, int userId);
 
 }

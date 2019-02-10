@@ -1,6 +1,7 @@
 package com.jms.socialmedia.dataservice;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -102,6 +103,7 @@ public class MockDataService implements DataService {
 		Post post = postsById.get(postId);
 		FullPost fullPost = new FullPost(post.getPostId(), post.getUserId(), post.getUsername(), post.getFullName(), post.getText(), post.getTimestamp());
 		fullPost.setComments(getComments(postId));
+		fullPost.setLikes(post.getLikes());
 		return fullPost;
 	}
 
@@ -116,6 +118,7 @@ public class MockDataService implements DataService {
 		if (post.getTimestamp() == null) {
 			post.setTimestamp(LocalDateTime.now());
 		}
+		post.setLikes(new ArrayList<>());
 		setCreatorOfEntry(post, usersById.get(post.getUserId()));
 		return postsById.put(post.getPostId(), post) == null;
 	}
@@ -133,7 +136,7 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getLikesOfPost(int postId) {
+	public Collection<Integer> getPostLikes(int postId) {
 		return getPost(postId).getLikes();
 	}
 
@@ -169,6 +172,7 @@ public class MockDataService implements DataService {
 		if (comment.getTimestamp() == null) {
 			comment.setTimestamp(LocalDateTime.now());
 		}
+		comment.setLikes(new ArrayList<>());
 		setCreatorOfEntry(comment, usersById.get(comment.getUserId()));
 		return commentsByPostId.put(comment.getPostId(), comment);
 	}
@@ -205,6 +209,7 @@ public class MockDataService implements DataService {
 		
 		Collection<Post> posts = Arrays.asList(firstPost, secondPost, thirdPost);
 		for (Post post: posts) {
+			post.setLikes(new ArrayList<>());
 			setCreatorOfEntry(post, user);
 			addPost(post);
 		}
@@ -219,6 +224,7 @@ public class MockDataService implements DataService {
 		
 		Collection<Comment> comments = Arrays.asList(firstComment, secondComment, thirdComment);
 		for (Comment comment: comments) {
+			comment.setLikes(new ArrayList<>());
 			setCreatorOfEntry(comment, user);
 			addComment(comment);
 		}
@@ -228,5 +234,20 @@ public class MockDataService implements DataService {
 		entry.setUserId(user.getUserId());
 		entry.setUsername(user.getUsername());
 		entry.setFullName(user.getFullName());
+	}
+
+	@Override
+	public Collection<Integer> getCommentLikes(int commentId) {
+		return getComment(commentId).getLikes();
+	}
+
+	@Override
+	public boolean likeComment(int commentId, int userId) {
+		return getComment(commentId).addLike(userId);
+	}
+
+	@Override
+	public boolean unlikeComment(int commentId, int userId) {
+		return getComment(commentId).removeLike(userId);
 	}
 }

@@ -134,7 +134,7 @@ public final class RequestHandler {
 	public Collection<Integer> handleGetPostLikes(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 
 		int postId = Integer.parseInt(request.params(":id"));
-		return dataService.getLikesOfPost(postId);
+		return dataService.getPostLikes(postId);
 	}
 	
 	public Boolean handleLikePost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
@@ -205,6 +205,28 @@ public final class RequestHandler {
 			throw new NotFoundException("Comment Not Found");
 		}
 		return true;
+	}
+
+	public Collection<Integer> handleGetCommentLikes(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		int commentId = Integer.parseInt(request.params(":id"));
+		return dataService.getCommentLikes(commentId);
+	}
+	
+	public Boolean handleLikeComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		int commentId = Integer.parseInt(request.params(":commentid"));
+		int userId = Integer.parseInt(request.params(":userid"));
+		authorizeRequest(request, userId, "Like Comment");
+		return dataService.likeComment(commentId, userId);
+	}
+
+	public Boolean handleUnlikeComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		int commentId = Integer.parseInt(request.params(":commentid"));
+		int userId = Integer.parseInt(request.params(":userid"));
+		authorizeRequest(request, userId, "Unlike Comment");
+		return dataService.unlikeComment(commentId, userId);
 	}
 
 	public Boolean handleEditUserPassword(Request request, Response response) throws IOException {

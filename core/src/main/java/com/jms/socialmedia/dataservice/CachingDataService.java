@@ -118,17 +118,19 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getLikesOfPost(int postId) {
-		return dataService.getLikesOfPost(postId);
+	public Collection<Integer> getPostLikes(int postId) {
+		return dataService.getPostLikes(postId);
 	}
 
 	@Override
 	public boolean likePost(int postId, int userId) {
+		removePostFromCache(postId);
 		return dataService.likePost(postId, userId);
 	}
 
 	@Override
 	public boolean unlikePost(int postId, int userId) {
+		removePostFromCache(postId);
 		return dataService.unlikePost(postId, userId);
 	}
 
@@ -163,5 +165,22 @@ abstract class CachingDataService implements DataService {
 	public boolean deleteComment(int commentId) {
 		removePostFromCacheUsingCommentId(commentId);
 		return dataService.deleteComment(commentId);
+	}
+	
+	@Override
+	public Collection<Integer> getCommentLikes(int commentId) {
+		return getComment(commentId).getLikes();
+	}
+
+	@Override
+	public boolean likeComment(int commentId, int userId) {
+		removePostFromCacheUsingCommentId(commentId);
+		return dataService.likeComment(commentId, userId);
+	}
+
+	@Override
+	public boolean unlikeComment(int commentId, int userId) {
+		removePostFromCacheUsingCommentId(commentId);
+		return dataService.unlikeComment(commentId, userId);
 	}
 }

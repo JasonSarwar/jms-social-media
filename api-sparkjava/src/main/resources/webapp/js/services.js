@@ -143,6 +143,34 @@
         });
     };
 
+    var likeComment = function (commentId, userId, token) {
+
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + token
+    		}
+    	};
+
+    	return $http.post("/api/comment/" + commentId + "/like/" + userId, null, configs)
+        	.then(function(response) {
+        		return response.data;
+        });
+    };
+
+    var unlikeComment = function (commentId, userId, token) {
+
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + token
+    		}
+    	};
+
+    	return $http.delete("/api/comment/" + commentId + "/unlike/" + userId, configs)
+        	.then(function(response) {
+        		return response.data;
+        });
+    };
+
     return {
     	getPost: getPost,
     	getPosts: getPosts,
@@ -153,7 +181,9 @@
     	unlikePost: unlikePost,
     	addComment: addComment,
     	editComment: editComment,
-    	deleteComment: deleteComment
+    	deleteComment: deleteComment,
+    	likeComment: likeComment,
+    	unlikeComment: unlikeComment
     };
   };
 

@@ -70,4 +70,28 @@ public class SqlSessionCommentsMapper implements CommentsMapper {
 			return mapper.deleteComment(commentId);
 		}
 	}
+
+	@Override
+	public Collection<Integer> getCommentLikes(int commentId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			CommentsMapper mapper = session.getMapper(CommentsMapper.class);
+			return mapper.getCommentLikes(commentId);
+		}
+	}
+
+	@Override
+	public int likeComment(int commentId, int userId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			CommentsMapper mapper = session.getMapper(CommentsMapper.class);
+			return mapper.likeComment(commentId, userId);
+		}
+	}
+
+	@Override
+	public int unlikeComment(int commentId, int userId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			CommentsMapper mapper = session.getMapper(CommentsMapper.class);
+			return mapper.unlikeComment(commentId, userId);
+		}
+	}
 }

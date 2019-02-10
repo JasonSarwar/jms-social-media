@@ -21,4 +21,10 @@ public interface CommentsMapper {
 	int editComment(@Param(value="id") int commentId, @Param(value="text") String commentText);
 	
 	int deleteComment(int commentId);
+
+	Collection<Integer> getCommentLikes(int commentId);
+
+	int likeComment(@Param(value="commentId") int commentId, @Param(value="userId") int userId);
+
+	int unlikeComment(@Param(value="commentId") int commentId, @Param(value="userId") int userId);
 }
