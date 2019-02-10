@@ -5,29 +5,29 @@
 <mapper namespace="com.jms.socialmedia.mybatis.CommentsMapper">
 
     <sql id="retrieveComments">
-		select post_id, posts_comments.user_id as user_id,
+		select post_id, comments.user_id as user_id,
 		comment_id, full_name, username, profile_picture_link, text, timestamp
-        from posts_comments, users    
+        from comments, users    
     </sql>
 
     <select id="getNumberOfCommentsInPost" parameterType="int" resultType="int">
-        select count(*) from posts_comments
+        select count(*) from comments
         where post_id = #{id}
     </select>
 
     <select id="getComments" parameterType="int" resultType="comment">
         <include refid="retrieveComments"></include>
-        where post_id = #{id} and posts_comments.user_id = users.user_id
+        where post_id = #{id} and comments.user_id = users.user_id
         order by timestamp asc
     </select>
 
     <select id="getComment" parameterType="int" resultType="comment">
         <include refid="retrieveComments"></include>
-        where comment_id = #{id} and posts_comments.user_id = users.user_id
+        where comment_id = #{id} and comments.user_id = users.user_id
     </select>
 
 	<select id="getUserIdFromCommentId" parameterType="int" resultType="Integer">
-        select user_id from posts_comments
+        select user_id from comments
         where comment_id = #{id}
     </select>
 
@@ -35,19 +35,19 @@
     	<selectKey keyProperty="commentId" resultType="int" order="BEFORE">
     		select COMMENTS_SEQ.nextval as commentId from DUAL
     	</selectKey>
-        insert into posts_comments (comment_id, post_id, user_id, text, timestamp) values (
+        insert into comments (comment_id, post_id, user_id, text, timestamp) values (
             #{commentId}, #{postId}, #{userId}, #{text}, systimestamp
         )
     </insert>
 
     <update id="editComment">
-        update posts_comments
+        update comments
         set text = #{text}
         where comment_id = #{id}
     </update>
 
     <delete id="deleteComment" parameterType="int">
-        delete from posts_comments
+        delete from comments
         where comment_id = #{id}
     </delete>
 
