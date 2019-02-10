@@ -35,9 +35,17 @@
 				</div>
 			</div>
 			<div class="row">
-				<button type="button" class="btn btn-outline-primary btn-sm" ng-if="userId">
-					<span class="fas fa-check-circle"></span> Like
-				</button>
+				<div ng-if="userId">
+					<button type="button" class="btn btn-outline-primary btn-sm" ng-hide="liked(entry)" ng-click="likeEntry(entry)">
+						<span class="fas fa-check-circle"></span> Like
+					</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-show="liked(entry)" ng-click="unlikeEntry(entry)">
+						<span class="fas fa-check-circle"></span> Liked
+					</button>
+					<button type="button" class="btn btn-outline-primary btn-sm">
+						{{ entry.likes.length }}
+					</button>
+				</div>
 				<button type="button" class="btn btn-outline-info btn-sm" ng-if="!entry.commentId" ng-click="goToPost(entry.postId)">
 					<span class="fas fa-comments"></span> {{ entry.comments.length }} Comments
 				</button>

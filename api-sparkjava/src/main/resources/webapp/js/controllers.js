@@ -92,6 +92,10 @@
 	
 	var EntryController = function($scope, $route, $location, postsService, alertService) {
 
+		$scope.liked = function (entry) {
+			return entry.likes.indexOf($scope.userId) > -1;
+		}
+		
 		$scope.startEditing = function (entry) {
 			entry.editing = true;
 			$scope.editText = entry.text;
@@ -143,6 +147,26 @@
 						});
 				}
 			}
+		};
+		
+		$scope.likeEntry = function (post) {
+			postsService.likePost(post.postId, $scope.userId, $scope.token)
+				.then(function (data) {
+					post.likes.push($scope.userId);
+				}, function (error) {
+					alertService.error(error.data);
+				});
+		};
+		
+		$scope.unlikeEntry = function (post) {
+			postsService.unlikePost(post.postId, $scope.userId, $scope.token)
+				.then(function (data) {
+					let index = post.likes.indexOf($scope.userId);
+					if (index > -1)
+						post.likes.splice(index, 1);
+				}, function (error) {
+					alertService.error(error.data);
+				});
 		};
 	};
 

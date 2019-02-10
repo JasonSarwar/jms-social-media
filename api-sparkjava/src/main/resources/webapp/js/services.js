@@ -65,6 +65,34 @@
         });
     };
 
+    var likePost = function (postId, userId, token) {
+
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + token
+    		}
+    	};
+
+    	return $http.post("/api/post/" + postId + "/like/" + userId, null, configs)
+        	.then(function(response) {
+        		return response.data;
+        });
+    };
+
+    var unlikePost = function (postId, userId, token) {
+
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + token
+    		}
+    	};
+
+    	return $http.delete("/api/post/" + postId + "/unlike/" + userId, configs)
+        	.then(function(response) {
+        		return response.data;
+        });
+    };
+
     var addComment = function (userId, postId, text, token) {
     	var data = {
 			userId: userId,
@@ -121,6 +149,8 @@
     	addPost: addPost,
     	editPost: editPost,
     	deletePost: deletePost,
+    	likePost: likePost,
+    	unlikePost: unlikePost,
     	addComment: addComment,
     	editComment: editComment,
     	deleteComment: deleteComment
