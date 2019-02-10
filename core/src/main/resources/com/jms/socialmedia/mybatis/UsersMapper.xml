@@ -35,6 +35,14 @@
         where user_id = #{id}
     </select>
 
+	<select id="getUsernamesByIds" parameterType="Integer" resultType="String">
+        select username from users
+        where user_id in 
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+	    	#{item}
+	    </foreach>
+    </select>
+
 	<update id="editPassword">
         update users
         set hashed_password = #{hashedPassword}

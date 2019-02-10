@@ -1,6 +1,7 @@
 package com.jms.socialmedia.model;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 import com.google.common.base.MoreObjects;
 
@@ -13,6 +14,7 @@ public abstract class Entry {
 	protected String profilePictureLink;
 	protected String text;
 	protected LocalDateTime timestamp;
+	protected Collection<Integer> likes;
 	
 	public Entry() {
 	}
@@ -71,13 +73,24 @@ public abstract class Entry {
 	public final void setText(String text) {
 		this.text = text;
 	}
+	public final Collection<Integer> getLikes() {
+		return likes;
+	}
+	public final void setLikes(Collection<Integer> likes) {
+		this.likes = likes;
+	}
+	public final boolean addLike(Integer userId) {
+		return this.likes.add(userId);
+	}
+	public final boolean removeLike(Integer userId) {
+		return this.likes.remove(userId);
+	}
 	public final LocalDateTime getTimestamp() {
 		return timestamp;
 	}
 	public final void setTimestamp(LocalDateTime postTimestamp) {
 		this.timestamp = postTimestamp;
 	}
-	
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
@@ -87,6 +100,7 @@ public abstract class Entry {
 				.add("fullName", fullName)
 				.add("profilePictureLink", profilePictureLink)
 				.add("text", text)
+				.add("likes", likes)
 				.add("timestamp", timestamp)
 				.toString();
 	}

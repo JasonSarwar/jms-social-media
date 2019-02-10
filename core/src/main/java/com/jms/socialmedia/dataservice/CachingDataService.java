@@ -40,6 +40,11 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
+	public Collection<String> getUsernamesByIds(Collection<Integer> userIds) {
+		return dataService.getUsernamesByIds(userIds);
+	}
+
+	@Override
 	public boolean editPassword(Integer userId, String hashedPassword) {
 		return dataService.editPassword(userId, hashedPassword);
 	}
@@ -111,7 +116,22 @@ abstract class CachingDataService implements DataService {
 		removePostFromCache(postId);
 		return dataService.deletePost(postId);
 	}
-	
+
+	@Override
+	public Collection<Integer> getLikesOfPost(int postId) {
+		return dataService.getLikesOfPost(postId);
+	}
+
+	@Override
+	public boolean likePost(int postId, int userId) {
+		return dataService.likePost(postId, userId);
+	}
+
+	@Override
+	public boolean unlikePost(int postId, int userId) {
+		return dataService.unlikePost(postId, userId);
+	}
+
 	@Override
 	public Collection<Comment> getComments(int postId) {
 		return dataService.getComments(postId);

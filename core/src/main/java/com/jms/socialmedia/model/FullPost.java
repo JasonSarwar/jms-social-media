@@ -32,6 +32,7 @@ public class FullPost extends Post {
 				.add("fullName", fullName)
 				.add("profilePictureLink", profilePictureLink)
 				.add("text", text)
+				.add("likes", likes)
 				.add("timestamp", timestamp)
 				.add("comments", comments)
 				.toString();

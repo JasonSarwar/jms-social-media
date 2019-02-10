@@ -73,4 +73,28 @@ public class SqlSessionPostsMapper implements PostsMapper {
 			return mapper.deletePost(postId);
 		}
 	}
+
+	@Override
+	public Collection<Integer> getLikesOfPost(int postId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			PostsMapper mapper = session.getMapper(PostsMapper.class);
+			return mapper.getLikesOfPost(postId);
+		}
+	}
+
+	@Override
+	public int likePost(int postId, int userId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			PostsMapper mapper = session.getMapper(PostsMapper.class);
+			return mapper.likePost(postId, userId);
+		}
+	}
+
+	@Override
+	public int unlikePost(int postId, int userId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			PostsMapper mapper = session.getMapper(PostsMapper.class);
+			return mapper.unlikePost(postId, userId);
+		}
+	}
 }

@@ -53,6 +53,11 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
+	public Collection<String> getUsernamesByIds(Collection<Integer> userIds) {
+		return usersMapper.getUsernamesByIds(userIds);
+	}
+
+	@Override
 	public boolean editPassword(Integer userId, String hashedPassword) {
 		return usersMapper.editPassword(userId, hashedPassword) == 1;
 	}
@@ -86,18 +91,25 @@ public class MybatisDataService implements DataService {
 
 	@Override
 	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
-		return postsMapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+		Collection<Post> posts = postsMapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+		posts.forEach(post -> post.setLikes(getLikesOfPost(post.getPostId())));
+		return posts;
 	}
 
 	@Override
 	public Post getPost(int postId) {
-		return postsMapper.getPost(postId);
+		Post post = postsMapper.getPost(postId);
+		if (post != null) {
+			post.setLikes(getLikesOfPost(postId));
+		}
+		return post;
 	}
 	
 	@Override
 	public FullPost getPostWithComments(int postId) {
 		FullPost post = postsMapper.getPost(postId);
 		if (post != null) {
+			post.setLikes(getLikesOfPost(postId));
 			post.setComments(getComments(postId));
 		}
 		return post;
@@ -132,6 +144,21 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
+	public Collection<Integer> getLikesOfPost(int postId) {
+		return postsMapper.getLikesOfPost(postId);
+	}
+
+	@Override
+	public boolean likePost(int postId, int userId) {
+		return postsMapper.likePost(postId, userId) == 1;
+	}
+
+	@Override
+	public boolean unlikePost(int postId, int userId) {
+		return postsMapper.unlikePost(postId, userId) == 1;
+	}
+
+	@Override
 	public Collection<Comment> getComments(int postId) {
 		return commentsMapper.getComments(postId);
 	}
@@ -160,5 +187,4 @@ public class MybatisDataService implements DataService {
 	public boolean deleteComment(int commentId) {
 		return commentsMapper.deleteComment(commentId) == 1;
 	}
-
 }

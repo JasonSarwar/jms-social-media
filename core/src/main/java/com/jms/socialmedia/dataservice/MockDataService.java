@@ -17,6 +17,8 @@ import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserObject;
 
+import static java.util.stream.Collectors.toList;
+
 public class MockDataService implements DataService {
 
 	private final Map<Integer, User> usersById;
@@ -55,6 +57,11 @@ public class MockDataService implements DataService {
 	public User getHashedPasswordByUserId(Integer userId) {
 		return usersById.values().stream().filter(user -> user.getUserId().equals(userId)).findFirst().orElse(null);
 
+	}
+
+	@Override
+	public Collection<String> getUsernamesByIds(Collection<Integer> userIds) {
+		return usersById.values().stream().filter(user -> userIds.contains(user.getUserId())).map(User::getUsername).collect(toList());
 	}
 
 	@Override
@@ -123,6 +130,21 @@ public class MockDataService implements DataService {
 	public boolean deletePost(int postId) {
 		commentsByPostId.removeAll(postId);
 		return postsById.remove(postId) != null;
+	}
+
+	@Override
+	public Collection<Integer> getLikesOfPost(int postId) {
+		return getPost(postId).getLikes();
+	}
+
+	@Override
+	public boolean likePost(int postId, int userId) {
+		return getPost(postId).addLike(userId);
+	}
+
+	@Override
+	public boolean unlikePost(int postId, int userId) {
+		return getPost(postId).removeLike(userId);
 	}
 
 	@Override

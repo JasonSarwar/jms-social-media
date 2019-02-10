@@ -15,7 +15,9 @@ public interface DataService {
 	User getUserLoginInfoByName(String username);
 
 	User getHashedPasswordByUserId(Integer userId);
-	
+
+	Collection<String> getUsernamesByIds(Collection<Integer> userIds);
+
 	boolean editPassword(Integer userId, String hashedPassword);
 
 	String createUser();
@@ -39,6 +41,12 @@ public interface DataService {
 	boolean editPost(int postId, String postText);
 
 	boolean deletePost(int postId);
+
+	Collection<Integer> getLikesOfPost(int postId);
+
+	boolean likePost(int postId, int userId);
+
+	boolean unlikePost(int postId, int userId);
 
 	Collection<Comment> getComments(int postId);
 

@@ -37,6 +37,7 @@ public class Comment extends Entry {
 				.add("fullName", fullName)
 				.add("profilePictureLink", profilePictureLink)
 				.add("text", text)
+				.add("likes", likes)
 				.add("timestamp", timestamp)
 				.toString();
 	}

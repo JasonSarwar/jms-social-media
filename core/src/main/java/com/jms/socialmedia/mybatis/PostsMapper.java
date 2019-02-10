@@ -13,7 +13,7 @@ public interface PostsMapper {
 
 	Collection<Post> getPosts(@Param(value="userId") Integer userId, @Param(value="username") String username, 
 			@Param(value="tag") String tag, @Param(value="onDate") String onDate, 
-			@Param(value="beforeDate") String beforeDate, @Param(value="afterDate")String afterDate);
+			@Param(value="beforeDate") String beforeDate, @Param(value="afterDate") String afterDate);
 
 	FullPost getPost(int postId);
 
@@ -24,4 +24,10 @@ public interface PostsMapper {
 	int editPost(@Param(value="id") int postId, @Param(value="text") String postText);
 
 	int deletePost(int postId);
+
+	Collection<Integer> getLikesOfPost(int postId);
+
+	int likePost(@Param(value="postId") int postId, @Param(value="userId") int userId);
+
+	int unlikePost(@Param(value="postId") int postId, @Param(value="userId") int userId);
 }

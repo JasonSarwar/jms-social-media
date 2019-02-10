@@ -67,7 +67,7 @@ public final class RequestHandler {
 	}
 
 	public Collection<Post> handleGetPosts(Request request, Response response) {
-		response.type("application/json");
+
 		String userIdStr = request.queryParams("userId");
 		Integer userId = userIdStr == null ? null : Integer.parseInt(userIdStr);
 		String username = request.queryParams("username");
@@ -80,8 +80,7 @@ public final class RequestHandler {
 
 	public Post handleGetPost(Request request, Response response) {
 		
-		String strPostId = request.params(":id");
-		int postId = Integer.parseInt(strPostId);
+		int postId = Integer.parseInt(request.params(":id"));
 		Post post = dataService.getPost(postId);
 
 		if(post != null) {
@@ -93,12 +92,8 @@ public final class RequestHandler {
 
 	public FullPost handleGetPostWithComments(Request request, Response response) {
 		
-		String strPostId = request.params(":id");
-		int postId = Integer.parseInt(strPostId);
-		long start = System.currentTimeMillis();
+		int postId = Integer.parseInt(request.params(":id"));
 		FullPost post = dataService.getPostWithComments(postId);
-		long stop = System.currentTimeMillis();
-		LOGGER.info("Post Retrieved in {} ms", stop - start);
 		
 		if(post != null) {
 			return post;
@@ -117,8 +112,7 @@ public final class RequestHandler {
 
 	public Boolean handleEditPost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 
-		String strPostId = request.params(":id");
-		int postId = Integer.parseInt(strPostId);
+		int postId = Integer.parseInt(request.params(":id"));
 		Entry body = extractBodyContent(request, Post.class);
 		authorizeRequest(request, dataService.getUserIdFromPostId(postId), "Edit Post");
 		if (!dataService.editPost(postId, body.getText())) {
@@ -129,8 +123,7 @@ public final class RequestHandler {
 
 	public Boolean handleDeletePost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 
-		String strPostId = request.params(":id");
-		int postId = Integer.parseInt(strPostId);
+		int postId = Integer.parseInt(request.params(":id"));
 		authorizeRequest(request, dataService.getUserIdFromPostId(postId), "Delete Post");
 		if (!dataService.deletePost(postId)) {
 			throw new NotFoundException("Post Not Found");
@@ -138,10 +131,31 @@ public final class RequestHandler {
 		return true;
 	}
 
+	public Collection<Integer> handleGetPostLikes(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		int postId = Integer.parseInt(request.params(":id"));
+		return dataService.getLikesOfPost(postId);
+	}
+	
+	public Boolean handleLikePost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		int postId = Integer.parseInt(request.params(":postid"));
+		int userId = Integer.parseInt(request.params(":userid"));
+		authorizeRequest(request, userId, "Like Post");
+		return dataService.likePost(postId, userId);
+	}
+
+	public Boolean handleUnlikePost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+		int postId = Integer.parseInt(request.params(":postid"));
+		int userId = Integer.parseInt(request.params(":userid"));
+		authorizeRequest(request, userId, "Unlike Post");
+		return dataService.unlikePost(postId, userId);
+	}
+
 	public Collection<Comment> handleGetComments(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 
-		String strPostId = request.params(":id");
-		int postId = Integer.parseInt(strPostId);
+		int postId = Integer.parseInt(request.params(":id"));
 		return dataService.getComments(postId);
 	}
 	
