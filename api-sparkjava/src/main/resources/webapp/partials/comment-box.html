@@ -1,13 +1,11 @@
-<div class="row" ng-controller="AddCommentController"  ng-show="userId">
-	<div class="col-sm-1">
-	</div>
-	<div class="col-sm-10">
-		<form>
-			<div class="form-group">
-		    	<label for="commentbox"></label>
-		    	<textarea class="form-control" id="commentbox" ng-model="commentText" rows="1" placeholder="Comment..."></textarea>
-		  	</div>
-		  	<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="addComment(userId, post.postId, commentText)">Comment</button>
-		</form>
-	</div>
+<div class="container border border-dark bg-light" ng-controller="AddCommentController" ng-show="userId">
+	<form>
+		<div class="form-group">
+	    	<label for="commentbox"></label>
+	    	<textarea class="form-control" id="commentbox" ng-model="commentText" rows="2" placeholder="Comment..."></textarea>
+	  	</div>
+	  	<button class="btn btn-secondary" type="submit" ng-click="addComment(userId, post.postId, commentText)">
+	  		<span class="fas fa-comment"></span> Comment
+	  	</button>
+	</form>
 </div>

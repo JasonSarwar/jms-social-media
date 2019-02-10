@@ -57,12 +57,10 @@
 		var postId = $routeParams.postId;
 		postsService.getPost(postId)
 			.then(function(data) {
-				$scope.post = data;
+				$scope.entry = data;
 		  	}, function(error) {
 		  		alertService.error(error.data);
 		  	});
-		
-		
 	};
 
 	var PostsController = function($scope, $location, postsService, alertService) {
@@ -89,6 +87,62 @@
 				}, function (error) {
 					alertService.error(error.data);
 				});
+		};
+	};
+	
+	var EntryController = function($scope, $route, $location, postsService, alertService) {
+
+		$scope.startEditing = function (entry) {
+			entry.editing = true;
+			$scope.editText = entry.text;
+		};
+
+		$scope.cancelEditing = function (entry) {
+			entry.editing = false;
+		};
+
+		$scope.editEntry = function (postId, commentId, text) {
+			
+			if (commentId) {
+				postsService.editComment(commentId, text, $scope.token)
+					.then(function (data) {
+						$route.reload();
+					}, function (error) {
+						alertService.error(error.data);
+					});
+				
+			} else {
+				postsService.editPost(postId, text, $scope.token)
+					.then(function (data) {
+						$route.reload();
+					}, function (error) {
+						alertService.error(error.data);
+					});
+			}
+		};
+		
+		$scope.deleteEntry = function (postId, commentId) {
+			
+			if (commentId) {
+				if (confirm("Are you sure you want to delete your comment?")) {
+					postsService.deleteComment(commentId, $scope.token)
+					.then(function (data) {
+						$route.reload();
+					}, function (error) {
+						alertService.error(error.data);
+					});
+				}
+
+			} else {
+				if (confirm("Are you sure you want to delete your post?")) {
+					postsService.deletePost(postId, $scope.token)
+						.then(function (data) {
+							$location.path("/posts");
+						}, function (error) {
+							alertService.error(error.data);
+						});
+				}
+			}
 		};
 	};
 
@@ -127,6 +181,7 @@
 		.controller("LogoutController", LogoutController)
 		.controller("PostController", PostController)
 		.controller("PostsController", PostsController)
+		.controller("EntryController", EntryController)
 		.controller("AddPostController", AddPostController)
 		.controller("AddCommentController", AddCommentController)
 		.controller("EditPasswordController", EditPasswordController);

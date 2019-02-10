@@ -34,6 +34,37 @@
         });
     };
 
+    var editPost = function (postId, text, token) {
+    	var data = {
+			text: text
+    	};
+
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + token
+    		}
+    	};
+
+    	return $http.put("/api/post/" + postId, data, configs)
+        	.then(function(response) {
+        		return response.data;
+        });
+    };
+
+    var deletePost = function (postId, token) {
+
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + token
+    		}
+    	};
+
+    	return $http.delete("/api/post/" + postId, configs)
+        	.then(function(response) {
+        		return response.data;
+        });
+    };
+
     var addComment = function (userId, postId, text, token) {
     	var data = {
 			userId: userId,
@@ -53,11 +84,46 @@
         });
     };
 
+    var editComment = function (commentId, text, token) {
+    	var data = {
+			text: text
+    	};
+
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + token
+    		}
+    	};
+
+    	return $http.put("/api/comment/" + commentId, data, configs)
+        	.then(function(response) {
+        		return response.data;
+        });
+    };
+
+    var deleteComment = function (commentId, token) {
+
+    	var configs = {
+    		headers: {
+    			"Authorization": "Bearer " + token
+    		}
+    	};
+
+    	return $http.delete("/api/comment/" + commentId, configs)
+        	.then(function(response) {
+        		return response.data;
+        });
+    };
+
     return {
     	getPost: getPost,
     	getPosts: getPosts,
     	addPost: addPost,
-    	addComment: addComment
+    	editPost: editPost,
+    	deletePost: deletePost,
+    	addComment: addComment,
+    	editComment: editComment,
+    	deleteComment: deleteComment
     };
   };
 

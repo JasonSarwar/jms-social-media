@@ -1,0 +1,55 @@
+
+<div class="container border border-dark bg-light" ng-controller="EntryController">
+	<div class="row">
+		<div class="col-sm-2">
+		</div>
+		<div class="col-sm-8">
+			<div class="row">
+				<strong>{{entry.fullName}}</strong>
+				&#160
+				<a ng-href="#!/posts?username={{entry.username}}">
+					@{{entry.username}}
+				</a>
+				&#160
+				<a ng-href="#!/posts?on={{entry.timestamp.date | dateForLink}}">
+					{{entry.timestamp.date | dateForEntry}}
+				</a>
+				&#160
+				{{entry.timestamp.time | timeForEntry}}
+			</div>
+			<div class="row">
+				<div ng-hide="entry.editing" ng-dblclick="startEditing(entry)">
+					<p ng-bind-html="entry.text | entryText"></p>
+				</div>
+				<div ng-show="entry.editing" class="col-md-10">
+					<form>
+					    <textarea class="form-control" id="editbox" ng-model="editText"></textarea>
+					  	<button class="btn btn-outline-success btn-sm" type="submit" ng-click="editEntry(entry.postId, entry.commentId, editText)">
+					  		<span class="fas fa-save"></span> Save
+					  	</button>
+					  	<button class="btn btn-outline-danger btn-sm" ng-click="cancelEditing(entry)">
+					  		<span class="fas fa-times-circle"></span> Cancel
+					  	</button>
+					</form>
+					<br>
+				</div>
+			</div>
+			<div class="row">
+				<button type="button" class="btn btn-outline-primary btn-sm" ng-if="userId">
+					<span class="fas fa-check-circle"></span> Like
+				</button>
+				<button type="button" class="btn btn-outline-info btn-sm" ng-if="!entry.commentId" ng-click="goToPost(entry.postId)">
+					<span class="fas fa-comments"></span> {{ entry.comments.length }} Comments
+				</button>
+			</div>
+		</div>
+		<div class="col-sm-2" ng-if="entry.userId==userId">
+			<button type="button" class="btn btn-outline-success btn-sm" ng-click="startEditing(entry)">
+				<span class="fas fa-pencil-alt"></span> Edit
+			</button>
+			<button type="button" class="btn btn-outline-danger btn-sm" ng-click="deleteEntry(entry.postId, entry.commentId)">
+				<span class="fas fa-trash-alt"></span> Delete
+			</button>
+		</div>
+	</div>
+</div>

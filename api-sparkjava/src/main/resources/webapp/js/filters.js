@@ -21,21 +21,21 @@
 	};
   };  
 
-  var dateForPost = function($filter) {
+  var dateForEntry = function($filter) {
 	return function(input) {
 		var date = convertDate(input);
 		return $filter('date')(date, "MMM dd");
 	};
   };
 
-  var timeForPost = function($filter) {
+  var timeForEntry = function($filter) {
 	return function(input) {
 		var date = convertTime(input);
 		return $filter('date')(date, "shortTime");
 	};
   };
 
-  var postText = function() {
+  var entryText = function() {
 	return function(postText) {
 		var text = postText.replace(/#(\S+)/g, "<a href='#!/posts?tag=\$1'>\$&</a>")
 							.replace(/https?:\/\/(\S+)/g, "<a href='$&'>\$&</a>");
@@ -45,7 +45,7 @@
 
   angular.module("mytwitter")
   	.filter("dateForLink", dateForLink)
-  	.filter("dateForPost", dateForPost)
-  	.filter("timeForPost", timeForPost)
-  	.filter("postText", postText);
+  	.filter("dateForEntry", dateForEntry)
+  	.filter("timeForEntry", timeForEntry)
+  	.filter("entryText", entryText);
 }());
