@@ -1,6 +1,8 @@
 package com.jms.socialmedia.dataservice;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +33,7 @@ public class MockDataService implements DataService {
 
 		usersById = new HashMap<>();
 		userSessionKeys = new HashMap<>();
-		postsById = new TreeMap<>();
+		postsById = new TreeMap<>((a, b) -> b.compareTo(a));
 		commentsByPostId = TreeMultimap.create(Ordering.natural(), (a, b) -> a.getCommentId().compareTo(b.getCommentId()));
 		setupUsers();
 		setupPosts();
@@ -84,13 +86,19 @@ public class MockDataService implements DataService {
 
 	@Override
 	public void removeSessionKey(String sessionKey) {
-		// TODO Auto-generated method stub
-		
+		userSessionKeys.remove(sessionKey);
 	}
 
 	@Override
 	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
-		return postsById.values();
+		DateTimeFormatter formatter =  DateTimeFormatter.ofPattern("MM-dd-yyyy");
+		return postsById.values().stream().filter(post -> userId == null || post.getUserId().equals(userId))
+				.filter(post -> username == null || post.getUsername().equals(username))
+				.filter(post -> tag == null || post.getText().contains(tag))
+				.filter(post -> onDate == null || post.getTimestamp().toLocalDate().equals(LocalDate.parse(onDate,formatter)))
+				.filter(post -> beforeDate == null || post.getTimestamp().toLocalDate().isAfter(LocalDate.parse(beforeDate, formatter)))
+				.filter(post -> afterDate == null || post.getTimestamp().toLocalDate().isAfter(LocalDate.parse(afterDate, formatter)))
+				.collect(toList());
 	}
 
 	@Override
@@ -114,7 +122,9 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean addPost(Post post) {
-		post.setPostId(postsById.size() + 1);
+		if (post.getPostId() == null) {
+			post.setPostId(postsById.size() + 1);
+		}
 		if (post.getTimestamp() == null) {
 			post.setTimestamp(LocalDateTime.now());
 		}
@@ -203,9 +213,9 @@ public class MockDataService implements DataService {
 	private void setupPosts() {
 		
 		User user = usersById.get(2);
-		Post firstPost = new Post(1, "Hello!", LocalDateTime.of(2019, 1, 1, 0, 0, 0));
-		Post secondPost = new Post(2, "Welcome to my website!", LocalDateTime.of(2019, 1, 1, 0, 0, 1));
-		Post thirdPost = new Post(3, "These posts are from a Mock #Data Service and are not from a database", LocalDateTime.of(2019, 1, 1, 0, 0, 2));
+		Post firstPost = new Post(3, "Hello!", LocalDateTime.of(2019, 1, 1, 0, 0, 10));
+		Post secondPost = new Post(2, "Welcome to my website!", LocalDateTime.of(2019, 1, 1, 0, 0, 5));
+		Post thirdPost = new Post(1, "These posts are from a Mock #Data Service and are not from a database", LocalDateTime.of(2019, 1, 1, 0, 0, 0));
 		
 		Collection<Post> posts = Arrays.asList(firstPost, secondPost, thirdPost);
 		for (Post post: posts) {
@@ -218,9 +228,9 @@ public class MockDataService implements DataService {
 	private void setupComments() {
 		
 		User user = usersById.get(2);
-		Comment firstComment = new Comment(1, 1, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 0));
-		Comment secondComment = new Comment(2, 2, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 1));
-		Comment thirdComment = new Comment(3, 3, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 2));
+		Comment firstComment = new Comment(1, 1, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 10));
+		Comment secondComment = new Comment(2, 2, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 5));
+		Comment thirdComment = new Comment(3, 3, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 1));
 		
 		Collection<Comment> comments = Arrays.asList(firstComment, secondComment, thirdComment);
 		for (Comment comment: comments) {
