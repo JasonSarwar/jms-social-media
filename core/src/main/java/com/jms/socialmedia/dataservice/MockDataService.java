@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Map;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
@@ -28,6 +29,7 @@ public class MockDataService implements DataService {
 	private final Map<String, Integer> userSessionKeys;
 	private final Map<Integer, Post> postsById;
 	private final Multimap<Integer, Comment> commentsByPostId;
+	private final Multimap<Integer, Integer> followerUserIds;
 	
 	public MockDataService() {
 
@@ -35,6 +37,7 @@ public class MockDataService implements DataService {
 		userSessionKeys = new HashMap<>();
 		postsById = new TreeMap<>((a, b) -> b.compareTo(a));
 		commentsByPostId = TreeMultimap.create(Ordering.natural(), (a, b) -> a.getCommentId().compareTo(b.getCommentId()));
+		followerUserIds = HashMultimap.create();
 		setupUsers();
 		setupPosts();
 		setupComments();
@@ -259,5 +262,25 @@ public class MockDataService implements DataService {
 	@Override
 	public boolean unlikeComment(int commentId, int userId) {
 		return getComment(commentId).removeLike(userId);
+	}
+
+	@Override
+	public Collection<Integer> getFollowerUserIds(int userId) {
+		return followerUserIds.entries().stream().filter(entry -> entry.getValue() == userId).map(Map.Entry::getKey).collect(toList());
+	}
+
+	@Override
+	public Collection<Integer> getFollowingUserIds(int userId) {
+		return followerUserIds.get(userId);
+	}
+
+	@Override
+	public boolean followUser(int followerUserId, int followingUserId) {
+		return followerUserIds.put(followerUserId, followingUserId);
+	}
+
+	@Override
+	public boolean unfollowUser(int followerUserId, int followingUserId) {
+		return followerUserIds.remove(followerUserId, followingUserId);
 	}
 }

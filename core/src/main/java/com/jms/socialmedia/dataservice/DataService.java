@@ -65,5 +65,12 @@ public interface DataService {
 	boolean likeComment(int commentId, int userId);
 
 	boolean unlikeComment(int commentId, int userId);
+	
+	Collection<Integer> getFollowerUserIds(int userId);
+	
+	Collection<Integer> getFollowingUserIds(int userId);
+	
+	boolean followUser(int followerUserId, int followingUserId);
 
+	boolean unfollowUser(int followerUserId, int followingUserId);
 }

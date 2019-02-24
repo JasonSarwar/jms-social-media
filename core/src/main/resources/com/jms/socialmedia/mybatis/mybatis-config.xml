@@ -32,5 +32,6 @@
     <mapper resource="com/jms/socialmedia/mybatis/PostsMapper.xml"/>
     <mapper resource="com/jms/socialmedia/mybatis/CommentsMapper.xml"/>
     <mapper resource="com/jms/socialmedia/mybatis/TagsMapper.xml"/>
+    <mapper resource="com/jms/socialmedia/mybatis/FollowersMapper.xml"/>
   </mappers>
 </configuration>

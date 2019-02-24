@@ -1,0 +1,28 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jms.socialmedia.mybatis.FollowersMapper">
+
+    <select id="getFollowerUserIds" parameterType="int" resultType="Integer">
+		select follower_user_id from followers
+		where following_user_id = #{id}
+	</select>
+
+	<select id="getFollowingUserIds" parameterType="int" resultType="Integer">
+		select following_user_id from followers
+		where follower_user_id = #{id}
+	</select>
+
+	<insert id="followUser">
+		insert into followers (follower_user_id, following_user_id, timestamp) values (
+            #{param1}, #{param2}, systimestamp
+        )
+	</insert>
+
+	<delete id="unfollowUser">
+        delete from followers
+        where follower_user_id = #{param1} and following_user_id = #{param2}
+    </delete>
+
+</mapper>

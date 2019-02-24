@@ -17,8 +17,10 @@ import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserObject;
 import com.jms.socialmedia.mybatis.CommentsMapper;
+import com.jms.socialmedia.mybatis.FollowersMapper;
 import com.jms.socialmedia.mybatis.PostsMapper;
 import com.jms.socialmedia.mybatis.SqlSessionCommentsMapper;
+import com.jms.socialmedia.mybatis.SqlSessionFollowersMapper;
 import com.jms.socialmedia.mybatis.SqlSessionPostsMapper;
 import com.jms.socialmedia.mybatis.SqlSessionTagsMapper;
 import com.jms.socialmedia.mybatis.SqlSessionUsersMapper;
@@ -32,7 +34,8 @@ public class MybatisDataService implements DataService {
 	private final PostsMapper postsMapper;
 	private final CommentsMapper commentsMapper;
 	private final TagsMapper tagsMapper;
-	
+	private final FollowersMapper followersMapper;
+
 	public MybatisDataService(Configurations configuration) throws IOException {
 		InputStream inputStream = Resources.getResourceAsStream(configuration.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
 		SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(inputStream, configuration.getProperties());
@@ -40,6 +43,7 @@ public class MybatisDataService implements DataService {
 		postsMapper = new SqlSessionPostsMapper(factory);
 		commentsMapper = new SqlSessionCommentsMapper(factory);
 		tagsMapper = new SqlSessionTagsMapper(factory);
+		followersMapper = new SqlSessionFollowersMapper(factory);
 	}
 
 	@Override
@@ -207,5 +211,25 @@ public class MybatisDataService implements DataService {
 	@Override
 	public boolean unlikeComment(int commentId, int userId) {
 		return commentsMapper.unlikeComment(commentId, userId) == 1;
+	}
+
+	@Override
+	public Collection<Integer> getFollowerUserIds(int userId) {
+		return followersMapper.getFollowerUserIds(userId);
+	}
+
+	@Override
+	public Collection<Integer> getFollowingUserIds(int userId) {
+		return followersMapper.getFollowingUserIds(userId);
+	}
+
+	@Override
+	public boolean followUser(int followerUserId, int followingUserId) {
+		return followersMapper.followUser(followerUserId, followingUserId) == 1;
+	}
+
+	@Override
+	public boolean unfollowUser(int followerUserId, int followingUserId) {
+		return followersMapper.unfollowUser(followerUserId, followingUserId) == 1;
 	}
 }

@@ -183,4 +183,24 @@ abstract class CachingDataService implements DataService {
 		removePostFromCacheUsingCommentId(commentId);
 		return dataService.unlikeComment(commentId, userId);
 	}
+	
+	@Override
+	public Collection<Integer> getFollowerUserIds(int userId) {
+		return dataService.getFollowerUserIds(userId);
+	}
+
+	@Override
+	public Collection<Integer> getFollowingUserIds(int userId) {
+		return dataService.getFollowingUserIds(userId);
+	}
+
+	@Override
+	public boolean followUser(int followerUserId, int followingUserId) {
+		return dataService.followUser(followerUserId, followingUserId);
+	}
+
+	@Override
+	public boolean unfollowUser(int followerUserId, int followingUserId) {
+		return dataService.unfollowUser(followerUserId, followingUserId);
+	}
 }

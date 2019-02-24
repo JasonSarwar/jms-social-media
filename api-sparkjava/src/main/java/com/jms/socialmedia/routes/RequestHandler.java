@@ -21,6 +21,7 @@ import com.jms.socialmedia.jwt.JWTService;
 import com.jms.socialmedia.model.ChangePassword;
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Entry;
+import com.jms.socialmedia.model.FollowRequest;
 import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.LoginSuccess;
 import com.jms.socialmedia.model.Post;
@@ -255,6 +256,25 @@ public final class RequestHandler {
 		return true;
 	}
 	
+	public Boolean handleFollowUser(Request request, Response response) throws IOException {
+		FollowRequest followRequest = extractBodyContent(request, FollowRequest.class);
+		authorizeRequest(request, followRequest.getFollowerUserId(), "Follow User");
+		return dataService.followUser(followRequest.getFollowerUserId(), followRequest.getFollowingUserId());
+	}
+	
+	public Boolean handleUnfollowUser(Request request, Response response) throws IOException {
+		FollowRequest followRequest = extractBodyContent(request, FollowRequest.class);
+		authorizeRequest(request, followRequest.getFollowerUserId(), "Unollow User");
+		return dataService.unfollowUser(followRequest.getFollowerUserId(), followRequest.getFollowingUserId());
+	}
+
+	public Collection<Post> handleGetFollowersPosts(Request request, Response response) {
+
+		Integer userId = Integer.parseInt(request.params("userid"));
+		Collection<Integer> followingUserIds = dataService.getFollowingUserIds(userId);
+		return dataService.getPosts(followingUserIds, null, null, null, null, null);
+	}
+
 	public LoginSuccess handleSessionRetrieval(Request request, Response response) throws IOException {
 		
 		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
