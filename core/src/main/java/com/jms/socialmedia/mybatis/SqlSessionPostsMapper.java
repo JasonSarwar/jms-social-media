@@ -25,12 +25,12 @@ public class SqlSessionPostsMapper implements PostsMapper {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Integer userId, String username, 
+	public Collection<Post> getPosts(Collection<Integer> userIds, String username, 
 			String tag, String onDate, String beforeDate, String afterDate) {
 		
 		try(SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			return mapper.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+			return mapper.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
 		}
 	}
 

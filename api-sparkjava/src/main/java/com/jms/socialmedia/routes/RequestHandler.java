@@ -1,6 +1,7 @@
 package com.jms.socialmedia.routes;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -34,6 +35,8 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import spark.Request;
 import spark.Response;
 import spark.utils.StringUtils;
+
+import static java.util.stream.Collectors.toSet;
 
 public final class RequestHandler {
 
@@ -69,13 +72,13 @@ public final class RequestHandler {
 	public Collection<Post> handleGetPosts(Request request, Response response) {
 
 		String userIdStr = request.queryParams("userId");
-		Integer userId = userIdStr == null ? null : Integer.parseInt(userIdStr);
+		Collection<Integer> userIds = userIdStr == null ? null : Arrays.stream(userIdStr.split("[,|]")).map(Integer::parseInt).collect(toSet());
 		String username = request.queryParams("username");
 		String tag = request.queryParams("tag");
 		String onDate = request.queryParams("on");
 		String beforeDate = request.queryParams("before");
 		String afterDate = request.queryParams("after");
-		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+		return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
 	}
 
 	public Post handleGetPost(Request request, Response response) {

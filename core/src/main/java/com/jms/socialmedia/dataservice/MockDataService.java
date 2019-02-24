@@ -90,9 +90,9 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate) {
+	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate, String afterDate) {
 		DateTimeFormatter formatter =  DateTimeFormatter.ofPattern("MM-dd-yyyy");
-		return postsById.values().stream().filter(post -> userId == null || post.getUserId().equals(userId))
+		return postsById.values().stream().filter(post -> userIds == null || userIds.contains(post.getUserId()))
 				.filter(post -> username == null || post.getUsername().equals(username))
 				.filter(post -> tag == null || post.getText().contains(tag))
 				.filter(post -> onDate == null || post.getTimestamp().toLocalDate().equals(LocalDate.parse(onDate,formatter)))

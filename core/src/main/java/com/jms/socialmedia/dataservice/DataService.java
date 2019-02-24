@@ -28,7 +28,7 @@ public interface DataService {
 
 	void removeSessionKey(String sessionKey);
 
-	Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate, String afterDate);
+	Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate, String afterDate);
 
 	Post getPost(int postId);
 

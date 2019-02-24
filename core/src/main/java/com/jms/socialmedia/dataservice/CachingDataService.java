@@ -70,9 +70,9 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Integer userId, String username, String tag, String onDate, String beforeDate,
+	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate,
 			String afterDate) {
-		return dataService.getPosts(userId, username, tag, onDate, beforeDate, afterDate);
+		return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
 	}
 
 	@Override

@@ -28,8 +28,11 @@
         
         WHERE posts.user_id = users.user_id
         
-        <if test="userId != null">
-        	AND posts.user_id = #{userId}
+        <if test="userIds != null and !userIds.isEmpty()">
+        	AND posts.user_id in
+        	<foreach item="userId" collection="userIds" open="(" separator="," close=")">
+        		#{userId}
+        	</foreach>
         </if>
         <if test="username != null">
         	AND username = #{username}
