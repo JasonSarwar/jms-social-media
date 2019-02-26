@@ -8,6 +8,8 @@ import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserObject;
 
+import static java.util.Collections.singleton;
+
 public interface DataService {
 
 	UserObject getUser(String username);
@@ -30,6 +32,10 @@ public interface DataService {
 
 	Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate, String afterDate);
 
+	default Collection<Post> getPosts(Integer userId) {
+		return getPosts(singleton(userId), null, null, null, null, null);
+	}
+
 	Post getPost(int postId);
 
 	FullPost getPostWithComments(int postId);
@@ -41,6 +47,8 @@ public interface DataService {
 	boolean editPost(int postId, String postText);
 
 	boolean deletePost(int postId);
+
+	Collection<Post> getLikedPostsByUserId(int userId);
 
 	Collection<Integer> getPostLikes(int postId);
 

@@ -118,6 +118,11 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
+	public Collection<Post> getLikedPostsByUserId(int userId) {
+		return dataService.getLikedPostsByUserId(userId);
+	}
+
+	@Override
 	public Collection<Integer> getPostLikes(int postId) {
 		return dataService.getPostLikes(postId);
 	}

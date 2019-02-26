@@ -148,6 +148,11 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
+	public Collection<Post> getLikedPostsByUserId(int userId) {
+		return postsMapper.getLikedPostsByUserId(userId);
+	}
+
+	@Override
 	public Collection<Integer> getPostLikes(int postId) {
 		return postsMapper.getPostLikes(postId);
 	}

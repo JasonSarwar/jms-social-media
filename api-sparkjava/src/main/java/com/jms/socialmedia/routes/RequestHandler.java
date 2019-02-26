@@ -82,6 +82,12 @@ public final class RequestHandler {
 		return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
 	}
 
+	public Collection<Post> handleGetPostsByUserId(Request request, Response response) {
+
+		int userId = Integer.parseInt(request.params(":userid"));
+		return dataService.getPosts(userId);
+	}
+
 	public Post handleGetPost(Request request, Response response) {
 		
 		int postId = Integer.parseInt(request.params(":id"));
@@ -133,6 +139,12 @@ public final class RequestHandler {
 			throw new NotFoundException("Post Not Found");
 		}
 		return true;
+	}
+
+	public Collection<Post> handleGetLikedPosts(Request request, Response response) {
+
+		int userId = Integer.parseInt(request.params("userid"));
+		return dataService.getLikedPostsByUserId(userId);
 	}
 
 	public Collection<Integer> handleGetPostLikes(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
