@@ -48,6 +48,8 @@ public interface DataService {
 
 	boolean deletePost(int postId);
 
+	Collection<Post> getCommentedPostsByUserId(int userId);
+
 	Collection<Post> getLikedPostsByUserId(int userId);
 
 	Collection<Integer> getPostLikes(int postId);

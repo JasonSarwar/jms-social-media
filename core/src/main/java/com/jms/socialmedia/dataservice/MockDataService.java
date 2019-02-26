@@ -149,6 +149,13 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
+	public Collection<Post> getCommentedPostsByUserId(int userId) {
+		Collection<Integer> postIds = commentsByPostId.entries().stream()
+				.filter(entry -> entry.getValue().getUserId() == userId).map(Map.Entry::getKey).collect(toList());
+		return postsById.values().stream().filter(post -> postIds.contains(post.getPostId())).collect(toList());
+	}
+
+	@Override
 	public Collection<Post> getLikedPostsByUserId(int userId) {
 		return postsById.values().stream()
 				.filter(post -> post.getLikes().contains(userId))

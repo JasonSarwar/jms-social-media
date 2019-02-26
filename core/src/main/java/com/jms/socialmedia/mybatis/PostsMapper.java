@@ -32,4 +32,6 @@ public interface PostsMapper {
 	int likePost(@Param(value="postId") int postId, @Param(value="userId") int userId);
 
 	int unlikePost(@Param(value="postId") int postId, @Param(value="userId") int userId);
+
+	Collection<Post> getCommentedPostsByUserId(int userId);
 }

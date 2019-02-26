@@ -141,6 +141,12 @@ public final class RequestHandler {
 		return true;
 	}
 
+	public Collection<Post> handleGetCommentedPosts(Request request, Response response) {
+
+		int userId = Integer.parseInt(request.params("userid"));
+		return dataService.getCommentedPostsByUserId(userId);
+	}
+
 	public Collection<Post> handleGetLikedPosts(Request request, Response response) {
 
 		int userId = Integer.parseInt(request.params("userid"));

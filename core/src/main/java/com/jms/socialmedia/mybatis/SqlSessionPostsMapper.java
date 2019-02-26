@@ -105,4 +105,12 @@ public class SqlSessionPostsMapper implements PostsMapper {
 			return mapper.unlikePost(postId, userId);
 		}
 	}
+
+	@Override
+	public Collection<Post> getCommentedPostsByUserId(int userId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			PostsMapper mapper = session.getMapper(PostsMapper.class);
+			return mapper.getCommentedPostsByUserId(userId);
+		}
+	}
 }
