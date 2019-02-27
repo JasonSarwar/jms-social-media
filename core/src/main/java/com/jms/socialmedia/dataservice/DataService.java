@@ -60,6 +60,8 @@ public interface DataService {
 
 	Collection<Comment> getComments(int postId);
 
+	Collection<Comment> getCommentsByUserId(int userId);
+
 	Comment getComment(int commentId);
 
 	Integer getUserIdFromCommentId(int commentId);

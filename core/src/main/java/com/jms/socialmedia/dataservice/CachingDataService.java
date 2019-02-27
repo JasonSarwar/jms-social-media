@@ -150,6 +150,11 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
+	public Collection<Comment> getCommentsByUserId(int userId) {
+		return dataService.getCommentsByUserId(userId);
+	}
+
+	@Override
 	public Comment getComment(int commentId) {
 		return dataService.getComment(commentId);
 	}

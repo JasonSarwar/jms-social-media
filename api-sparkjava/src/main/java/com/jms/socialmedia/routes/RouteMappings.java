@@ -83,7 +83,7 @@ public class RouteMappings {
 
 				Spark.get("/user/:userid/likedposts", contentType, requestHandler::handleGetLikedPosts, contentWriter);
 
-				//Spark.get("/user/:userid/comments", contentType, requestHandler::handleGetCommentsByUserId, contentWriter);
+				Spark.get("/user/:userid/comments", contentType, requestHandler::handleGetCommentsByUserId, contentWriter);
 
 				Spark.get("/user/:userid/commentedposts", contentType, requestHandler::handleGetCommentedPosts, contentWriter);
 

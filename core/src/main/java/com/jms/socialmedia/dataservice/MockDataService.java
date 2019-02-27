@@ -28,6 +28,7 @@ public class MockDataService implements DataService {
 	private final Map<Integer, User> usersById;
 	private final Map<String, Integer> userSessionKeys;
 	private final Map<Integer, Post> postsById;
+	private final Map<Integer, Comment> commentsById;
 	private final Multimap<Integer, Comment> commentsByPostId;
 	private final Multimap<Integer, Integer> followerUserIds;
 	
@@ -36,6 +37,7 @@ public class MockDataService implements DataService {
 		usersById = new HashMap<>();
 		userSessionKeys = new HashMap<>();
 		postsById = new TreeMap<>((a, b) -> b.compareTo(a));
+		commentsById = new HashMap<>();
 		commentsByPostId = TreeMultimap.create(Ordering.natural(), (a, b) -> a.getCommentId().compareTo(b.getCommentId()));
 		followerUserIds = HashMultimap.create();
 		setupUsers();
@@ -183,9 +185,13 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
+	public Collection<Comment> getCommentsByUserId(int userId) {
+		return commentsById.values().stream().filter(comment -> comment.getUserId() == userId).collect(toList());
+	}
+
+	@Override
 	public Comment getComment(int commentId) {
-		return commentsByPostId.values().stream()
-				.filter(comment -> comment.getCommentId().intValue() == commentId).findAny().orElse(null);
+		return commentsById.get(commentId);
 	}
 
 	@Override
@@ -201,6 +207,7 @@ public class MockDataService implements DataService {
 		}
 		comment.setLikes(new ArrayList<>());
 		setCreatorOfEntry(comment, usersById.get(comment.getUserId()));
+		commentsById.put(comment.getCommentId(), comment);
 		return commentsByPostId.put(comment.getPostId(), comment);
 	}
 
@@ -217,7 +224,7 @@ public class MockDataService implements DataService {
 	@Override
 	public boolean deleteComment(int commentId) {
 		Comment comment = getComment(commentId);
-		return comment == null ? false : commentsByPostId.remove(comment.getPostId(), comment);
+		return comment == null ? false : commentsById.remove(commentId, comment) & commentsByPostId.remove(comment.getPostId(), comment);
 	}
 
 	private void setupUsers() {

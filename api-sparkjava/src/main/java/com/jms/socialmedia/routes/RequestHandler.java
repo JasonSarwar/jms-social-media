@@ -112,7 +112,7 @@ public final class RequestHandler {
 		}
 	}
 
-	public Boolean handleAddPost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleAddPost(Request request, Response response) throws IOException {
 		
 		Post newPost = extractBodyContent(request, Post.class);
 		validateAddEntryRequest(newPost);
@@ -120,7 +120,7 @@ public final class RequestHandler {
 		return dataService.addPost(newPost);
 	}
 
-	public Boolean handleEditPost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleEditPost(Request request, Response response) throws IOException {
 
 		int postId = Integer.parseInt(request.params(":id"));
 		Entry body = extractBodyContent(request, Post.class);
@@ -131,7 +131,7 @@ public final class RequestHandler {
 		return true;
 	}
 
-	public Boolean handleDeletePost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleDeletePost(Request request, Response response) throws IOException {
 
 		int postId = Integer.parseInt(request.params(":id"));
 		authorizeRequest(request, dataService.getUserIdFromPostId(postId), "Delete Post");
@@ -153,13 +153,13 @@ public final class RequestHandler {
 		return dataService.getLikedPostsByUserId(userId);
 	}
 
-	public Collection<Integer> handleGetPostLikes(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Collection<Integer> handleGetPostLikes(Request request, Response response) throws IOException {
 
 		int postId = Integer.parseInt(request.params(":id"));
 		return dataService.getPostLikes(postId);
 	}
 	
-	public Boolean handleLikePost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleLikePost(Request request, Response response) throws IOException {
 
 		int postId = Integer.parseInt(request.params(":postid"));
 		int userId = Integer.parseInt(request.params(":userid"));
@@ -167,7 +167,7 @@ public final class RequestHandler {
 		return dataService.likePost(postId, userId);
 	}
 
-	public Boolean handleUnlikePost(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleUnlikePost(Request request, Response response) throws IOException {
 
 		int postId = Integer.parseInt(request.params(":postid"));
 		int userId = Integer.parseInt(request.params(":userid"));
@@ -175,13 +175,19 @@ public final class RequestHandler {
 		return dataService.unlikePost(postId, userId);
 	}
 
-	public Collection<Comment> handleGetComments(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Collection<Comment> handleGetComments(Request request, Response response) {
 
 		int postId = Integer.parseInt(request.params(":id"));
 		return dataService.getComments(postId);
 	}
-	
-	public Comment handleGetComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+
+	public Collection<Comment> handleGetCommentsByUserId(Request request, Response response) {
+
+		int userid = Integer.parseInt(request.params(":userid"));
+		return dataService.getCommentsByUserId(userid);
+	}
+
+	public Comment handleGetComment(Request request, Response response) {
 
 		String strCommentId = request.params(":id");
 		int commentId = Integer.parseInt(strCommentId);
@@ -193,7 +199,7 @@ public final class RequestHandler {
 		}
 	}
 
-	public Boolean handleAddComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleAddComment(Request request, Response response) throws IOException {
 		
 		Comment newComment = extractBodyContent(request, Comment.class);
 		String strPostId = request.params(":id");
@@ -206,7 +212,7 @@ public final class RequestHandler {
 		return dataService.addComment(newComment);
 	}
 
-	public Boolean handleEditComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleEditComment(Request request, Response response) throws IOException {
 
 		String strCommentId = request.params(":id");
 		int commentId = Integer.parseInt(strCommentId);
@@ -218,7 +224,7 @@ public final class RequestHandler {
 		return true;
 	}
 
-	public Boolean handleDeleteComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleDeleteComment(Request request, Response response) throws IOException {
 
 		String strCommentId = request.params(":id");
 		int commentId = Integer.parseInt(strCommentId);
@@ -229,13 +235,13 @@ public final class RequestHandler {
 		return true;
 	}
 
-	public Collection<Integer> handleGetCommentLikes(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Collection<Integer> handleGetCommentLikes(Request request, Response response) {
 
 		int commentId = Integer.parseInt(request.params(":id"));
 		return dataService.getCommentLikes(commentId);
 	}
 	
-	public Boolean handleLikeComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleLikeComment(Request request, Response response) throws IOException {
 
 		int commentId = Integer.parseInt(request.params(":commentid"));
 		int userId = Integer.parseInt(request.params(":userid"));
@@ -243,7 +249,7 @@ public final class RequestHandler {
 		return dataService.likeComment(commentId, userId);
 	}
 
-	public Boolean handleUnlikeComment(Request request, Response response) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Boolean handleUnlikeComment(Request request, Response response) throws IOException {
 
 		int commentId = Integer.parseInt(request.params(":commentid"));
 		int userId = Integer.parseInt(request.params(":userid"));
@@ -269,9 +275,8 @@ public final class RequestHandler {
 			throw new BadRequestException("New Password Too Long");
 		}
 		
-		dataService.editPassword(changePassword.getUserId(), 
+		return dataService.editPassword(changePassword.getUserId(), 
 				passwordService.encryptPassword(changePassword.getNewPassword()));
-		return true;
 	}
 	
 	public Boolean handleFollowUser(Request request, Response response) throws IOException {

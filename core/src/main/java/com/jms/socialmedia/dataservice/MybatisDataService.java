@@ -180,6 +180,13 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
+	public Collection<Comment> getCommentsByUserId(int userId) {
+		Collection<Comment> comments = commentsMapper.getCommentsByUserId(userId);
+		comments.forEach(comment -> comment.setLikes(getCommentLikes(comment.getCommentId())));
+		return comments;
+	}
+
+	@Override
 	public Comment getComment(int commentId) {
 		Comment comment = commentsMapper.getComment(commentId);
 		if (comment != null) {

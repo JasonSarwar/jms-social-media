@@ -21,6 +21,12 @@
         order by timestamp asc
     </select>
 
+	<select id="getCommentsByUserId" parameterType="int" resultType="comment">
+        <include refid="retrieveComments"></include>
+        where comments.user_id = #{id} and comments.user_id = users.user_id
+        order by timestamp desc
+    </select>
+
     <select id="getComment" parameterType="int" resultType="comment">
         <include refid="retrieveComments"></include>
         where comment_id = #{id} and comments.user_id = users.user_id
