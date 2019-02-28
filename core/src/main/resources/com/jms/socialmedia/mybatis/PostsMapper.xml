@@ -77,14 +77,14 @@
         where post_id = #{id}
     </delete>
 
-	<select id="getLikedPostsByUserId" parameterType="int" resultType="Integer">
+	<select id="getLikedPostsByUserId" parameterType="int" resultType="post">
 		<include refid="retrievePosts"></include>
 		, posts_likes
 		where posts.post_id = posts_likes.post_id
 		and posts_likes.user_id = #{id}
 	</select>
 
-	<select id="getPostLikes" parameterType="int" resultType="post">
+	<select id="getPostLikes" parameterType="int" resultType="Integer">
 		select user_id from posts_likes
 		where post_id = #{id}
 	</select>
@@ -100,7 +100,7 @@
         where post_id = #{postId} and user_id = #{userId}
     </delete>
 
-    <select id="getCommentedPostsByUserId" parameterType="int" resultType="Integer">
+    <select id="getCommentedPostsByUserId" parameterType="int" resultType="post">
 		<include refid="retrievePosts"></include>
 		where posts.post_id in (
 			select distinct comments.post_id from comments
