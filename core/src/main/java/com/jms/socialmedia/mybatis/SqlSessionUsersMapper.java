@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.jms.socialmedia.model.AddUserDB;
 import com.jms.socialmedia.model.User;
+import com.jms.socialmedia.model.UserPage;
 
 public class SqlSessionUsersMapper implements UsersMapper {
 
@@ -37,6 +38,14 @@ public class SqlSessionUsersMapper implements UsersMapper {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			UsersMapper mapper = session.getMapper(UsersMapper.class);
 			return mapper.addUser(addUserDb);
+		}
+	}
+
+	@Override
+	public UserPage getUserPageInfoByName(String username) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			UsersMapper mapper = session.getMapper(UsersMapper.class);
+			return mapper.getUserPageInfoByName(username);
 		}
 	}
 

@@ -79,6 +79,8 @@ public class RouteMappings {
 
 				Spark.delete("/comment/:commentid/unlike/:userid", contentType, requestHandler::handleUnlikeComment, contentWriter);
 
+				Spark.get("/user/:username/pageinfo", contentType, requestHandler::handleGetUserPage, contentWriter);
+
 				Spark.get("/user/:userid/posts", contentType, requestHandler::handleGetPostsByUserId, contentWriter);
 
 				Spark.get("/user/:userid/likedposts", contentType, requestHandler::handleGetLikedPosts, contentWriter);

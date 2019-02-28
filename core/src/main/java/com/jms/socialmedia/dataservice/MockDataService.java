@@ -20,6 +20,7 @@ import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserObject;
+import com.jms.socialmedia.model.UserPage;
 
 import static java.util.stream.Collectors.toList;
 
@@ -53,6 +54,11 @@ public class MockDataService implements DataService {
 	@Override
 	public String createUser() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserPage getUserPageInfoByName(String username) {
 		return null;
 	}
 

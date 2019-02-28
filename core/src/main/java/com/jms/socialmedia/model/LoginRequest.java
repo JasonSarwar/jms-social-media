@@ -1,11 +1,11 @@
 package com.jms.socialmedia.model;
 
-public class UserLogin {
+public class LoginRequest {
 
 	private String user;
 	private String password;
 	
-	public UserLogin() {
+	public LoginRequest() {
 
 	}
 

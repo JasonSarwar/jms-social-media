@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.jms.socialmedia.model.AddUserDB;
 import com.jms.socialmedia.model.User;
+import com.jms.socialmedia.model.UserPage;
 
 public interface UsersMapper {
 
@@ -14,6 +15,8 @@ public interface UsersMapper {
 	int isEmailPresent(String email);
 
 	int addUser(AddUserDB addUserDb);
+	
+	UserPage getUserPageInfoByName(String username);
 
 	User getUserLoginInfoByName(String username);
 

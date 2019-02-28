@@ -2,7 +2,7 @@ package com.jms.socialmedia.password;
 
 import com.jms.socialmedia.model.ChangePassword;
 import com.jms.socialmedia.model.User;
-import com.jms.socialmedia.model.UserLogin;
+import com.jms.socialmedia.model.LoginRequest;
 
 public interface PasswordService {
 	
@@ -10,8 +10,8 @@ public interface PasswordService {
 	
 	boolean checkPassword(String password, String hashedPassword);
 	
-	default boolean checkPassword(UserLogin userLogin, User user) {
-		return checkPassword(userLogin.getPassword(), user.getHashedPassword());
+	default boolean checkPassword(LoginRequest loginRequest, User user) {
+		return checkPassword(loginRequest.getPassword(), user.getHashedPassword());
 	}
 
 	default boolean checkPassword(ChangePassword changePassword, User user) {

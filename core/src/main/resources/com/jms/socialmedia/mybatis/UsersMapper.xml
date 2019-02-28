@@ -24,7 +24,12 @@
             #{userId}, #{username}, #{hashedPassword}, #{fullName}, #{email}, #{bio}, #{birthdate}, systimestamp
         )
     </insert>
- 
+
+	<select id="getUserPageInfoByName" parameterType="String" resultType="userPage">
+        select user_id, username, full_name, email, bio, birthdate, dateTimeJoined, profilePictureLink from users 
+        where lower(username) = lower(#{id})
+    </select>
+
     <select id="getUserLoginInfoByName" parameterType="String" resultType="user">
         select user_id, full_name, hashed_password from users 
         where lower(username) = lower(#{id}) or lower(email) = lower(#{id})

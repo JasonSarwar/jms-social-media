@@ -26,7 +26,8 @@ import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.LoginSuccess;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
-import com.jms.socialmedia.model.UserLogin;
+import com.jms.socialmedia.model.UserPage;
+import com.jms.socialmedia.model.LoginRequest;
 import com.jms.socialmedia.password.PasswordService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -70,6 +71,15 @@ public final class RequestHandler {
 		return null;
 	}
 
+	public UserPage handleGetUserPage(Request request, Response response) {
+		String username = request.params("username");
+		UserPage userPage = dataService.getUserPageInfoByName(username);
+		int userId = userPage.getUserId();
+		userPage.addFollowersUserIds(dataService.getFollowerUserIds(userId));
+		userPage.addFollowingUserIds(dataService.getFollowingUserIds(userId));
+		return userPage;
+	}
+	
 	public Collection<Post> handleGetPosts(Request request, Response response) {
 
 		String userIdStr = request.queryParams("userId");
@@ -326,15 +336,15 @@ public final class RequestHandler {
 			throw new InvalidUserLoginStateException("A User is already logged in");
 		}
 		
-		UserLogin userLogin = extractBodyContent(request, UserLogin.class);
+		LoginRequest loginRequest = extractBodyContent(request, LoginRequest.class);
 
-		User user = dataService.getUserLoginInfoByName(userLogin.getUser());
+		User user = dataService.getUserLoginInfoByName(loginRequest.getUser());
 
 		if (user == null) {
 			throw new FailedLoginAttemptException("Incorrect Username or Password");
 		}
 
-		if (!passwordService.checkPassword(userLogin, user)) {
+		if (!passwordService.checkPassword(loginRequest, user)) {
 			throw new FailedLoginAttemptException("Incorrect Username or Password");
 		}
 

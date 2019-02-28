@@ -16,6 +16,7 @@ import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserObject;
+import com.jms.socialmedia.model.UserPage;
 import com.jms.socialmedia.mybatis.CommentsMapper;
 import com.jms.socialmedia.mybatis.FollowersMapper;
 import com.jms.socialmedia.mybatis.PostsMapper;
@@ -44,6 +45,11 @@ public class MybatisDataService implements DataService {
 		commentsMapper = new SqlSessionCommentsMapper(factory);
 		tagsMapper = new SqlSessionTagsMapper(factory);
 		followersMapper = new SqlSessionFollowersMapper(factory);
+	}
+
+	@Override
+	public UserPage getUserPageInfoByName(String username) {
+		return usersMapper.getUserPageInfoByName(username);
 	}
 
 	@Override
