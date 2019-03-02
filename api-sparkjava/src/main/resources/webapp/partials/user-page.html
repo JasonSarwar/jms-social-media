@@ -1,0 +1,93 @@
+<div class="row">
+	<div class="col-sm-2"></div>
+	<div class="col-sm-8 jumbotron">
+		<div class="row">
+			<div class="col-sm-11">
+				<h1 class="display-4">{{ user.fullName }}</h1>
+				<h2 class="display-6">@{{ user.username }}</h2>
+			</div>
+			<div class="col-sm-1">
+				<button type="button" class="btn btn-outline-success btn-sm" ng-if="user.userId==userId" ng-click="startEditing(entry)">
+					<span class="fas fa-pencil-alt"></span> Edit Profile
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-2"></div>
+	<div class="col-sm-2">
+		<div class="row card">
+			<div class="card-header">
+				Bio
+			</div>
+			<div class="card-body">
+				<p class="card-text">{{ user.bio }}</p>
+				<p class="card-text">Joined {{ user ? (user.dateTimeJoined  | dateWithMonthYear) : date }}</p>
+			</div>
+		</div>
+		<br>
+		<div class="row card">
+			<div class="card-header">
+				
+			</div>
+			<div class="card-body">
+				<p class="card-text">Number of Posts: {{ posts.length }}</p>
+				<p class="card-text">Following: {{ user.followingUserIds.length }}</p>
+				<p class="card-text">Followers: {{ user.followersUserIds.length }}</p>
+			</div>
+		</div>
+	</div>
+	<div class=col-sm-6 ng-show="user">
+		<ul class="nav nav-tabs" id="userPageTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="posts-tab" data-toggle="tab" data-target="#posts" href="" role="tab" aria-controls="posts" aria-selected="true">Posts</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="likes-tab" data-toggle="tab" data-target="#likes" ng-click="getLikedPosts()" href="" role="tab" aria-controls="likes" aria-selected="false">Likes</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="commented-posts-tab" data-toggle="tab" data-target="#commented-posts" ng-click="getCommentedPosts()" href="" role="tab" aria-controls="commented-posts" aria-selected="false">Commented Posts</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="comments-tab" data-toggle="tab" data-target="#comments" ng-click="getComments()" href="" role="tab" aria-controls="comments" aria-selected="false">Comments</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="mentions-tab" data-toggle="tab" data-target="#mentions" ng-click="getMentions()" href="" role="tab" aria-controls="mentions" aria-selected="false">Mentions</a>
+			</li>
+		</ul>
+		<div class="tab-content" id="userPageTabContent">
+			<div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+				<div ng-repeat="entry in posts">
+					<br>
+					<div ng-include="'partials/entry.html'""></div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="likes" role="tabpanel" aria-labelledby="likes-tab">
+				<div ng-repeat="entry in likedPosts">
+					<br>
+					<div ng-include="'partials/entry.html'""></div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="commented-posts" role="tabpanel" aria-labelledby="commented-posts-tab">
+				<div ng-repeat="entry in commentedPosts">
+					<br>
+					<div ng-include="'partials/entry.html'""></div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+				<div ng-repeat="entry in comments">
+					<br>
+					<div ng-include="'partials/entry.html'""></div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="mentions" role="tabpanel" aria-labelledby="mentions-tab">
+				<div ng-repeat="entry in mentions">
+					<br>
+					<div ng-include="'partials/entry.html'""></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -6,9 +6,12 @@
 		<meta name="description" content="">
     	<meta name="author" content="Jason Sarwar">
 
-		<title>My Twitter</title>
+		<title>My Social Media</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 		
+		<!-- Main CSS -->
+    	<link href="css/main.css" rel="stylesheet">
+    	
 		<!-- For Login Page -->
     	<link href="css/floating-labels.css" rel="stylesheet">
 		
@@ -29,16 +32,13 @@
 		<script src="js/filters.js"></script>
 	</head>
 
-	<body ng-app="mytwitter" ng-controller="MainController">
+	<body ng-app="mysocialmedia" ng-controller="MainController">
 		<div ng-include="'partials/navbar.html'"></div>
 
-		<div class="alert alert-{{alertType}}" role="alert" ng-show="alertText">{{alertText}}</div>
+		<div class="padTop alert alert-{{alertType}}" role="alert" ng-show="alertText">{{alertText}}</div>
 
-		<div class="row">
-			<div class="col-md-2"></div>
-			<div class="col-md-8" ng-view></div>
-			<div class="col-md-2"></div>
-		</div>
+		<div class="padTop" ng-view></div>
+
 		<p class="mt-5 mb-3 text-muted text-center">&copy; 2018</p>
 	</body>
 

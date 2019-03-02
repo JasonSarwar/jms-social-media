@@ -1,5 +1,5 @@
 (function() {
-	var app = angular.module("mytwitter", ["ngRoute", "ngSanitize"])
+	var app = angular.module("mysocialmedia", ["ngRoute", "ngSanitize"])
 		.config(function($routeProvider) {
 			$routeProvider
 				.when("/home", {
@@ -22,6 +22,10 @@
 				.when("/posts", {
 					templateUrl: "partials/posts.html",
 					controller: "PostsController"
+				})
+				.when("/user/:username", {
+					templateUrl: "partials/user-page.html",
+					controller: "UserPageController"
 				})
 				.when("/editpassword", {
 					templateUrl: "partials/edit-password.html",

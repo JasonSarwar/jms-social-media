@@ -93,6 +93,34 @@
         });
     };
 
+    var getPostsByUserId = function (userId) {
+    	return $http.get("/api/user/" + userId + "/posts")
+              .then(function(response) {
+            	  return response.data;
+              });
+    };
+    
+    var getLikedPostsByUserId = function (userId) {
+    	return $http.get("/api/user/" + userId + "/likedposts")
+              .then(function(response) {
+            	  return response.data;
+              });
+    };
+
+    var getCommentedPostsByUserId = function (userId) {
+    	return $http.get("/api/user/" + userId + "/commentedposts")
+              .then(function(response) {
+            	  return response.data;
+              });
+    };
+
+    var getCommentsByUserId = function (userId) {
+    	return $http.get("/api/user/" + userId + "/comments")
+              .then(function(response) {
+            	  return response.data;
+              });
+    };
+
     var addComment = function (userId, postId, text, token) {
     	var data = {
 			userId: userId,
@@ -179,6 +207,10 @@
     	deletePost: deletePost,
     	likePost: likePost,
     	unlikePost: unlikePost,
+    	getPostsByUserId: getPostsByUserId,
+    	getLikedPostsByUserId: getLikedPostsByUserId,
+    	getCommentedPostsByUserId: getCommentedPostsByUserId,
+    	getCommentsByUserId: getCommentsByUserId,
     	addComment: addComment,
     	editComment: editComment,
     	deleteComment: deleteComment,
@@ -189,6 +221,13 @@
 
   var usersService = function($http) {
 
+	var getUserPageInfo = function (username) {
+		return $http.get("/api/user/" + username + "/pageinfo")
+			.then(function (response) {
+				return response.data;
+			});
+	};
+	  
     var editPassword = function (userId, oldPassword, newPassword, token) {
     	var data = {
     		userId: userId,
@@ -208,6 +247,7 @@
 
     
 	return {
+		getUserPageInfo: getUserPageInfo,
     	editPassword: editPassword
 	};
   };
@@ -261,7 +301,7 @@
   };
 
 	  
-  angular.module("mytwitter")
+  angular.module("mysocialmedia")
   	.factory("postsService", postsService)
   	.factory("usersService", usersService)
   	.factory("loginService", loginService)

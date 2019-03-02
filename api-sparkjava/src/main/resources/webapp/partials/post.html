@@ -1,17 +1,25 @@
-<div ng-if="entry">
-	<div ng-include="'partials/entry.html'"></div>
-	<br>
-	<div ng-repeat="entry in entry.comments">
-		<div class="row">
-			<div class="col-sm-1"></div>
-			<div class="col-sm-10" ng-include="'partials/entry.html'"></div>
-			<div class="col-sm-1"></div>
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-8">
+		<div ng-if="entry">
+			<div ng-include="'partials/entry.html'"></div>
+			<br>
+			<div ng-repeat="entry in entry.comments">
+				<div class="row">
+					<div class="col-sm-1"></div>
+					<div class="col-sm-10" ng-include="'partials/entry.html'"></div>
+					<div class="col-sm-1"></div>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-sm-1"></div>
+				<div class="col-sm-10" ng-include="'partials/comment-box.html'"></div>
+				<div class="col-sm-1"></div>
+			</div>
 		</div>
 	</div>
-	<br>
-	<div class="row">
-		<div class="col-sm-1"></div>
-		<div class="col-sm-10" ng-include="'partials/comment-box.html'"></div>
-		<div class="col-sm-1"></div>
-	</div>
+	<div class="col-md-2"></div>
 </div>
+
+

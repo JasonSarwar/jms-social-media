@@ -1,5 +1,10 @@
-
-<div ng-repeat="entry in posts">
-	<br>
-	<div ng-include="'partials/entry.html'""></div>
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-8">
+		<div ng-repeat="entry in posts">
+			<div ng-include="'partials/entry.html'""></div>
+			<br>
+		</div>
+	</div>
+	<div class="col-md-2"></div>
 </div>

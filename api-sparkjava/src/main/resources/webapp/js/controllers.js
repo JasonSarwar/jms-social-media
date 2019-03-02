@@ -225,7 +225,46 @@
 		};
 	};
 
-	angular.module("mytwitter")
+	var UserPageController = function($scope, $routeParams, usersService, postsService) {
+		var username = $routeParams.username;
+		usersService.getUserPageInfo(username)
+			.then(function (data) {
+				$scope.user = data;
+				postsService.getPostsByUserId(data.userId)
+				.then(function (postData) {
+					$scope.posts = postData;
+				});
+			});
+		
+		$scope.getLikedPosts = function () {
+			if (!$scope.likedPosts) {
+				postsService.getLikedPostsByUserId($scope.user.userId)
+				.then(function (data) {
+					$scope.likedPosts = data;
+				});
+			}
+		};
+		
+		$scope.getCommentedPosts = function () {
+			if (!$scope.commentedPosts) {
+				postsService.getCommentedPostsByUserId($scope.user.userId)
+				.then(function (data) {
+					$scope.commentedPosts = data;
+				});
+			}
+		};
+		
+		$scope.getComments = function () {
+			if (!$scope.comments) {
+				postsService.getCommentsByUserId($scope.user.userId)
+				.then(function (data) {
+					$scope.comments = data;
+				});
+			}
+		};
+	};
+
+	angular.module("mysocialmedia")
 		.controller("MainController", MainController)
 		.controller("LogoutController", LogoutController)
 		.controller("PostController", PostController)
@@ -233,6 +272,7 @@
 		.controller("EntryController", EntryController)
 		.controller("AddPostController", AddPostController)
 		.controller("AddCommentController", AddCommentController)
-		.controller("EditPasswordController", EditPasswordController);
+		.controller("EditPasswordController", EditPasswordController)
+		.controller("UserPageController", UserPageController);
 	
 }());

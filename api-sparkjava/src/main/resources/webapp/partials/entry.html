@@ -7,7 +7,7 @@
 			<div class="row">
 				<strong>{{entry.fullName}}</strong>
 				&#160
-				<a ng-href="#!/posts?username={{entry.username}}">
+				<a ng-href="#!/user/{{entry.username}}">
 					@{{entry.username}}
 				</a>
 				&#160
@@ -45,11 +45,14 @@
 					<button type="button" class="btn btn-outline-primary btn-sm">
 						{{ entry.likes.length }}
 					</button>
+					&#160 &#160
 				</div>
-				&#160 &#160
-				<button type="button" class="btn btn-outline-info btn-sm" ng-if="!entry.commentId" ng-click="goToPost(entry.postId)">
+				<a class="btn btn-outline-info btn-sm" ng-if="!entry.commentId" ng-href="#!/post/{{entry.postId}}">
 					<span class="fas fa-comments"></span> {{ entry.comments.length }} Comments
-				</button>
+				</a>
+				<a class="btn btn-outline-info btn-sm" ng-if="entry.commentId" ng-href="#!/post/{{entry.postId}}">
+					<span class="fas fa-angle-up"></span> {{ entry.comments.length }} Go To Post
+				</a>
 			</div>
 		</div>
 		<div class="col-sm-2" ng-if="entry.userId==userId">

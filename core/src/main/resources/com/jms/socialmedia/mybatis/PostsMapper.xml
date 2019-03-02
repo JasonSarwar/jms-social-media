@@ -6,9 +6,15 @@
     
     <sql id="retrievePosts">
 		select posts.post_id as post_id, posts.user_id as user_id, full_name, username, 
-        profile_picture_link, text, timestamp
+        profile_picture_link, text, posts.timestamp as timestamp
         from posts, users    
     </sql>
+
+	<sql id="whereForPosts">
+		<where>
+			posts.user_id = users.user_id
+		</where>
+	</sql>
 
     <select id="getNumberOfPosts" resultType="int">
         select count(1) from posts
@@ -16,7 +22,8 @@
     
     <select id="getPost" parameterType="int" resultType="fullpost">
         <include refid="retrievePosts"></include>
-        where post_id = #{id} and posts.user_id = users.user_id
+        <include refid="whereForPosts"></include>
+        and post_id = #{id}
     </select>
     
     <select id="getPosts" resultType="post">
@@ -26,7 +33,7 @@
         , posts_tags
         </if>
         
-        WHERE posts.user_id = users.user_id
+        <include refid="whereForPosts"></include>
         
         <if test="userIds != null and !userIds.isEmpty()">
         	AND posts.user_id in
@@ -80,8 +87,10 @@
 	<select id="getLikedPostsByUserId" parameterType="int" resultType="post">
 		<include refid="retrievePosts"></include>
 		, posts_likes
-		where posts.post_id = posts_likes.post_id
+		<include refid="whereForPosts"></include>
+		and posts.post_id = posts_likes.post_id
 		and posts_likes.user_id = #{id}
+		order by posts_likes.timestamp desc
 	</select>
 
 	<select id="getPostLikes" parameterType="int" resultType="Integer">
@@ -102,11 +111,12 @@
 
     <select id="getCommentedPostsByUserId" parameterType="int" resultType="post">
 		<include refid="retrievePosts"></include>
-		where posts.post_id in (
+		<include refid="whereForPosts"></include>
+		and posts.post_id in (
 			select distinct comments.post_id from comments
 			where comments.user_id = #{id}
 		)
-
+		order by comments.timestamp desc
 	</select>
 
 </mapper>
