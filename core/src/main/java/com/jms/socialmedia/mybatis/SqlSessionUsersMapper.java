@@ -66,7 +66,7 @@ public class SqlSessionUsersMapper implements UsersMapper {
 	}
 
 	@Override
-	public Collection<String> getUsernamesByIds(Collection<Integer> userIds) {
+	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			UsersMapper mapper = session.getMapper(UsersMapper.class);
 			return mapper.getUsernamesByIds(userIds);

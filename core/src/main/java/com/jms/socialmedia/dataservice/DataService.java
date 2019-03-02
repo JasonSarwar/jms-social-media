@@ -21,7 +21,7 @@ public interface DataService {
 
 	User getHashedPasswordByUserId(Integer userId);
 
-	Collection<String> getUsernamesByIds(Collection<Integer> userIds);
+	Collection<User> getUsernamesByIds(Collection<Integer> userIds);
 
 	boolean editPassword(Integer userId, String hashedPassword);
 

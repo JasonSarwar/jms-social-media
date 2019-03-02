@@ -74,8 +74,8 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<String> getUsernamesByIds(Collection<Integer> userIds) {
-		return usersById.values().stream().filter(user -> userIds.contains(user.getUserId())).map(User::getUsername).collect(toList());
+	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
+		return usersById.values().stream().filter(user -> userIds.contains(user.getUserId())).collect(toList());
 	}
 
 	@Override

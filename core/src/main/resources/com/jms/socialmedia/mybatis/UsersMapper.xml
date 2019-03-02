@@ -40,8 +40,8 @@
         where user_id = #{id}
     </select>
 
-	<select id="getUsernamesByIds" parameterType="Integer" resultType="String">
-        select username from users
+	<select id="getUsernamesByIds" parameterType="Integer" resultType="User">
+        select user_id, username from users
         where user_id in 
         <foreach item="item" collection="list" open="(" separator="," close=")">
 	    	#{item}

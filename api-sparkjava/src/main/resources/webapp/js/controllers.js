@@ -1,10 +1,21 @@
 (function() {
 
-	var MainController = function($scope, $location, alertService, loginService) {
+	var MainController = function($scope, $location, alertService, loginService, usersService) {
 		$scope.$on('$routeChangeStart', function(scope, next, current){
 			alertService.clearAlerts();
 		});
-		
+
+		loginService.retrieveSession()
+			.then(function (data) {
+				if (data) {
+					$scope.userId = data.userId;
+					$scope.firstname = data.firstname;
+					$scope.token = data.token;
+				}
+		  	}, function (error) {
+	
+		  	});
+
 		$scope.attemptLogin = function (user, password) {
 			loginService.attemptLogin(user, password)
 				.then(function (data) {
@@ -22,7 +33,7 @@
 			  		$scope.password = null;
 			  	});
 		};
-		
+
 		$scope.logout = function () {
 			loginService.logout()
 				.then(function (response) {
@@ -35,21 +46,47 @@
 			$scope.token = null;
 			$location.path("/home");
 		};
-		
-		loginService.retrieveSession()
-			.then(function (data) {
-				if (data) {
-					$scope.userId = data.userId;
-					$scope.firstname = data.firstname;
-					$scope.token = data.token;
-				}
-		  	}, function (error) {
 
-		  	});
+		$scope.showUsersModal = function (userIds) {
+			if (userIds && userIds.length > 0) {
+				usersService.getUsernames(userIds)
+					.then(function (data) {
+						if (data) {
+							$scope.modalUsers = data;
+							if ($scope.userId) {
+								usersService.getFollowingUserIds($scope.userId)
+									.then(function (data) {
+										$scope.modalFollowingUserIds = data;
+									});
+							}
+							$('#usersModal').modal();
+						}
+					});
+			}
+		};
 	};
 
 	var LogoutController = function($scope) {
 		$scope.logout();
+	};
+	
+	var HomeController = function ($scope, postsService, alertService) {
+		
+		if ($scope.userId) {
+			postsService.getFollowingPosts($scope.userId)
+				.then(function (data) {
+					$scope.posts = data;
+			  	}, function (error) {
+			  		alertService.error(error.data);
+			  	});
+		} else {
+			postsService.getPosts("")
+				.then(function (data) {
+					$scope.posts = data;
+			  	}, function (error) {
+			  		alertService.error(error.data);
+			  	});
+		}
 	};
 	
 	var PostController = function($scope, $routeParams, postsService, alertService) {
@@ -262,10 +299,52 @@
 				});
 			}
 		};
+		
+		$scope.isFollowing = function () {
+			return $scope.user && $scope.user.followersUserIds.indexOf($scope.userId) > -1;
+		};
+		
+		$scope.followUser = function () {
+			usersService.followUser($scope.userId, $scope.user.userId, $scope.token);
+			$scope.user.followersUserIds.push($scope.userId);
+		};
+		
+		$scope.unfollowUser = function () {
+			usersService.unfollowUser($scope.userId, $scope.user.userId, $scope.token);
+			let index = $scope.user.followersUserIds.indexOf($scope.userId);
+			if (index > -1) {
+				$scope.user.followersUserIds.splice(index, 1);
+			}
+		};
+	};
+
+	var UsersModalController = function($scope, $location, usersService) {
+		$scope.isFollowing = function (userId) {
+			return $scope.modalFollowingUserIds && $scope.modalFollowingUserIds.indexOf(userId) > -1;
+		};
+		
+		$scope.followUser = function (userId) {
+			usersService.followUser($scope.userId, userId, $scope.token);
+			$scope.modalFollowingUserIds.push(userId);
+		};
+		
+		$scope.unfollowUser = function (userId) {
+			usersService.unfollowUser($scope.userId, userId, $scope.token);
+			let index = $scope.modalFollowingUserIds.indexOf(userId);
+			if (index > -1) {
+				$scope.modalFollowingUserIds.splice(index, 1);
+			}
+		};
+		
+		$scope.goToUser = function (username) {
+			$location.path("/user/" + username);
+			$('#usersModal').modal('hide');
+		};
 	};
 
 	angular.module("mysocialmedia")
 		.controller("MainController", MainController)
+		.controller("HomeController", HomeController)
 		.controller("LogoutController", LogoutController)
 		.controller("PostController", PostController)
 		.controller("PostsController", PostsController)
@@ -273,6 +352,7 @@
 		.controller("AddPostController", AddPostController)
 		.controller("AddCommentController", AddCommentController)
 		.controller("EditPasswordController", EditPasswordController)
-		.controller("UserPageController", UserPageController);
+		.controller("UserPageController", UserPageController)
+		.controller("UsersModalController", UsersModalController);
 	
 }());

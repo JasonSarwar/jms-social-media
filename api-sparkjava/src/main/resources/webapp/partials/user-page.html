@@ -33,9 +33,44 @@
 				
 			</div>
 			<div class="card-body">
-				<p class="card-text">Number of Posts: {{ posts.length }}</p>
-				<p class="card-text">Following: {{ user.followingUserIds.length }}</p>
-				<p class="card-text">Followers: {{ user.followersUserIds.length }}</p>
+				
+				<div class="row">
+					<div class="col-sm-4">
+						Posts
+					</div>
+					<div class="col-sm-4">
+						Following
+					</div>
+					<div class="col-sm-4">
+						Followers
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-link" onclick="$('#posts-tab').trigger('click');">
+							{{ posts.length }}
+						</button>
+					</div>
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-link" ng-click="showUsersModal(user.followingUserIds)">
+							{{ user.followingUserIds.length }}
+						</button>
+					</div>
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-link" ng-click="showUsersModal(user.followersUserIds)">
+							{{ user.followersUserIds.length }}
+						</button>
+					</div>
+				</div>
+				<hr>
+				<div ng-show="userId && userId != user.userId">
+					<button type="button" class="btn btn-success btn-lg" ng-hide="isFollowing()" ng-click="followUser()">
+						<span class="fas fa-plus-square"></span> Follow
+					</button>
+					<button type="button" class="btn btn-danger btn-lg" ng-show="isFollowing()" ng-click="unfollowUser()">
+						<span class="fas fa-minus-square"></span> Unfollow
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>

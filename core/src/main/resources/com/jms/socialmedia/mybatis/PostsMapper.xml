@@ -6,7 +6,7 @@
     
     <sql id="retrievePosts">
 		select posts.post_id as post_id, posts.user_id as user_id, full_name, username, 
-        profile_picture_link, text, posts.timestamp as timestamp
+        profile_picture_link, posts.text as text, posts.timestamp as timestamp
         from posts, users    
     </sql>
 
@@ -111,11 +111,11 @@
 
     <select id="getCommentedPostsByUserId" parameterType="int" resultType="post">
 		<include refid="retrievePosts"></include>
+		, comments
 		<include refid="whereForPosts"></include>
-		and posts.post_id in (
-			select distinct comments.post_id from comments
-			where comments.user_id = #{id}
-		)
+		
+		and posts.post_id = comments.post_id
+		and comments.user_id = #{id}
 		order by comments.timestamp desc
 	</select>
 

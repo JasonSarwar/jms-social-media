@@ -42,7 +42,7 @@
 					<button type="button" class="btn btn-primary btn-sm" ng-show="liked(entry)" ng-click="unlikeEntry(entry)">
 						<span class="fas fa-check-circle"></span> Liked
 					</button>
-					<button type="button" class="btn btn-outline-primary btn-sm">
+					<button type="button" class="btn btn-outline-primary btn-sm" ng-click="showUsersModal(entry.likes)">
 						{{ entry.likes.length }}
 					</button>
 					&#160 &#160

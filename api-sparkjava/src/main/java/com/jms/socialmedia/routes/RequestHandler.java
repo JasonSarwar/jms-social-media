@@ -3,7 +3,9 @@ package com.jms.socialmedia.routes;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -267,6 +269,15 @@ public final class RequestHandler {
 		return dataService.unlikeComment(commentId, userId);
 	}
 
+	public Collection<User> handleGetUsernamesAndIds(Request request, Response response) throws IOException {
+		String queryParam = request.queryParams("ids");
+		if (StringUtils.isBlank(queryParam)) {
+			throw new BadRequestException("No User IDs included");
+		}
+		Collection<Integer> userIds = Arrays.stream(queryParam.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+		return dataService.getUsernamesByIds(userIds);
+	}
+
 	public Boolean handleEditUserPassword(Request request, Response response) throws IOException {
 		ChangePassword changePassword = extractBodyContent(request, ChangePassword.class);
 		
@@ -292,6 +303,9 @@ public final class RequestHandler {
 	public Boolean handleFollowUser(Request request, Response response) throws IOException {
 		FollowRequest followRequest = extractBodyContent(request, FollowRequest.class);
 		authorizeRequest(request, followRequest.getFollowerUserId(), "Follow User");
+		if (followRequest.getFollowerUserId().equals(followRequest.getFollowingUserId())) {
+			throw new BadRequestException("A User cannot follow themselves");
+		}
 		return dataService.followUser(followRequest.getFollowerUserId(), followRequest.getFollowingUserId());
 	}
 	
@@ -301,10 +315,19 @@ public final class RequestHandler {
 		return dataService.unfollowUser(followRequest.getFollowerUserId(), followRequest.getFollowingUserId());
 	}
 
-	public Collection<Post> handleGetFollowersPosts(Request request, Response response) {
+	public Collection<Integer> handleGetFollowingUserIds(Request request, Response response) {
+
+		Integer userId = Integer.parseInt(request.params("userid"));
+		return dataService.getFollowingUserIds(userId);
+	}
+
+	public Collection<Post> handleGetFollowingPosts(Request request, Response response) {
 
 		Integer userId = Integer.parseInt(request.params("userid"));
 		Collection<Integer> followingUserIds = dataService.getFollowingUserIds(userId);
+		if (followingUserIds == null || followingUserIds.isEmpty()) {
+			return Collections.emptySet();
+		}
 		return dataService.getPosts(followingUserIds, null, null, null, null, null);
 	}
 

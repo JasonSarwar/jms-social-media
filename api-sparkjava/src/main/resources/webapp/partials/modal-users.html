@@ -1,0 +1,39 @@
+<!-- Modal -->
+<div class="modal fade" id="usersModal" tabindex="-1" role="dialog" aria-labelledby="usersModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="usersModalLabel">Users</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div ng-repeat="user in modalUsers">
+	        <!-- a ng-href="#!/user/{{user.username}}" data-dismiss="modal">
+				@{{user.username}}
+				<hr>
+			</a-->
+			<div class="row">
+				<div class="col-sm-8">
+					<button type="button" class="btn btn-link" ng-click=goToUser(user.username)>@{{user.username}}</button>
+				</div>
+				<div class="col-sm-4" ng-if="userId && userId != user.userId">
+					<button type="button" class="btn btn-success" ng-hide="isFollowing(user.userId)" ng-click="followUser(user.userId)">
+						<span class="fas fa-plus-square"></span> Follow
+					</button>
+					<button type="button" class="btn btn-danger" ng-show="isFollowing(user.userId)" ng-click="unfollowUser(user.userId)">
+						<span class="fas fa-minus-square"></span> Unfollow
+					</button>
+				</div>
+				
+			</div>
+			<hr>
+         </div> 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

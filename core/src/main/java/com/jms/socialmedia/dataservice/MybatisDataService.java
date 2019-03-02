@@ -63,7 +63,7 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<String> getUsernamesByIds(Collection<Integer> userIds) {
+	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
 		return usersMapper.getUsernamesByIds(userIds);
 	}
 

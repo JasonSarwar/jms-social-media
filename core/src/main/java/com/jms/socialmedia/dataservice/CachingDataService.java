@@ -46,7 +46,7 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<String> getUsernamesByIds(Collection<Integer> userIds) {
+	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
 		return dataService.getUsernamesByIds(userIds);
 	}
 

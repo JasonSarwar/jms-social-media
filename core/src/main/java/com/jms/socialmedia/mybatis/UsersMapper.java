@@ -22,7 +22,7 @@ public interface UsersMapper {
 
 	User getHashedPasswordByUserId(Integer userId);
 
-	Collection<String> getUsernamesByIds(Collection<Integer> userIds);
+	Collection<User> getUsernamesByIds(Collection<Integer> userIds);
 
 	int editPassword(@Param(value="id") Integer userId, @Param(value="hashedPassword") String hashedPassword);
 

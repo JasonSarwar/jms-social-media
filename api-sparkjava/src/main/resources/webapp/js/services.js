@@ -15,7 +15,14 @@
             	  return response.data;
               });
     };
-    
+
+    var getFollowingPosts = function (userId) {
+    	return $http.get("/api/user/" + userId + "/following/posts")
+              .then(function(response) {
+            	  return response.data;
+              });
+    };
+
     var addPost = function (userId, text, token) {
     	var data = {
 			userId: userId,
@@ -202,6 +209,7 @@
     return {
     	getPost: getPost,
     	getPosts: getPosts,
+    	getFollowingPosts: getFollowingPosts,
     	addPost: addPost,
     	editPost: editPost,
     	deletePost: deletePost,
@@ -219,38 +227,83 @@
     };
   };
 
-  var usersService = function($http) {
-
-	var getUserPageInfo = function (username) {
-		return $http.get("/api/user/" + username + "/pageinfo")
-			.then(function (response) {
-				return response.data;
-			});
-	};
+  	var usersService = function($http) {
 	  
-    var editPassword = function (userId, oldPassword, newPassword, token) {
-    	var data = {
-    		userId: userId,
-    		oldPassword: oldPassword,
-    		newPassword: newPassword
-    	};
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-    	return $http.put("/api/user/password", data, configs)
-        	.then(function (response) {
-        		return response.data;
-        });
-    };
+		var getUserPageInfo = function (username) {
+			return $http.get("/api/user/" + username + "/pageinfo")
+				.then(function (response) {
+					return response.data;
+				});
+		};
+		
+		var getUsernames = function (userIds) {
+			return $http.get("/api/users?ids=" + userIds.join())
+				.then(function (response) {
+					return response.data;
+				});
+		}
+		
+	    var editPassword = function (userId, oldPassword, newPassword, token) {
+	    	var data = {
+	    		userId: userId,
+	    		oldPassword: oldPassword,
+	    		newPassword: newPassword
+	    	};
 
+	    	var configs = {
+        		headers: {
+        			"Authorization": "Bearer " + token
+        		}
+        	};
+
+	    	return $http.put("/api/user/password", data, configs)
+	        	.then(function (response) {
+	        		return response.data;
+	        });
+	    };
+	
+	    var followUser = function (followerUserId, followingUserId, token) {
+	    	var configs = {
+	    		headers: {
+	    			"Authorization": "Bearer " + token
+	    		}
+	    	};
+	    	
+	    	return $http.post("/api/user/follow", {followerUserId: followerUserId, followingUserId: followingUserId}, configs)
+		    	.then(function (response) {
+		    		return response.data;
+		    	});
+	    };
     
-	return {
-		getUserPageInfo: getUserPageInfo,
-    	editPassword: editPassword
-	};
-  };
+	    var unfollowUser = function (followerUserId, followingUserId, token) {
+	    	var configs = {
+	    		headers: {
+	    			"Authorization": "Bearer " + token
+	    		}
+	    	};
+
+	    	return $http.post("/api/user/unfollow", {followerUserId: followerUserId, followingUserId: followingUserId}, configs)
+		    	.then(function (response) {
+		    		return response.data;
+		    	});
+	    };
+	    
+	    var getFollowingUserIds = function (userId) {
+	    	return $http.get("/api/user/" + userId + "/following")
+		    	.then(function (response) {
+		    		return response.data;
+		    	});
+	    };
+	
+		return {
+			getUserPageInfo: getUserPageInfo,
+			getUsernames: getUsernames,
+	    	editPassword: editPassword,
+	    	followUser: followUser,
+	    	unfollowUser: unfollowUser,
+	    	getFollowingUserIds: getFollowingUserIds
+		};
+    };
 
   var loginService = function($http) {
 
