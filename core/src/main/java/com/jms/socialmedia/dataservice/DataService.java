@@ -6,18 +6,15 @@ import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
-import com.jms.socialmedia.model.UserObject;
 import com.jms.socialmedia.model.UserPage;
 
 import static java.util.Collections.singleton;
 
 public interface DataService {
 
-	UserObject getUser(String username);
-
 	UserPage getUserPageInfoByName(String username);
 
-	User getUserLoginInfoByName(String username);
+	User getUserLoginInfoByString(String usernameOrEmail);
 
 	User getHashedPasswordByUserId(Integer userId);
 

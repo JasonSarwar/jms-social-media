@@ -15,7 +15,6 @@ import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
-import com.jms.socialmedia.model.UserObject;
 import com.jms.socialmedia.model.UserPage;
 import com.jms.socialmedia.mybatis.CommentsMapper;
 import com.jms.socialmedia.mybatis.FollowersMapper;
@@ -53,8 +52,8 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public User getUserLoginInfoByName(String username) {
-		return usersMapper.getUserLoginInfoByName(username);
+	public User getUserLoginInfoByString(String username) {
+		return usersMapper.getUserLoginInfoByString(username);
 	}
 
 	@Override
@@ -70,12 +69,6 @@ public class MybatisDataService implements DataService {
 	@Override
 	public boolean editPassword(Integer userId, String hashedPassword) {
 		return usersMapper.editPassword(userId, hashedPassword) == 1;
-	}
-
-	@Override
-	public UserObject getUser(String username) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

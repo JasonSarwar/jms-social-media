@@ -6,7 +6,6 @@ import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
-import com.jms.socialmedia.model.UserObject;
 import com.jms.socialmedia.model.UserPage;
 
 abstract class CachingDataService implements DataService {
@@ -24,11 +23,6 @@ abstract class CachingDataService implements DataService {
 	protected abstract void removePostFromCache(int postId);
 	
 	protected abstract void removePostFromCacheUsingCommentId(int commentId);
-	
-	@Override
-	public UserObject getUser(String username) {
-		return dataService.getUser(username);
-	}
 
 	@Override
 	public UserPage getUserPageInfoByName(String username) {
@@ -36,8 +30,8 @@ abstract class CachingDataService implements DataService {
 	}
 
 	@Override
-	public User getUserLoginInfoByName(String username) {
-		return dataService.getUserLoginInfoByName(username);
+	public User getUserLoginInfoByString(String username) {
+		return dataService.getUserLoginInfoByString(username);
 	}
 
 	@Override

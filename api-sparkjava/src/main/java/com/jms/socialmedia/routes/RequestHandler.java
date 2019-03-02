@@ -341,6 +341,7 @@ public final class RequestHandler {
 			if (user != null) {
 				LoginSuccess loginSuccess = new LoginSuccess();
 				loginSuccess.setUserId(user.getUserId());
+				loginSuccess.setUsername(user.getUsername());
 				loginSuccess.setToken(jwtService.createJWT(user.getUserId()));
 				loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
 				return loginSuccess;
@@ -361,7 +362,7 @@ public final class RequestHandler {
 		
 		LoginRequest loginRequest = extractBodyContent(request, LoginRequest.class);
 
-		User user = dataService.getUserLoginInfoByName(loginRequest.getUser());
+		User user = dataService.getUserLoginInfoByString(loginRequest.getUser());
 
 		if (user == null) {
 			throw new FailedLoginAttemptException("Incorrect Username or Password");
@@ -378,6 +379,7 @@ public final class RequestHandler {
 		response.cookie(SESSION_COOKIE, sessionKey);
 		LoginSuccess loginSuccess = new LoginSuccess();
 		loginSuccess.setUserId(user.getUserId());
+		loginSuccess.setUsername(user.getUsername());
 		loginSuccess.setToken(jwtService.createJWT(user.getUserId()));
 		loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
 		return loginSuccess;

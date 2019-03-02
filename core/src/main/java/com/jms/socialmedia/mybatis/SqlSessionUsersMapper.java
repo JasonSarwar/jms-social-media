@@ -50,10 +50,10 @@ public class SqlSessionUsersMapper implements UsersMapper {
 	}
 
 	@Override
-	public User getUserLoginInfoByName(String username) {
+	public User getUserLoginInfoByString(String username) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			UsersMapper mapper = session.getMapper(UsersMapper.class);
-			return mapper.getUserLoginInfoByName(username);
+			return mapper.getUserLoginInfoByString(username);
 		}
 	}
 

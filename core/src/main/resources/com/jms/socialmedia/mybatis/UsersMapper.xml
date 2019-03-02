@@ -30,8 +30,8 @@
         where lower(username) = lower(#{id})
     </select>
 
-    <select id="getUserLoginInfoByName" parameterType="String" resultType="user">
-        select user_id, full_name, hashed_password from users 
+    <select id="getUserLoginInfoByString" parameterType="String" resultType="user">
+        select user_id, username, full_name, hashed_password from users 
         where lower(username) = lower(#{id}) or lower(email) = lower(#{id})
     </select>
 
@@ -61,7 +61,7 @@
     </insert>
     
     <select id="getUserBySessionKey" parameterType="String" resultType="user">
-        select user_sessions.user_id as user_id, full_name from user_sessions, users 
+        select user_sessions.user_id as user_id, username, full_name from user_sessions, users 
         where session_key = #{id} and user_sessions.user_id = users.user_id
     </select>
 

@@ -3,11 +3,11 @@ package com.jms.socialmedia.model;
 public class LoginSuccess {
 
 	private Integer userId;
+	private String username;
 	private String firstname;
 	private String token;
 
 	public LoginSuccess() {
-		
 	}
 
 	public final Integer getUserId() {
@@ -16,6 +16,14 @@ public class LoginSuccess {
 
 	public final void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+
+	public final String getUsername() {
+		return username;
+	}
+
+	public final void setUsername(String username) {
+		this.username = username;
 	}
 
 	public final String getFirstname() {

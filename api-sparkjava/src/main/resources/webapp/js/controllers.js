@@ -1,6 +1,6 @@
 (function() {
 
-	var MainController = function($scope, $location, alertService, loginService, usersService) {
+	var MainController = function($scope, $location, $route, alertService, loginService, usersService) {
 		$scope.$on('$routeChangeStart', function(scope, next, current){
 			alertService.clearAlerts();
 		});
@@ -9,8 +9,10 @@
 			.then(function (data) {
 				if (data) {
 					$scope.userId = data.userId;
+					$scope.username = data.username;
 					$scope.firstname = data.firstname;
 					$scope.token = data.token;
+					$route.reload();
 				}
 		  	}, function (error) {
 	
@@ -22,6 +24,7 @@
 					$scope.loginError = null;
 					$scope.password = null;
 					$scope.userId = data.userId;
+					$scope.username = data.username;
 					$scope.firstname = data.firstname;
 					$scope.token = data.token;
 
@@ -42,6 +45,7 @@
 					
 				});
 			$scope.userId = null;
+			$scope.username = null;
 			$scope.firstname = null;
 			$scope.token = null;
 			$location.path("/home");
@@ -262,8 +266,19 @@
 		};
 	};
 
-	var UserPageController = function($scope, $routeParams, usersService, postsService) {
-		var username = $routeParams.username;
+	var UserPageController = function($scope, $location, $routeParams, usersService, postsService) {
+
+		var username;
+		if ($location.path() == "/myprofile") {
+			username = $scope.username;
+			if (!username) {
+				$location.path("/home");
+				return;
+			}
+		} else {
+			username = $routeParams.username;
+		}
+		
 		usersService.getUserPageInfo(username)
 			.then(function (data) {
 				$scope.user = data;

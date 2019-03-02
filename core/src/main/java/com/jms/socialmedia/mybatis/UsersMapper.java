@@ -18,7 +18,7 @@ public interface UsersMapper {
 	
 	UserPage getUserPageInfoByName(String username);
 
-	User getUserLoginInfoByName(String username);
+	User getUserLoginInfoByString(String usernameOrEmail);
 
 	User getHashedPasswordByUserId(Integer userId);
 

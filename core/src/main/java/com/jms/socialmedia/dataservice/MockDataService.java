@@ -19,7 +19,6 @@ import com.jms.socialmedia.model.Entry;
 import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
-import com.jms.socialmedia.model.UserObject;
 import com.jms.socialmedia.model.UserPage;
 
 import static java.util.stream.Collectors.toList;
@@ -47,11 +46,6 @@ public class MockDataService implements DataService {
 	}
 	
 	@Override
-	public UserObject getUser(String username) {
-		return null;//usersById.get(username);
-	}
-
-	@Override
 	public String createUser() {
 		// TODO Auto-generated method stub
 		return null;
@@ -63,7 +57,7 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public User getUserLoginInfoByName(String username) {
+	public User getUserLoginInfoByString(String username) {
 		return usersById.values().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
 	}
 
