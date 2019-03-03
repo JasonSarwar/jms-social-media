@@ -3,7 +3,6 @@ package com.jms.socialmedia.dataservice;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -125,7 +124,7 @@ public class MybatisDataService implements DataService {
 
 	@Override
 	public boolean addPost(Post post) {
-		List<String> tags = TagsUtils.extractTagsFromPost(post);
+		Collection<String> tags = TagsUtils.extractTagsFromPost(post);
 		boolean addedPost = postsMapper.addPost(post) == 1;
 		boolean addedTags = tags.isEmpty() ? true : 
 			tagsMapper.addTags(post.getPostId(), tags) == tags.size();
@@ -135,7 +134,7 @@ public class MybatisDataService implements DataService {
 	@Override
 	public boolean editPost(int postId, String postText) {
 		tagsMapper.removePostTags(postId);
-		List<String> tags = TagsUtils.extractTags(postText);
+		Collection<String> tags = TagsUtils.extractTags(postText);
 		boolean addedTags = tags.isEmpty() ? true : 
 			tagsMapper.addTags(postId, tags) == tags.size();
 		return postsMapper.editPost(postId, postText) == 1 && addedTags;

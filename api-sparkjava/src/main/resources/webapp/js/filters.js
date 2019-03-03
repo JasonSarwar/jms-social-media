@@ -44,8 +44,10 @@
 	
 	var entryText = function() {
 		return function(postText) {
-			var text = postText.replace(/#(\S+)/g, "<a href='#!/posts?tag=\$1'>\$&</a>")
-								.replace(/https?:\/\/(\S+)/g, "<a href='$&'>\$&</a>");
+			var text = postText.replace(/(?<=\s|^)#([\w_-]*)(?=\s|$)/g, "<a href='#!/posts?tag=\$1'>\$&</a>")
+								.replace(/(?<=\s|^)https?:\/\/(\S+\.\S+)/g, "<a href='$&'>\$1</a>")
+								.replace(/(?<=\s|^)www\.\S+\.\S+/g, "<a href='http://$&'>\$&</a>")
+								.replace(/(?<=\s|^)\S+\.[a-zA-Z]{2,3}(?=\s|$)/g, "<a href='http://$&'>\$&</a>");
 			return text;
 		};
 	};

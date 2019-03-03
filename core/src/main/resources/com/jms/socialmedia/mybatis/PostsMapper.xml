@@ -45,16 +45,16 @@
         	AND username = #{username}
         </if>
         <if test="tag != null">
-        	AND posts.post_id = posts_tags.post_id AND posts_tags.tag = #{tag}
+        	AND posts.post_id = posts_tags.post_id AND posts_tags.tag = lower(#{tag})
         </if>
         <if test="onDate != null">
-        	AND TO_CHAR(post_timestamp, 'MM-DD-YYYY') = #{onDate}
+        	AND TO_CHAR(timestamp, 'MM-DD-YYYY') = #{onDate}
         </if>
         <if test="beforeDate != null">
-        	AND (TO_DATE(#{beforeDate}, 'MM-DD-YYYY') + INTERVAL '1' DAY) >= post_timestamp
+        	AND (TO_DATE(#{beforeDate}, 'MM-DD-YYYY') + INTERVAL '1' DAY) >= timestamp
         </if>
         <if test="afterDate != null">
-        	AND post_timestamp >= TO_DATE(#{afterDate}, 'MM-DD-YYYY') 
+        	AND timestamp >= TO_DATE(#{afterDate}, 'MM-DD-YYYY') 
         </if>
         order by timestamp desc
     </select>

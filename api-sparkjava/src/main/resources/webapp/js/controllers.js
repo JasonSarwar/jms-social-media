@@ -113,6 +113,8 @@
 		  	}, function (error) {
 		  		alertService.error(error.data);
 		  	});
+
+		$scope.tagName = $location.search().tag;
 		
 		$scope.goToPost = function (postId) {
 			$location.path("/post/" + postId);
