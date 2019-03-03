@@ -10,6 +10,12 @@ import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jms.socialmedia.dataservice.DataService;
+import com.jms.socialmedia.handlers.CommentRequestHandler;
+import com.jms.socialmedia.handlers.FollowRequestHandler;
+import com.jms.socialmedia.handlers.LikeRequestHandler;
+import com.jms.socialmedia.handlers.LoginRequestHandler;
+import com.jms.socialmedia.handlers.PostRequestHandler;
+import com.jms.socialmedia.handlers.UserRequestHandler;
 import com.jms.socialmedia.password.PasswordService;
 
 import spark.Request;
@@ -30,11 +36,16 @@ public class RouteMappings {
 	}
 	
 	public final void start() {
-		
-		RequestHandler requestHandler = new RequestHandler(dataService, passwordService);
-		ExceptionHandler exceptionHandler = new ExceptionHandler();
-		
+
 		Gson gson = new GsonBuilder().create();
+		UserRequestHandler userRequestHandler = new UserRequestHandler(dataService, passwordService, gson);
+		LoginRequestHandler loginRequestHandler = new LoginRequestHandler(dataService, passwordService, gson);
+		PostRequestHandler postRequestHandler = new PostRequestHandler(dataService, gson);
+		CommentRequestHandler commentRequestHandler = new CommentRequestHandler(dataService, gson);
+		LikeRequestHandler likeRequestHandler = new LikeRequestHandler(dataService, gson);
+		FollowRequestHandler followRequestHandler = new FollowRequestHandler(dataService, gson);
+		ExceptionHandler exceptionHandler = new ExceptionHandler();
+
 		ObjectWriter xmlWriter = new XmlMapper().registerModule(new AfterburnerModule()).writer();
 		Map<String, ResponseTransformer> contentWriters = Map.of("application/json", gson::toJson, 
 																"application/xml", xmlWriter::writeValueAsString);
@@ -45,71 +56,81 @@ public class RouteMappings {
 
 			contentWriters.forEach((contentType, contentWriter) -> {
 
-				Spark.get("/posts", contentType, requestHandler::handleGetPosts, contentWriter);
+				/** Post Request Mappings **/
 
-				Spark.get("/post/:id", contentType, requestHandler::handleGetPost, contentWriter);
-				Spark.get("/post/:id/full", contentType, requestHandler::handleGetPostWithComments, contentWriter);
+				Spark.get("/posts", contentType, postRequestHandler::handleGetPosts, contentWriter);
+
+				Spark.get("/post/:id", contentType, postRequestHandler::handleGetPost, contentWriter);
+				Spark.get("/post/:id/full", contentType, postRequestHandler::handleGetPostWithComments, contentWriter);
+
+				Spark.post("/post/add", contentType, postRequestHandler::handleAddPost, contentWriter);
+
+				Spark.put("/post/:id", contentType, postRequestHandler::handleEditPost, contentWriter);
+
+				Spark.delete("/post/:id", contentType, postRequestHandler::handleDeletePost, contentWriter);
+
+				Spark.get("/user/:userid/posts", contentType, postRequestHandler::handleGetPostsByUserId, contentWriter);
+
+				Spark.get("/user/:userid/commentedposts", contentType, postRequestHandler::handleGetCommentedPosts, contentWriter);
+
+				/** Comments Request Mappings **/
+
+				Spark.get("/post/:id/comments", contentType, commentRequestHandler::handleGetComments, contentWriter);
+
+				Spark.get("/comment/:id", contentType, commentRequestHandler::handleGetComment, contentWriter);
 				
-				Spark.post("/post/add", contentType, requestHandler::handleAddPost, contentWriter);
-
-				Spark.put("/post/:id", contentType, requestHandler::handleEditPost, contentWriter);
-
-				Spark.delete("/post/:id", contentType, requestHandler::handleDeletePost, contentWriter);
-
-				Spark.get("/post/:id/likes", contentType, requestHandler::handleGetPostLikes, contentWriter);
-
-				Spark.post("/post/:postid/like/:userid", contentType, requestHandler::handleLikePost, contentWriter);
-
-				Spark.delete("/post/:postid/unlike/:userid", contentType, requestHandler::handleUnlikePost, contentWriter);
-
-				Spark.get("/post/:id/comments", contentType, requestHandler::handleGetComments, contentWriter);
-
-				Spark.get("/comment/:id", contentType, requestHandler::handleGetComment, contentWriter);
+				Spark.post("/comment/add", contentType, commentRequestHandler::handleAddComment, contentWriter);
+				Spark.post("/post/:id/comment/add", contentType, commentRequestHandler::handleAddComment, contentWriter);
 				
-				Spark.post("/comment/add", contentType, requestHandler::handleAddComment, contentWriter);
-				Spark.post("/post/:id/comment/add", contentType, requestHandler::handleAddComment, contentWriter);
+				Spark.put("/comment/:id", contentType, commentRequestHandler::handleEditComment, contentWriter);
+
+				Spark.delete("/comment/:id", contentType, commentRequestHandler::handleDeleteComment, contentWriter);
 				
-				Spark.put("/comment/:id", contentType, requestHandler::handleEditComment, contentWriter);
-
-				Spark.delete("/comment/:id", contentType, requestHandler::handleDeleteComment, contentWriter);
+				/** Like Request Mappings **/
 				
-				Spark.get("/comment/:id/likes", contentType, requestHandler::handleGetCommentLikes, contentWriter);
+				Spark.get("/post/:id/likes", contentType, likeRequestHandler::handleGetPostLikes, contentWriter);
 
-				Spark.post("/comment/:commentid/like/:userid", contentType, requestHandler::handleLikeComment, contentWriter);
+				Spark.post("/post/:postid/like/:userid", contentType, likeRequestHandler::handleLikePost, contentWriter);
 
-				Spark.delete("/comment/:commentid/unlike/:userid", contentType, requestHandler::handleUnlikeComment, contentWriter);
+				Spark.delete("/post/:postid/unlike/:userid", contentType, likeRequestHandler::handleUnlikePost, contentWriter);
 
-				Spark.get("/user/:username/pageinfo", contentType, requestHandler::handleGetUserPage, contentWriter);
+				Spark.get("/user/:userid/likedposts", contentType, likeRequestHandler::handleGetLikedPosts, contentWriter);
 
-				Spark.get("/user/:userid/posts", contentType, requestHandler::handleGetPostsByUserId, contentWriter);
+				Spark.get("/comment/:id/likes", contentType, likeRequestHandler::handleGetCommentLikes, contentWriter);
 
-				Spark.get("/user/:userid/likedposts", contentType, requestHandler::handleGetLikedPosts, contentWriter);
+				Spark.post("/comment/:commentid/like/:userid", contentType, likeRequestHandler::handleLikeComment, contentWriter);
 
-				Spark.get("/user/:userid/comments", contentType, requestHandler::handleGetCommentsByUserId, contentWriter);
-
-				Spark.get("/user/:userid/commentedposts", contentType, requestHandler::handleGetCommentedPosts, contentWriter);
-
-				Spark.get("/user/:userid/following", contentType, requestHandler::handleGetFollowingUserIds, contentWriter);
-
-				Spark.get("/user/:userid/following/posts", contentType, requestHandler::handleGetFollowingPosts, contentWriter);
-
-				Spark.get("/users", contentType, requestHandler::handleGetUsernamesAndIds, contentWriter);
-
-				Spark.post("/user/follow", contentType, requestHandler::handleFollowUser, contentWriter);
-
-				Spark.post("/user/unfollow", contentType, requestHandler::handleUnfollowUser, contentWriter);
-
-				Spark.put("/user/password", contentType, requestHandler::handleEditUserPassword, contentWriter);
+				Spark.delete("/comment/:commentid/unlike/:userid", contentType, likeRequestHandler::handleUnlikeComment, contentWriter);
 				
-				Spark.post("/retrieveSession", contentType, requestHandler::handleSessionRetrieval, contentWriter);
+				Spark.get("/user/:userid/comments", contentType, commentRequestHandler::handleGetCommentsByUserId, contentWriter);
+				
+				/** Follow Request Mappings **/
 
-				Spark.post("/login", contentType, requestHandler::handleLogin, contentWriter);
+				Spark.get("/user/:userid/following", contentType, followRequestHandler::handleGetFollowingUserIds, contentWriter);
+
+				Spark.get("/user/:userid/following/posts", contentType, followRequestHandler::handleGetFollowingPosts, contentWriter);
+
+				Spark.post("/user/follow", contentType, followRequestHandler::handleFollowUser, contentWriter);
+
+				Spark.post("/user/unfollow", contentType, followRequestHandler::handleUnfollowUser, contentWriter);
+
+				/** User Request Mappings **/
+
+				Spark.get("/users", contentType, userRequestHandler::handleGetUsernamesAndIds, contentWriter);
+
+				Spark.get("/user/:username/pageinfo", contentType, userRequestHandler::handleGetUserPage, contentWriter);
+
+				Spark.put("/user/password", contentType, userRequestHandler::handleEditUserPassword, contentWriter);
+				
+				/** Login Request Mappings **/
+				
+				Spark.post("/retrieveSession", contentType, loginRequestHandler::handleSessionRetrieval, contentWriter);
+
+				Spark.post("/login", contentType, loginRequestHandler::handleLogin, contentWriter);
+				
+				Spark.post("/logout", contentType, loginRequestHandler::handleLogout);
 
 			});
-			
-			
-			Spark.post("/logout", requestHandler::handleLogout);
-		
 		});
 	
 		Spark.exception(Exception.class, exceptionHandler::handleException);

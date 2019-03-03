@@ -63,4 +63,3 @@ buildNumber.properties
 .project
 .classpath
 .settings
-api-sparkjava/src/main/resources/application.properties
