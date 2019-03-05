@@ -97,9 +97,15 @@
 		
 		var postId = $routeParams.postId;
 		postsService.getPost(postId)
-			.then(function(data) {
+			.then(function (data) {
 				$scope.entry = data;
-		  	}, function(error) {
+		  	}, function (error) {
+		  		alertService.error(error.data);
+		  	});
+		postsService.getComments(postId)
+			.then(function (data) {
+				$scope.comments = data;
+		  	}, function (error) {
 		  		alertService.error(error.data);
 		  	});
 	};

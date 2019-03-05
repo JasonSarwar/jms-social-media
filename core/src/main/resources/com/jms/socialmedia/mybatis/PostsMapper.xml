@@ -20,7 +20,7 @@
         select count(1) from posts
     </select>
     
-    <select id="getPost" parameterType="int" resultType="fullpost">
+    <select id="getPost" parameterType="int" resultType="post">
         <include refid="retrievePosts"></include>
         <include refid="whereForPosts"></include>
         and post_id = #{id}

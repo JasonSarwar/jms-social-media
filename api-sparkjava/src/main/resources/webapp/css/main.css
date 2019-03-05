@@ -1,3 +1,11 @@
 .padTop {
 	padding-top: 100px;
 }
+
+.entry {
+	padding: 7px;
+}
+
+.textBox {
+	padding-bottom: 10px;
+}

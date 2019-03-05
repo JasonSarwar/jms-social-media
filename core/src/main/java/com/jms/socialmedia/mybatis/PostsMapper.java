@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 
 public interface PostsMapper {
@@ -15,7 +14,7 @@ public interface PostsMapper {
 			@Param(value="tag") String tag, @Param(value="onDate") String onDate, 
 			@Param(value="beforeDate") String beforeDate, @Param(value="afterDate") String afterDate);
 
-	FullPost getPost(int postId);
+	Post getPost(int postId);
 
 	Integer getUserIdFromPostId(int postId);
 

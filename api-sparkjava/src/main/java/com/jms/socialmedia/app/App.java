@@ -5,11 +5,14 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jms.socialmedia.cache.CachingService;
+import com.jms.socialmedia.cache.GuavaCachingService;
+import com.jms.socialmedia.cache.JavaMapCachingService;
 import com.jms.socialmedia.configuration.Configurations;
 import com.jms.socialmedia.configuration.ConfigurationsFromFile;
 import com.jms.socialmedia.configuration.CoreSettings;
+import com.jms.socialmedia.dataservice.CachingDataService;
 import com.jms.socialmedia.dataservice.DataService;
-import com.jms.socialmedia.dataservice.GuavaCachingDataService;
 import com.jms.socialmedia.dataservice.MockDataService;
 import com.jms.socialmedia.dataservice.MybatisDataService;
 import com.jms.socialmedia.password.BcryptPasswordService;
@@ -38,7 +41,15 @@ public class App {
 		} else {
 			passwordService = new BcryptPasswordService();
 			if (configurations.get(CoreSettings.USE_CACHING)) {
-				dataService = new GuavaCachingDataService(new MybatisDataService(configurations));
+
+				CachingService cachingService;
+				String cachingImplementation = configurations.get(CoreSettings.CACHING_IMPLEMENTATION);
+				if (cachingImplementation.toLowerCase().equals("javamap")) {
+					cachingService = new JavaMapCachingService();
+				} else {
+					cachingService = new GuavaCachingService();
+				}
+				dataService = new CachingDataService(new MybatisDataService(configurations), cachingService);
 				
 			} else {
 				dataService = new MybatisDataService(configurations);

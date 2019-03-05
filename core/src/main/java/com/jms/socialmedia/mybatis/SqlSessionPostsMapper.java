@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 
 public class SqlSessionPostsMapper implements PostsMapper {
@@ -35,7 +34,7 @@ public class SqlSessionPostsMapper implements PostsMapper {
 	}
 
 	@Override
-	public FullPost getPost(int postId) {
+	public Post getPost(int postId) {
 		try(SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
 			return mapper.getPost(postId);

@@ -11,7 +11,6 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import com.jms.socialmedia.configuration.Configurations;
 import com.jms.socialmedia.configuration.CoreSettings;
 import com.jms.socialmedia.model.Comment;
-import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
@@ -103,16 +102,6 @@ public class MybatisDataService implements DataService {
 		Post post = postsMapper.getPost(postId);
 		if (post != null) {
 			post.setLikes(getPostLikes(postId));
-		}
-		return post;
-	}
-	
-	@Override
-	public FullPost getPostWithComments(int postId) {
-		FullPost post = postsMapper.getPost(postId);
-		if (post != null) {
-			post.setLikes(getPostLikes(postId));
-			post.setComments(getComments(postId));
 		}
 		return post;
 	}

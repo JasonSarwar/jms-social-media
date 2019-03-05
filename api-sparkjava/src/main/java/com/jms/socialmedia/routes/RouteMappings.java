@@ -61,7 +61,6 @@ public class RouteMappings {
 				Spark.get("/posts", contentType, postRequestHandler::handleGetPosts, contentWriter);
 
 				Spark.get("/post/:id", contentType, postRequestHandler::handleGetPost, contentWriter);
-				Spark.get("/post/:id/full", contentType, postRequestHandler::handleGetPostWithComments, contentWriter);
 
 				Spark.post("/post/add", contentType, postRequestHandler::handleAddPost, contentWriter);
 

@@ -4,13 +4,6 @@
 
 <mapper namespace="com.jms.socialmedia.mybatis.TagsMapper">
 
-    <!-- insert id="addTags">
-    	insert into posts_tags (post_id, tag) values
-    	<foreach item="tag" collection="tags" separator=",">
-    		(#{postId}, #{tag})
-    	</foreach>
-    </insert-->
-
 	<select id="getTags" resultType="String">
         select distinct tag from posts_tags
     </select>

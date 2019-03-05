@@ -3,12 +3,19 @@
   var postsService = function($http, $location) {
 
     var getPost = function (postId) {
-    	return $http.get("/api/post/" + postId + "/full")
-              .then(function(response) {
+    	return $http.get("/api/post/" + postId)
+              .then(function (response) {
             	  return response.data;
               });
     };
-    
+
+    var getComments = function (postId) {
+    	return $http.get("/api/post/" + postId + "/comments")
+              .then(function (response) {
+            	  return response.data;
+              });
+    };
+
     var getPosts = function (queryParamString) {
     	return $http.get("/api/posts?" + queryParamString)
               .then(function(response) {
@@ -208,6 +215,7 @@
 
     return {
     	getPost: getPost,
+    	getComments: getComments,
     	getPosts: getPosts,
     	getFollowingPosts: getFollowingPosts,
     	addPost: addPost,

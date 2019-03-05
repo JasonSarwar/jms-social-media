@@ -16,7 +16,6 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Entry;
-import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
@@ -109,15 +108,6 @@ public class MockDataService implements DataService {
 	@Override
 	public Post getPost(int postId) {
 		return postsById.get(postId);
-	}
-	
-	@Override
-	public FullPost getPostWithComments(int postId) {
-		Post post = postsById.get(postId);
-		FullPost fullPost = new FullPost(post.getPostId(), post.getUserId(), post.getUsername(), post.getFullName(), post.getText(), post.getTimestamp());
-		fullPost.setComments(getComments(postId));
-		fullPost.setLikes(post.getLikes());
-		return fullPost;
 	}
 
 	@Override

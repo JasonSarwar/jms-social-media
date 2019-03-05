@@ -11,7 +11,6 @@ import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
 import com.jms.socialmedia.exception.NotFoundException;
 import com.jms.socialmedia.model.Entry;
-import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import spark.Request;
 import spark.Response;
@@ -84,30 +83,6 @@ public class PostRequestHandler extends RequestHandler {
 		int postId = Integer.parseInt(request.params(":id"));
 		Post post = dataService.getPost(postId);
 
-		if(post != null) {
-			return post;
-		} else {
-			throw new NotFoundException("Post Not Found");
-		}
-	}
-
-	/**
-	 * <h1> GET /api/post/:id/full </h1>
-	 * 
-	 * :id - ID of Post
-	 * 
-	 * @param request				Spark Request
-	 * @param response				Spark Response
-	 * @return 						a single {@link FullPost}
-	 * 
-	 * @throws NotFoundException		if a Post with the given ID does not exist
-	 * @throws NumberFormatException	if given post id is not a number
-	 */
-	public FullPost handleGetPostWithComments(Request request, Response response) {
-		
-		int postId = Integer.parseInt(request.params(":id"));
-		FullPost post = dataService.getPostWithComments(postId);
-		
 		if(post != null) {
 			return post;
 		} else {

@@ -2,27 +2,21 @@ package com.jms.socialmedia.dataservice;
 
 import java.util.Collection;
 
+import com.jms.socialmedia.cache.CachingService;
 import com.jms.socialmedia.model.Comment;
-import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
 
-abstract class CachingDataService implements DataService {
+public class CachingDataService implements DataService {
 
 	private final DataService dataService;
-	
-	protected CachingDataService(DataService dataService) {
-		this.dataService = dataService;
-	}
+	private final CachingService cachingService;
 
-	protected abstract FullPost getPostFromCache(int postId);
-	
-	protected abstract void putPostIntoCache(FullPost post);
-	
-	protected abstract void removePostFromCache(int postId);
-	
-	protected abstract void removePostFromCacheUsingCommentId(int commentId);
+	public CachingDataService(DataService dataService, CachingService cachingService) {
+		this.dataService = dataService;
+		this.cachingService = cachingService;
+	}
 
 	@Override
 	public UserPage getUserPageInfoByName(String username) {
@@ -77,23 +71,12 @@ abstract class CachingDataService implements DataService {
 
 	@Override
 	public Post getPost(int postId) {
-		Post post = getPostFromCache(postId);
-		return post != null ? post : dataService.getPost(postId);
-	}
-
-	@Override
-	public FullPost getPostWithComments(int postId) {
-		FullPost post = getPostFromCache(postId);
-		if (post == null) {
-			post = dataService.getPostWithComments(postId);
-			putPostIntoCache(post);
-		}
-		return post;
+		return cachingService.getPostFromCacheOrSupplier(postId, () -> dataService.getPost(postId));
 	}
 
 	@Override
 	public Integer getUserIdFromPostId(int postId) {
-		FullPost post = getPostFromCache(postId);
+		Post post = cachingService.getPostFromCache(postId);
 		if (post != null) {
 			return post.getUserId();
 		}
@@ -107,13 +90,16 @@ abstract class CachingDataService implements DataService {
 	
 	@Override
 	public boolean editPost(int postId, String postText) {
-		removePostFromCache(postId);
+		Post post = cachingService.getPostFromCache(postId);
+		if (post != null) {
+			post.setText(postText);
+		}
 		return dataService.editPost(postId, postText);
 	}
 
 	@Override
 	public boolean deletePost(int postId) {
-		removePostFromCache(postId);
+		cachingService.removePostFromCache(postId);
 		return dataService.deletePost(postId);
 	}
 
@@ -129,18 +115,28 @@ abstract class CachingDataService implements DataService {
 
 	@Override
 	public Collection<Integer> getPostLikes(int postId) {
+		Post post = cachingService.getPostFromCache(postId);
+		if (post != null) {
+			post.getLikes();
+		}
 		return dataService.getPostLikes(postId);
 	}
 
 	@Override
 	public boolean likePost(int postId, int userId) {
-		removePostFromCache(postId);
+		Post post = cachingService.getPostFromCache(postId);
+		if (post != null) {
+			post.addLike(userId);
+		}
 		return dataService.likePost(postId, userId);
 	}
 
 	@Override
 	public boolean unlikePost(int postId, int userId) {
-		removePostFromCache(postId);
+		Post post = cachingService.getPostFromCache(postId);
+		if (post != null) {
+			post.removeLike(userId);
+		}
 		return dataService.unlikePost(postId, userId);
 	}
 
@@ -156,46 +152,68 @@ abstract class CachingDataService implements DataService {
 
 	@Override
 	public Comment getComment(int commentId) {
-		return dataService.getComment(commentId);
+		Comment comment = cachingService.getCommentFromCache(commentId);
+		if (comment == null) {
+			comment = dataService.getComment(commentId);
+			cachingService.putCommentIntoCache(comment);
+		}
+		return comment;
 	}
 
 	@Override
 	public Integer getUserIdFromCommentId(int commentId) {
+		Comment comment = cachingService.getCommentFromCache(commentId);
+		if (comment == null) {
+			comment = dataService.getComment(commentId);
+			return comment.getUserId();
+		}
 		return dataService.getUserIdFromCommentId(commentId);
 	}
 
 	@Override
 	public boolean addComment(Comment comment) {
-		removePostFromCache(comment.getPostId());
 		return dataService.addComment(comment);
 	}
 	
 	@Override
 	public boolean editComment(int commentId, String commentText) {
-		removePostFromCacheUsingCommentId(commentId);
+		Comment comment = cachingService.getCommentFromCache(commentId);
+		if (comment != null) {
+			comment.setText(commentText);
+		}
 		return dataService.editComment(commentId, commentText);
 	}
 
 	@Override
 	public boolean deleteComment(int commentId) {
-		removePostFromCacheUsingCommentId(commentId);
+		cachingService.removeCommentFromCache(commentId);
 		return dataService.deleteComment(commentId);
 	}
 	
 	@Override
 	public Collection<Integer> getCommentLikes(int commentId) {
-		return getComment(commentId).getLikes();
+		Comment comment = cachingService.getCommentFromCache(commentId);
+		if (comment != null) {
+			return comment.getLikes();
+		}
+		return dataService.getCommentLikes(commentId);
 	}
 
 	@Override
 	public boolean likeComment(int commentId, int userId) {
-		removePostFromCacheUsingCommentId(commentId);
+		Comment comment = cachingService.getCommentFromCache(commentId);
+		if (comment != null) {
+			comment.addLike(userId);
+		}
 		return dataService.likeComment(commentId, userId);
 	}
 
 	@Override
 	public boolean unlikeComment(int commentId, int userId) {
-		removePostFromCacheUsingCommentId(commentId);
+		Comment comment = cachingService.getCommentFromCache(commentId);
+		if (comment != null) {
+			comment.removeLike(userId);
+		}
 		return dataService.unlikeComment(commentId, userId);
 	}
 	

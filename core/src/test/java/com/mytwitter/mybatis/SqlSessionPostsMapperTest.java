@@ -14,7 +14,6 @@ import org.junit.Test;
 import com.jms.socialmedia.configuration.Configurations;
 import com.jms.socialmedia.configuration.ConfigurationsFromFile;
 import com.jms.socialmedia.configuration.CoreSettings;
-import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 
 import static org.hamcrest.CoreMatchers.equalTo;

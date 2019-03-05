@@ -3,7 +3,6 @@ package com.jms.socialmedia.dataservice;
 import java.util.Collection;
 
 import com.jms.socialmedia.model.Comment;
-import com.jms.socialmedia.model.FullPost;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
@@ -37,8 +36,6 @@ public interface DataService {
 	}
 
 	Post getPost(int postId);
-
-	FullPost getPostWithComments(int postId);
 
 	Integer getUserIdFromPostId(int postId);
 
