@@ -45,6 +45,11 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
+	public Integer getUserIdByUsername(String username) {
+		return usersMapper.getUserIdByUsername(username);
+	}
+
+	@Override
 	public UserPage getUserPageInfoByName(String username) {
 		return usersMapper.getUserPageInfoByName(username);
 	}

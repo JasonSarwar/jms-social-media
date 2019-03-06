@@ -25,6 +25,11 @@
         )
     </insert>
 
+	<select id="getUserIdByUsername" parameterType="String" resultType="Integer">
+        select user_id from users 
+        where lower(username) = lower(#{id})
+    </select>
+
 	<select id="getUserPageInfoByName" parameterType="String" resultType="userPage">
         select user_id, username, full_name, email, bio, birthdate, date_time_joined, profile_picture_link from users 
         where lower(username) = lower(#{id})

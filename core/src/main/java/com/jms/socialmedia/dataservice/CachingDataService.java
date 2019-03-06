@@ -19,6 +19,11 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
+	public Integer getUserIdByUsername(String username) {
+		return dataService.getUserIdByUsername(username);
+	}
+
+	@Override
 	public UserPage getUserPageInfoByName(String username) {
 		return dataService.getUserPageInfoByName(username);
 	}

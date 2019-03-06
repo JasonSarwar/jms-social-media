@@ -15,7 +15,9 @@ public interface UsersMapper {
 	int isEmailPresent(String email);
 
 	int addUser(AddUserDB addUserDb);
-	
+
+	Integer getUserIdByUsername(String username);
+
 	UserPage getUserPageInfoByName(String username);
 
 	User getUserLoginInfoByString(String usernameOrEmail);

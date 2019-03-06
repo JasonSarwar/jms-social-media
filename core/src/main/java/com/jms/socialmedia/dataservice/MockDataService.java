@@ -6,11 +6,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Map;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
@@ -25,20 +25,20 @@ import static java.util.stream.Collectors.toList;
 public class MockDataService implements DataService {
 
 	private final Map<Integer, User> usersById;
+	private final Map<Integer, UserPage> userPagesById;
 	private final Map<String, Integer> userSessionKeys;
 	private final Map<Integer, Post> postsById;
 	private final Map<Integer, Comment> commentsById;
 	private final Multimap<Integer, Comment> commentsByPostId;
-	private final Multimap<Integer, Integer> followerUserIds;
 	
 	public MockDataService() {
 
 		usersById = new HashMap<>();
+		userPagesById = new HashMap<>();
 		userSessionKeys = new HashMap<>();
 		postsById = new TreeMap<>((a, b) -> b.compareTo(a));
 		commentsById = new HashMap<>();
 		commentsByPostId = TreeMultimap.create(Ordering.natural(), (a, b) -> a.getCommentId().compareTo(b.getCommentId()));
-		followerUserIds = HashMultimap.create();
 		setupUsers();
 		setupPosts();
 		setupComments();
@@ -51,8 +51,13 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
+	public Integer getUserIdByUsername(String username) {
+		return usersById.values().stream().filter(user -> user.getUsername().equalsIgnoreCase(username)).map(User::getUserId).findAny().orElse(null);
+	}
+	
+	@Override
 	public UserPage getUserPageInfoByName(String username) {
-		return null;
+		return userPagesById.values().stream().filter(page -> page.getUsername().equalsIgnoreCase(username)).findAny().orElse(null);
 	}
 
 	@Override
@@ -217,11 +222,66 @@ public class MockDataService implements DataService {
 		return comment == null ? false : commentsById.remove(commentId, comment) & commentsByPostId.remove(comment.getPostId(), comment);
 	}
 
+
+	@Override
+	public Collection<Integer> getCommentLikes(int commentId) {
+		return getComment(commentId).getLikes();
+	}
+
+	@Override
+	public boolean likeComment(int commentId, int userId) {
+		return getComment(commentId).addLike(userId);
+	}
+
+	@Override
+	public boolean unlikeComment(int commentId, int userId) {
+		return getComment(commentId).removeLike(userId);
+	}
+
+	@Override
+	public Collection<Integer> getFollowerUserIds(int userId) {
+		return userPagesById.get(userId).getFollowersUserIds();
+	}
+
+	@Override
+	public Collection<Integer> getFollowingUserIds(int userId) {
+		return userPagesById.get(userId).getFollowingUserIds();
+	}
+
+	@Override
+	public boolean followUser(int followerUserId, int followingUserId) {
+		return userPagesById.get(followerUserId).addFollowingUserIds(Collections.singleton(followingUserId))
+				& userPagesById.get(followingUserId).addFollowersUserIds(Collections.singleton(followerUserId));
+	}
+
+	@Override
+	public boolean unfollowUser(int followerUserId, int followingUserId) {
+		return getFollowingUserIds(followerUserId).remove(followingUserId) 
+				& getFollowerUserIds(followingUserId).remove(followerUserId);
+	}
+
 	private void setupUsers() {
 		User user = new User(1, "user", "Visitor", "password");
 		User jason = new User(2, "Jason", "Jason Sarwar", "#$%@%$%");
 		usersById.put(1, user);
 		usersById.put(2, jason);
+		
+		UserPage userPage = new UserPage();
+		userPage.setUserId(1);
+		userPage.setUsername("user");
+		userPage.setFullName("Visitor");
+		userPage.setBio("Awesome person visiting Jason's website!");
+		userPage.setDateTimeJoined(LocalDateTime.now());
+		userPage.addFollowingUserIds(Collections.singleton(2));
+		userPagesById.put(1, userPage);
+		
+		UserPage jasonPage = new UserPage();
+		jasonPage.setUserId(2);
+		jasonPage.setUsername("Jason");
+		jasonPage.setFullName("Jason Sarwar");
+		jasonPage.setBio("Trying to create this website.");
+		jasonPage.setDateTimeJoined(LocalDateTime.of(2019, 1, 1, 0, 0, 0));
+		userPagesById.put(2, jasonPage);
 	}
 	
 	private void setupPosts() {
@@ -258,40 +318,5 @@ public class MockDataService implements DataService {
 		entry.setUserId(user.getUserId());
 		entry.setUsername(user.getUsername());
 		entry.setFullName(user.getFullName());
-	}
-
-	@Override
-	public Collection<Integer> getCommentLikes(int commentId) {
-		return getComment(commentId).getLikes();
-	}
-
-	@Override
-	public boolean likeComment(int commentId, int userId) {
-		return getComment(commentId).addLike(userId);
-	}
-
-	@Override
-	public boolean unlikeComment(int commentId, int userId) {
-		return getComment(commentId).removeLike(userId);
-	}
-
-	@Override
-	public Collection<Integer> getFollowerUserIds(int userId) {
-		return followerUserIds.entries().stream().filter(entry -> entry.getValue() == userId).map(Map.Entry::getKey).collect(toList());
-	}
-
-	@Override
-	public Collection<Integer> getFollowingUserIds(int userId) {
-		return followerUserIds.get(userId);
-	}
-
-	@Override
-	public boolean followUser(int followerUserId, int followingUserId) {
-		return followerUserIds.put(followerUserId, followingUserId);
-	}
-
-	@Override
-	public boolean unfollowUser(int followerUserId, int followingUserId) {
-		return followerUserIds.remove(followerUserId, followingUserId);
 	}
 }

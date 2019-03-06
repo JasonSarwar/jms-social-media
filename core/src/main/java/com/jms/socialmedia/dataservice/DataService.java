@@ -11,6 +11,8 @@ import static java.util.Collections.singleton;
 
 public interface DataService {
 
+	Integer getUserIdByUsername(String username);
+
 	UserPage getUserPageInfoByName(String username);
 
 	User getUserLoginInfoByString(String usernameOrEmail);

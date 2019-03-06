@@ -42,6 +42,14 @@ public class SqlSessionUsersMapper implements UsersMapper {
 	}
 
 	@Override
+	public Integer getUserIdByUsername(String username) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			UsersMapper mapper = session.getMapper(UsersMapper.class);
+			return mapper.getUserIdByUsername(username);
+		}
+	}
+
+	@Override
 	public UserPage getUserPageInfoByName(String username) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			UsersMapper mapper = session.getMapper(UsersMapper.class);

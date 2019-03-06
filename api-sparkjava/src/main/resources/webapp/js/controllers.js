@@ -274,19 +274,10 @@
 		};
 	};
 
-	var UserPageController = function($scope, $location, $routeParams, usersService, postsService) {
+	var UserPageController = function($scope, $routeParams, usersService, postsService, alertService) {
 
-		var username;
-		if ($location.path() == "/myprofile") {
-			username = $scope.username;
-			if (!username) {
-				$location.path("/home");
-				return;
-			}
-		} else {
-			username = $routeParams.username;
-		}
-		
+		var username = $routeParams.username;
+
 		usersService.getUserPageInfo(username)
 			.then(function (data) {
 				$scope.user = data;
@@ -294,6 +285,8 @@
 				.then(function (postData) {
 					$scope.posts = postData;
 				});
+			}, function (error) {
+				alertService.error(error.data);
 			});
 		
 		$scope.getLikedPosts = function () {

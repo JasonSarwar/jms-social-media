@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
+import com.jms.socialmedia.exception.NotFoundException;
 import com.jms.socialmedia.model.ChangePassword;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
@@ -29,10 +30,14 @@ public class UserRequestHandler extends RequestHandler {
 	public UserPage handleGetUserPage(Request request, Response response) {
 		String username = request.params("username");
 		UserPage userPage = dataService.getUserPageInfoByName(username);
-		int userId = userPage.getUserId();
-		userPage.addFollowersUserIds(dataService.getFollowerUserIds(userId));
-		userPage.addFollowingUserIds(dataService.getFollowingUserIds(userId));
-		return userPage;
+		if (userPage != null) {
+			int userId = userPage.getUserId();
+			userPage.addFollowersUserIds(dataService.getFollowerUserIds(userId));
+			userPage.addFollowingUserIds(dataService.getFollowingUserIds(userId));
+			return userPage;
+		} else {
+			throw new NotFoundException("User not found");
+		}
 	}
 	
 	public Collection<User> handleGetUsernamesAndIds(Request request, Response response) throws IOException {

@@ -27,10 +27,6 @@
 					templateUrl: "partials/user-page.html",
 					controller: "UserPageController"
 				})
-				.when("/myprofile", {
-					templateUrl: "partials/user-page.html",
-					controller: "UserPageController"
-				})
 				.when("/editpassword", {
 					templateUrl: "partials/edit-password.html",
 					controller: "EditPasswordController"
