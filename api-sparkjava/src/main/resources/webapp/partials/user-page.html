@@ -17,7 +17,7 @@
 
 <div class="row">
 	<div class="col-sm-2"></div>
-	<div class="col-sm-2">
+	<div class="col-sm-3">
 		<div class="row card">
 			<div class="card-header">
 				Bio
@@ -74,7 +74,7 @@
 			</div>
 		</div>
 	</div>
-	<div class=col-sm-6 ng-show="user">
+	<div class=col-sm-5 ng-show="user">
 		<ul class="nav nav-tabs" id="userPageTab" role="tablist">
 			<li class="nav-item">
 				<a class="nav-link active" id="posts-tab" data-toggle="tab" data-target="#posts" href="" role="tab" aria-controls="posts" aria-selected="true">Posts</a>
@@ -95,31 +95,26 @@
 		<div class="tab-content" id="userPageTabContent">
 			<div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
 				<div ng-repeat="entry in posts">
-					<br>
 					<div ng-include="'partials/entry.html'""></div>
 				</div>
 			</div>
 			<div class="tab-pane fade" id="likes" role="tabpanel" aria-labelledby="likes-tab">
 				<div ng-repeat="entry in likedPosts">
-					<br>
 					<div ng-include="'partials/entry.html'""></div>
 				</div>
 			</div>
 			<div class="tab-pane fade" id="commented-posts" role="tabpanel" aria-labelledby="commented-posts-tab">
 				<div ng-repeat="entry in commentedPosts">
-					<br>
 					<div ng-include="'partials/entry.html'""></div>
 				</div>
 			</div>
 			<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
 				<div ng-repeat="entry in comments">
-					<br>
 					<div ng-include="'partials/entry.html'""></div>
 				</div>
 			</div>
 			<div class="tab-pane fade" id="mentions" role="tabpanel" aria-labelledby="mentions-tab">
 				<div ng-repeat="entry in mentions">
-					<br>
 					<div ng-include="'partials/entry.html'""></div>
 				</div>
 			</div>
