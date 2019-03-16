@@ -33,13 +33,19 @@ public class App {
 		Spark.staticFiles.location("webapp");
 		Spark.port(configurations.get(CoreSettings.PORT));
 
-		DataService dataService;
-		PasswordService passwordService;
+		DataService dataService = createDataService(configurations);
+		PasswordService passwordService = createPasswordService(configurations);
+
+		RouteMappings routes = new RouteMappings(dataService, passwordService);
+		routes.addRouteListener(new LogRouteAdapter());
+		routes.start();
+		LOGGER.info("Starting up at port:{}", Spark.port());
+	}
+	
+	private static DataService createDataService(Configurations configurations) throws IOException {
 		if (configurations.get(CoreSettings.USE_MOCK_DATA_SERVICE)) {
-			dataService = new MockDataService();
-			passwordService = new NonEncryptionPasswordService();
+			return new MockDataService();
 		} else {
-			passwordService = new BcryptPasswordService();
 			if (configurations.get(CoreSettings.USE_CACHING)) {
 
 				CachingService cachingService;
@@ -49,16 +55,19 @@ public class App {
 				} else {
 					cachingService = new GuavaCachingService();
 				}
-				dataService = new CachingDataService(new MybatisDataService(configurations), cachingService);
+				return new CachingDataService(new MybatisDataService(configurations), cachingService);
 				
 			} else {
-				dataService = new MybatisDataService(configurations);
+				return new MybatisDataService(configurations);
 			}
 		}
-
-		RouteMappings routes = new RouteMappings(dataService, passwordService);
-		routes.addRouteListener(new LogRouteAdapter());
-		routes.start();
-		LOGGER.info("Starting up at localhost:{}/", Spark.port());
+	}
+	
+	private static PasswordService createPasswordService(Configurations configurations) {
+		if (configurations.get(CoreSettings.USE_MOCK_DATA_SERVICE)) {
+			return new NonEncryptionPasswordService();
+		} else {
+			return new BcryptPasswordService();
+		}
 	}
 }

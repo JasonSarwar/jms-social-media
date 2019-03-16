@@ -71,7 +71,15 @@ public class CachingDataService implements DataService {
 	@Override
 	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate,
 			String afterDate) {
-		return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
+		Collection<Post> posts = dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
+		// Put the first 5 posts into cache
+		int i = 0;
+		for (Post post : posts) {
+			cachingService.putPostIntoCache(post);
+			if (i++ > 5)
+				break;
+		}
+		return posts;
 	}
 
 	@Override
@@ -122,7 +130,7 @@ public class CachingDataService implements DataService {
 	public Collection<Integer> getPostLikes(int postId) {
 		Post post = cachingService.getPostFromCache(postId);
 		if (post != null) {
-			post.getLikes();
+			return post.getLikes();
 		}
 		return dataService.getPostLikes(postId);
 	}
@@ -147,7 +155,7 @@ public class CachingDataService implements DataService {
 
 	@Override
 	public Collection<Comment> getComments(int postId) {
-		return dataService.getComments(postId);
+		return cachingService.getCommentsFromCacheOrSupplier(postId, () -> dataService.getComments(postId));
 	}
 
 	@Override
@@ -177,7 +185,11 @@ public class CachingDataService implements DataService {
 
 	@Override
 	public boolean addComment(Comment comment) {
-		return dataService.addComment(comment);
+		if (dataService.addComment(comment)) {
+			cachingService.putCommentIntoCache(getComment(comment.getCommentId()));
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
