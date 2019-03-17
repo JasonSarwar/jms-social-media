@@ -4,16 +4,20 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.ibatis.io.Resources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jms.socialmedia.exception.ConfigurationException;
 
 public class ConfigurationsFromFile implements Configurations {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationsFromFile.class);
 	private final Properties properties;
 	
 	public ConfigurationsFromFile(String propertiesFilePath) throws IOException {
 		properties = new Properties();
-		properties.load(Resources.getResourceAsStream("application.properties"));
+		properties.load(Resources.getResourceAsStream(propertiesFilePath));
+		LOGGER.info("Loaded Configurations from {}", propertiesFilePath);
 	}
 	
 	public final Properties getProperties() {

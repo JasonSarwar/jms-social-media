@@ -29,7 +29,8 @@ public class App {
 
 	public static void main(String[] args) throws IOException {
 
-		Configurations configurations = new ConfigurationsFromFile("application.properties");
+		String configurationPath = args.length > 0 ? args[0] : "application-mock.properties";
+		Configurations configurations = new ConfigurationsFromFile(configurationPath);
 		Spark.staticFiles.location("webapp");
 		Spark.port(configurations.get(CoreSettings.PORT));
 
