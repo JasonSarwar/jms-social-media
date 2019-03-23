@@ -1,6 +1,6 @@
 package com.jms.socialmedia.exception;
 
-public class NotFoundException extends MyTwitterException {
+public class NotFoundException extends MySocialMediaException {
 
 	/**
 	 * 

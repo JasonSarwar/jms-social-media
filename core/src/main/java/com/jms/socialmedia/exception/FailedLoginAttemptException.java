@@ -1,6 +1,6 @@
 package com.jms.socialmedia.exception;
 
-public class FailedLoginAttemptException extends MyTwitterException {
+public class FailedLoginAttemptException extends MySocialMediaException {
 
 	/**
 	 * 

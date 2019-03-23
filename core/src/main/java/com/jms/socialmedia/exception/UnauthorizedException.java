@@ -1,6 +1,6 @@
 package com.jms.socialmedia.exception;
 
-public class UnauthorizedException extends MyTwitterException {
+public class UnauthorizedException extends MySocialMediaException {
 
 	/**
 	 * 

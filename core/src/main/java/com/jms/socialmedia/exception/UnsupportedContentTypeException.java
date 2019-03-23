@@ -1,6 +1,6 @@
 package com.jms.socialmedia.exception;
 
-public class UnsupportedContentTypeException extends MyTwitterException {
+public class UnsupportedContentTypeException extends MySocialMediaException {
 
 	/**
 	 * 

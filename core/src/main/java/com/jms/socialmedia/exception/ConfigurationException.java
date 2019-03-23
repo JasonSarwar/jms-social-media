@@ -1,6 +1,6 @@
 package com.jms.socialmedia.exception;
 
-public class ConfigurationException extends MyTwitterException {
+public class ConfigurationException extends MySocialMediaException {
 
 	/**
 	 * 

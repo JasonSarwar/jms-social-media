@@ -1,6 +1,6 @@
 package com.jms.socialmedia.exception;
 
-public class BadRequestException extends MyTwitterException {
+public class BadRequestException extends MySocialMediaException {
 
 	/**
 	 * 

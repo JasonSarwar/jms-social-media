@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jms.socialmedia.exception.BadRequestException;
+import com.jms.socialmedia.exception.DatabaseInsertException;
 import com.jms.socialmedia.exception.FailedLoginAttemptException;
 import com.jms.socialmedia.exception.InvalidUserLoginStateException;
 import com.jms.socialmedia.exception.NotFoundException;
@@ -56,6 +57,10 @@ public class ExceptionHandler {
 		} else if (exception instanceof NumberFormatException) {
 			response.body(exception.getMessage().replace("For input string:", "Invalid ID"));
 			response.status(400);
+
+		} else if (exception instanceof DatabaseInsertException) {
+			response.body("Database Error: " + exception.getMessage());
+			response.status(500);
 
 		} else if (exception instanceof SQLIntegrityConstraintViolationException) {
 			response.body(exception.getMessage());
