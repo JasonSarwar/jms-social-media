@@ -16,6 +16,7 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Entry;
+import com.jms.socialmedia.model.NewUser;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
@@ -43,12 +44,6 @@ public class MockDataService implements DataService {
 		setupPosts();
 		setupComments();
 	}
-	
-	@Override
-	public String createUser() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Integer getUserIdByUsername(String username) {
@@ -74,6 +69,23 @@ public class MockDataService implements DataService {
 	@Override
 	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
 		return usersById.values().stream().filter(user -> userIds.contains(user.getUserId())).collect(toList());
+	}
+
+	@Override
+	public boolean addUser(NewUser newUser) {
+		User user = new User(usersById.size() + 1, newUser.getUsername(), newUser.getFullName(), newUser.getHashedPassword());
+		usersById.put(user.getUserId(), user);
+		UserPage userPage = new UserPage();
+		userPage.setUserId(user.getUserId());
+		userPage.setUsername(newUser.getUsername());
+		userPage.setFullName(newUser.getFullName());
+		userPage.setEmail(newUser.getEmail());
+		userPage.setBio(newUser.getBio());
+		userPage.setBirthdate(newUser.getBirthdate());
+		userPage.setProfilePictureLink(newUser.getProfilePictureLink());
+		userPage.setDateTimeJoined(LocalDateTime.now());
+		userPagesById.put(userPage.getUserId(), userPage);
+		return true;
 	}
 
 	@Override

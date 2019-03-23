@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.jms.socialmedia.cache.CachingService;
 import com.jms.socialmedia.model.Comment;
+import com.jms.socialmedia.model.NewUser;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
@@ -44,13 +45,13 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public boolean editPassword(Integer userId, String hashedPassword) {
-		return dataService.editPassword(userId, hashedPassword);
+	public boolean addUser(NewUser newUser) {
+		return dataService.addUser(newUser);
 	}
 
 	@Override
-	public String createUser() {
-		return dataService.createUser();
+	public boolean editPassword(Integer userId, String hashedPassword) {
+		return dataService.editPassword(userId, hashedPassword);
 	}
 
 	@Override

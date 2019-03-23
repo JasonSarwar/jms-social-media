@@ -11,6 +11,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import com.jms.socialmedia.configuration.Configurations;
 import com.jms.socialmedia.configuration.CoreSettings;
 import com.jms.socialmedia.model.Comment;
+import com.jms.socialmedia.model.NewUser;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
@@ -70,14 +71,13 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public boolean editPassword(Integer userId, String hashedPassword) {
-		return usersMapper.editPassword(userId, hashedPassword) == 1;
+	public boolean addUser(NewUser newUser) {
+		return usersMapper.addUser(newUser) == 1;
 	}
 
 	@Override
-	public String createUser() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean editPassword(Integer userId, String hashedPassword) {
+		return usersMapper.editPassword(userId, hashedPassword) == 1;
 	}
 
 	@Override

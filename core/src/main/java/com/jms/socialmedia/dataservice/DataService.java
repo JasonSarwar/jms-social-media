@@ -3,6 +3,7 @@ package com.jms.socialmedia.dataservice;
 import java.util.Collection;
 
 import com.jms.socialmedia.model.Comment;
+import com.jms.socialmedia.model.NewUser;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
@@ -21,13 +22,13 @@ public interface DataService {
 
 	Collection<User> getUsernamesByIds(Collection<Integer> userIds);
 
+	boolean addUser(NewUser newUser);
+
 	boolean editPassword(Integer userId, String hashedPassword);
 
-	String createUser();
+	User getUserBySessionKey(String sessionKey);
 
 	boolean addUserSession(int userId, String sessionKey);
-
-	User getUserBySessionKey(String sessionKey);
 
 	void removeSessionKey(String sessionKey);
 
