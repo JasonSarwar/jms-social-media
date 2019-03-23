@@ -48,10 +48,10 @@
 					&#160 &#160
 				</div>
 				<a class="btn btn-outline-info btn-sm" ng-if="!entry.commentId" ng-href="#!/post/{{entry.postId}}">
-					<span class="fas fa-comments"></span> {{ entry.comments.length }} Comments
+					<span class="fas fa-comments"></span> {{ entry.comments.length }} Comment{{ entry.comments.length == 1 ? '' : 's'}}
 				</a>
 				<a class="btn btn-outline-info btn-sm" ng-if="entry.commentId" ng-href="#!/post/{{entry.postId}}">
-					<span class="fas fa-angle-up"></span> {{ entry.comments.length }} Go To Post
+					<span class="fas fa-angle-up"></span> Go To Post
 				</a>
 			</div>
 		</div>

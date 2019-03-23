@@ -104,7 +104,7 @@
 		  	});
 		postsService.getComments(postId)
 			.then(function (data) {
-				$scope.comments = data;
+				$scope.entry.comments = data;
 		  	}, function (error) {
 		  		alertService.error(error.data);
 		  	});
