@@ -37,12 +37,18 @@
         where comment_id = #{id}
     </select>
 
-	<insert id="addComment" parameterType="comment" keyColumn="comment_id">
+	<insert id="addComment" parameterType="comment" databaseId="oracle" keyColumn="comment_id">
     	<selectKey keyProperty="commentId" resultType="int" order="BEFORE">
     		select COMMENTS_SEQ.nextval as commentId from DUAL
     	</selectKey>
         insert into comments (comment_id, post_id, user_id, text, timestamp) values (
             #{commentId}, #{postId}, #{userId}, #{text}, systimestamp
+        )
+    </insert>
+
+	<insert id="addComment" parameterType="comment" databaseId="mysql" useGeneratedKeys="true" keyProperty="commentId" keyColumn="comment_id">
+        insert into comments (post_id, user_id, text, timestamp) values (
+            #{postId}, #{userId}, #{text}, now()
         )
     </insert>
 
@@ -62,9 +68,15 @@
 		where comment_id = #{id}
 	</select>
 
-	<insert id="likeComment">
+	<insert id="likeComment" databaseId="oracle">
 		insert into comments_likes (comment_id, user_id, timestamp) values (
             #{commentId}, #{userId}, systimestamp
+        )
+	</insert>
+
+	<insert id="likeComment" databaseId="mysql">
+		insert into comments_likes (comment_id, user_id, timestamp) values (
+            #{commentId}, #{userId}, now()
         )
 	</insert>
 

@@ -5,23 +5,29 @@
 <mapper namespace="com.jms.socialmedia.mybatis.UsersMapper">
 
 	<select id="getNumberOfUsers" resultType="int">
-        select count(*) from users
+        select count(1) from users
     </select>
     
     <select id="isUsernamePresent" parameterType="String" resultType="int">
-        select count(*) from users where username = #{username}
+        select count(1) from users where lower(username) = lower(#{username})
     </select>    
     
     <select id="isEmailPresent" parameterType="String" resultType="int">
-        select count(*) from users where email = #{email}
+        select count(1) from users where lower(email) = lower(#{email})
     </select>
     
-    <insert id="addUser" parameterType="adduserdb" keyColumn="user_id">
-    	<selectKey keyProperty="userId" resultType="int" order="BEFORE">
-    		select USERS_SEQ.nextval as userId from DUAL
+    <insert id="addUser" parameterType="newUser" databaseId="oracle" keyColumn="user_id">
+    	<selectKey keyProperty="userId" resultType="Integer" order="BEFORE">
+    		select users_seq.nextval as userId from dual
     	</selectKey>
-        insert into users (user_id, username, hashed_password, full_name, email, bio, birthdate, date_time_joined) values (
-            #{userId}, #{username}, #{hashedPassword}, #{fullName}, #{email}, #{bio}, #{birthdate}, systimestamp
+        insert into users (user_id, username, hashed_password, full_name, email, bio, birthdate, profile_picture_link, date_time_joined) values (
+            #{userId}, #{username}, #{hashedPassword}, #{fullName}, #{email}, #{bio}, #{birthdate}, #{profilePictureLink}, systimestamp
+        )
+    </insert>
+
+	<insert id="addUser" parameterType="newUser" databaseId="mysql" useGeneratedKeys="true" keyProperty="userId" keyColumn="user_id">
+        insert into users (username, hashed_password, full_name, email, bio, birthdate, profile_picture_link, date_time_joined) values (
+            #{username}, #{hashedPassword}, #{fullName}, #{email}, #{bio}, #{birthdate}, #{profilePictureLink}, now()
         )
     </insert>
 

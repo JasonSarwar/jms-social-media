@@ -26,7 +26,12 @@
       </dataSource>
     </environment>
   </environments>
-  
+
+  <databaseIdProvider type="DB_VENDOR">
+	<property name="MySQL" value="mysql"/>
+	<property name="Oracle" value="oracle" />
+  </databaseIdProvider>
+
   <mappers>
     <mapper resource="com/jms/socialmedia/mybatis/UsersMapper.xml"/>
     <mapper resource="com/jms/socialmedia/mybatis/PostsMapper.xml"/>
@@ -34,4 +39,5 @@
     <mapper resource="com/jms/socialmedia/mybatis/TagsMapper.xml"/>
     <mapper resource="com/jms/socialmedia/mybatis/FollowersMapper.xml"/>
   </mappers>
+
 </configuration>

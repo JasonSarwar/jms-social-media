@@ -13,13 +13,20 @@
         where post_id = #{id}
     </select>
 
-    <insert id="addTags">
+    <insert id="addTags" databaseId="oracle">
     	insert all
     	<foreach item="tag" collection="tags">
     		into posts_tags (post_id, tag) values
     		(#{postId}, #{tag})
     	</foreach>
     	select * from dual
+    </insert>
+
+    <insert id="addTags" databaseId="mysql">
+    	insert into posts_tags values
+    	<foreach item="tag" collection="tags" separator=",">
+    		(#{postId}, #{tag})
+    	</foreach>
     </insert>
 
 	<delete id="removePostTags">

@@ -7,14 +7,10 @@
     <sql id="retrievePosts">
 		select posts.post_id as post_id, posts.user_id as user_id, full_name, username, 
         profile_picture_link, posts.text as text, posts.timestamp as timestamp
-        from posts, users    
+        from posts
+        inner join users
+        on posts.user_id = users.user_id
     </sql>
-
-	<sql id="whereForPosts">
-		<where>
-			posts.user_id = users.user_id
-		</where>
-	</sql>
 
     <select id="getNumberOfPosts" resultType="int">
         select count(1) from posts
@@ -22,40 +18,47 @@
     
     <select id="getPost" parameterType="int" resultType="post">
         <include refid="retrievePosts"></include>
-        <include refid="whereForPosts"></include>
-        and post_id = #{id}
+        where post_id = #{id}
     </select>
     
     <select id="getPosts" resultType="post">
         <include refid="retrievePosts"></include>
         
         <if test="tag != null">
-        , posts_tags
+        	inner join posts_tags
+        	on posts.post_id = posts_tags.post_id
         </if>
         
-        <include refid="whereForPosts"></include>
-        
-        <if test="userIds != null and !userIds.isEmpty()">
-        	AND posts.user_id in
-        	<foreach item="userId" collection="userIds" open="(" separator="," close=")">
-        		#{userId}
-        	</foreach>
-        </if>
-        <if test="username != null">
-        	AND username = #{username}
-        </if>
-        <if test="tag != null">
-        	AND posts.post_id = posts_tags.post_id AND posts_tags.tag = lower(#{tag})
-        </if>
-        <if test="onDate != null">
-        	AND TO_CHAR(timestamp, 'MM-DD-YYYY') = #{onDate}
-        </if>
-        <if test="beforeDate != null">
-        	AND (TO_DATE(#{beforeDate}, 'MM-DD-YYYY') + INTERVAL '1' DAY) >= timestamp
-        </if>
-        <if test="afterDate != null">
-        	AND timestamp >= TO_DATE(#{afterDate}, 'MM-DD-YYYY') 
-        </if>
+        <where>
+	        <if test="userIds != null and !userIds.isEmpty()">
+	        	AND posts.user_id in
+	        	<foreach item="userId" collection="userIds" open="(" separator="," close=")">
+	        		#{userId}
+	        	</foreach>
+	        </if>
+	        <if test="username != null">
+	        	AND lower(username) = lower(#{username})
+	        </if>
+	        <if test="tag != null">
+	        	AND posts_tags.tag = lower(#{tag})
+	        </if>
+	        <if test="onDate != null">
+	        	<if test="_databaseId == 'oracle'">
+	        		AND TO_CHAR(timestamp, 'MM-DD-YYYY') = #{onDate}
+	        	</if>
+	        </if>
+	        <if test="beforeDate != null">
+	        	<if test="_databaseId == 'oracle'">
+	        		AND (TO_DATE(#{beforeDate}, 'MM-DD-YYYY') + INTERVAL '1' DAY) >= timestamp
+	        	</if>
+	        </if>
+	        <if test="afterDate != null">
+	        	<if test="_databaseId == 'oracle'">
+	        		AND timestamp >= TO_DATE(#{afterDate}, 'MM-DD-YYYY')
+	        	</if>
+	        </if>
+        </where>
+
         order by timestamp desc
     </select>
 
@@ -64,12 +67,18 @@
         where post_id = #{id}
     </select>
     
-    <insert id="addPost" parameterType="post" keyColumn="post_id">
+    <insert id="addPost" parameterType="post" databaseId="oracle" keyColumn="post_id">
     	<selectKey keyProperty="postId" resultType="int" order="BEFORE">
     		select POSTS_SEQ.nextval as postId from DUAL
     	</selectKey>
         insert into posts (post_id, user_id, text, timestamp) values (
             #{postId}, #{userId}, #{text}, systimestamp
+        )
+    </insert>
+
+	<insert id="addPost" parameterType="post" databaseId="mysql" useGeneratedKeys="true" keyProperty="postId" keyColumn="post_id">
+        insert into posts (user_id, text, timestamp) values (
+            #{userId}, #{text}, now()
         )
     </insert>
 
@@ -86,10 +95,9 @@
 
 	<select id="getLikedPostsByUserId" parameterType="int" resultType="post">
 		<include refid="retrievePosts"></include>
-		, posts_likes
-		<include refid="whereForPosts"></include>
-		and posts.post_id = posts_likes.post_id
-		and posts_likes.user_id = #{id}
+		inner join posts_likes
+		on posts.post_id = posts_likes.post_id
+		where posts_likes.user_id = #{id}
 		order by posts_likes.timestamp desc
 	</select>
 
@@ -98,9 +106,15 @@
 		where post_id = #{id}
 	</select>
 
-	<insert id="likePost">
+	<insert id="likePost" databaseId="oracle">
 		insert into posts_likes (post_id, user_id, timestamp) values (
             #{postId}, #{userId}, systimestamp
+        )
+	</insert>
+
+	<insert id="likePost" databaseId="mysql">
+		insert into posts_likes (post_id, user_id, timestamp) values (
+            #{postId}, #{userId}, now()
         )
 	</insert>
 
@@ -111,11 +125,9 @@
 
     <select id="getCommentedPostsByUserId" parameterType="int" resultType="post">
 		<include refid="retrievePosts"></include>
-		, comments
-		<include refid="whereForPosts"></include>
-		
-		and posts.post_id = comments.post_id
-		and comments.user_id = #{id}
+		inner join comments
+		on posts.post_id = comments.post_id
+		where comments.user_id = #{id}
 		order by comments.timestamp desc
 	</select>
 
