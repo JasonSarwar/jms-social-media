@@ -57,7 +57,7 @@ public class MockDataService implements DataService {
 
 	@Override
 	public User getUserLoginInfoByString(String username) {
-		return usersById.values().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
+		return usersById.values().stream().filter(user -> user.getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
 	}
 
 	@Override
@@ -73,12 +73,12 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean isUsernameTaken(String username) {
-		return usersById.values().stream().anyMatch(user -> user.getUsername().equals(username));
+		return usersById.values().stream().anyMatch(user -> user.getUsername().equalsIgnoreCase(username));
 	}
 
 	@Override
 	public boolean isEmailTaken(String email) {
-		return userPagesById.values().stream().anyMatch(userPage -> userPage.getEmail().equals(email));
+		return userPagesById.values().stream().anyMatch(userPage -> userPage.getEmail().equalsIgnoreCase(email));
 	}
 
 	@Override

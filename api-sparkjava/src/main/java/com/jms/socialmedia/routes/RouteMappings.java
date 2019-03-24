@@ -1,5 +1,6 @@
 package com.jms.socialmedia.routes;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +14,6 @@ import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.handlers.CommentRequestHandler;
 import com.jms.socialmedia.handlers.FollowRequestHandler;
 import com.jms.socialmedia.handlers.LikeRequestHandler;
-import com.jms.socialmedia.handlers.LoginRequestHandler;
 import com.jms.socialmedia.handlers.PostRequestHandler;
 import com.jms.socialmedia.handlers.UserRequestHandler;
 import com.jms.socialmedia.password.PasswordService;
@@ -37,9 +37,8 @@ public class RouteMappings {
 	
 	public final void start() {
 
-		Gson gson = new GsonBuilder().create();
+		Gson gson = createGson();
 		UserRequestHandler userRequestHandler = new UserRequestHandler(dataService, passwordService, gson);
-		LoginRequestHandler loginRequestHandler = new LoginRequestHandler(dataService, passwordService, gson);
 		PostRequestHandler postRequestHandler = new PostRequestHandler(dataService, gson);
 		CommentRequestHandler commentRequestHandler = new CommentRequestHandler(dataService, gson);
 		LikeRequestHandler likeRequestHandler = new LikeRequestHandler(dataService, gson);
@@ -119,15 +118,19 @@ public class RouteMappings {
 
 				Spark.get("/user/:username/pageinfo", contentType, userRequestHandler::handleGetUserPage, contentWriter);
 
-				Spark.put("/user/password", contentType, userRequestHandler::handleEditUserPassword, contentWriter);
-				
-				/** Login Request Mappings **/
-				
-				Spark.post("/retrieveSession", contentType, loginRequestHandler::handleSessionRetrieval, contentWriter);
+				Spark.get("/users/isUsernameTaken/:username", contentType, userRequestHandler::handleGetIsUsernameTaken, contentWriter);
 
-				Spark.post("/login", contentType, loginRequestHandler::handleLogin, contentWriter);
-				
-				Spark.post("/logout", contentType, loginRequestHandler::handleLogout);
+				Spark.get("/users/isEmailTaken/:email", contentType, userRequestHandler::handleGetIsEmailTaken, contentWriter);
+
+				Spark.post("/user/add", contentType, userRequestHandler::handleAddUser, contentWriter);
+
+				Spark.put("/user/password", contentType, userRequestHandler::handleEditUserPassword, contentWriter);
+
+				Spark.post("/retrieveSession", contentType, userRequestHandler::handleSessionRetrieval, contentWriter);
+
+				Spark.post("/login", contentType, userRequestHandler::handleLogin, contentWriter);
+
+				Spark.post("/logout", contentType, userRequestHandler::handleLogout);
 
 			});
 		});
@@ -145,5 +148,11 @@ public class RouteMappings {
 
 	private void informAllListenersOnResponse(Request request, Response response) {
 		routeListeners.forEach(e -> e.onResponse(response));
+	}
+	
+	private Gson createGson() {
+		return new GsonBuilder()
+				.registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+				.create();
 	}
 }
