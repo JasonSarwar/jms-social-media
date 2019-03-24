@@ -45,13 +45,13 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public boolean isUsernamePresent(String username) {
-		return dataService.isUsernamePresent(username);
+	public boolean isUsernameTaken(String username) {
+		return dataService.isUsernameTaken(username);
 	}
 
 	@Override
-	public boolean isEmailPresent(String email) {
-		return dataService.isEmailPresent(email);
+	public boolean isEmailTaken(String email) {
+		return dataService.isEmailTaken(email);
 	}
 
 	@Override

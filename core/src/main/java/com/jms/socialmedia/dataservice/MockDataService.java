@@ -72,12 +72,12 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public boolean isUsernamePresent(String username) {
+	public boolean isUsernameTaken(String username) {
 		return usersById.values().stream().anyMatch(user -> user.getUsername().equals(username));
 	}
 
 	@Override
-	public boolean isEmailPresent(String email) {
+	public boolean isEmailTaken(String email) {
 		return userPagesById.values().stream().anyMatch(userPage -> userPage.getEmail().equals(email));
 	}
 

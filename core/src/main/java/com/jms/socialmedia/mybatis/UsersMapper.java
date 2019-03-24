@@ -10,9 +10,9 @@ import com.jms.socialmedia.model.UserPage;
 
 public interface UsersMapper {
 
-	int isUsernamePresent(String username);
+	int isUsernameTaken(String username);
 
-	int isEmailPresent(String email);
+	int isEmailTaken(String email);
 
 	int addUser(NewUser newUser);
 

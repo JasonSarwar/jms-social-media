@@ -18,18 +18,18 @@ public class SqlSessionUsersMapper implements UsersMapper {
 	}
 
 	@Override
-	public int isUsernamePresent(String username) {
+	public int isUsernameTaken(String username) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			UsersMapper mapper = session.getMapper(UsersMapper.class);
-			return mapper.isUsernamePresent(username);
+			return mapper.isUsernameTaken(username);
 		}
 	}
 	
 	@Override
-	public int isEmailPresent(String email) {
+	public int isEmailTaken(String email) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			UsersMapper mapper = session.getMapper(UsersMapper.class);
-			return mapper.isEmailPresent(email);
+			return mapper.isEmailTaken(email);
 		}
 	}
 	

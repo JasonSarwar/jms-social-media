@@ -8,11 +8,11 @@
         select count(1) from users
     </select>
     
-    <select id="isUsernamePresent" parameterType="String" resultType="int">
+    <select id="isUsernameTaken" parameterType="String" resultType="int">
         select count(1) from users where lower(username) = lower(#{username})
     </select>    
     
-    <select id="isEmailPresent" parameterType="String" resultType="int">
+    <select id="isEmailTaken" parameterType="String" resultType="int">
         select count(1) from users where lower(email) = lower(#{email})
     </select>
     

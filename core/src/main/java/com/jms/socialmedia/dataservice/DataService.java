@@ -22,9 +22,9 @@ public interface DataService {
 
 	Collection<User> getUsernamesByIds(Collection<Integer> userIds);
 
-	boolean isUsernamePresent(String username);
+	boolean isUsernameTaken(String username);
 
-	boolean isEmailPresent(String email);
+	boolean isEmailTaken(String email);
 
 	boolean addUser(NewUser newUser);
 

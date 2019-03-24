@@ -71,13 +71,13 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public boolean isUsernamePresent(String username) {
-		return usersMapper.isUsernamePresent(username) > 0;
+	public boolean isUsernameTaken(String username) {
+		return usersMapper.isUsernameTaken(username) > 0;
 	}
 
 	@Override
-	public boolean isEmailPresent(String email) {
-		return usersMapper.isEmailPresent(email) > 0;
+	public boolean isEmailTaken(String email) {
+		return usersMapper.isEmailTaken(email) > 0;
 	}
 
 	@Override
