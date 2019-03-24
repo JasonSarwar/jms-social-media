@@ -12,7 +12,7 @@ public class UserPage {
 	private String fullName;
 	private String email;
 	private String bio;
-	private LocalDate birthdate;
+	private LocalDate birthDate;
 	private LocalDateTime dateTimeJoined;
 	private String profilePictureLink;
 	private final Collection<Integer> followersUserIds;
@@ -63,12 +63,12 @@ public class UserPage {
 		this.bio = bio;
 	}
 
-	public final LocalDate getBirthdate() {
-		return birthdate;
+	public final LocalDate getBirthDate() {
+		return birthDate;
 	}
 
-	public final void setBirthdate(LocalDate birthdate) {
-		this.birthdate = birthdate;
+	public final void setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
 	}
 
 	public final LocalDateTime getDateTimeJoined() {

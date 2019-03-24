@@ -22,6 +22,10 @@ public interface DataService {
 
 	Collection<User> getUsernamesByIds(Collection<Integer> userIds);
 
+	boolean isUsernamePresent(String username);
+
+	boolean isEmailPresent(String email);
+
 	boolean addUser(NewUser newUser);
 
 	boolean editPassword(Integer userId, String hashedPassword);

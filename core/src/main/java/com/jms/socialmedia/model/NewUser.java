@@ -1,32 +1,19 @@
 package com.jms.socialmedia.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
-public class NewUser {
+import com.google.common.base.MoreObjects;
 
-	private Integer userId;
-	private String username;
+public class NewUser extends User {
+
 	private String password1;
 	private String password2;
-	private String hashedPassword;
-	private String fullName;
 	private String email;
 	private String bio;
-	private LocalDate birthdate;
+	private LocalDate birthDate;
 	private String profilePictureLink;
 	
-	public final Integer getUserId() {
-		return userId;
-	}
-	public final void setUserId(Integer userId) {
-		this.userId = userId;
-	}
-	public final String getUsername() {
-		return username;
-	}
-	public final void setUsername(String username) {
-		this.username = username;
-	}
 	public final String getPassword1() {
 		return password1;
 	}
@@ -38,18 +25,6 @@ public class NewUser {
 	}
 	public final void setPassword2(String password2) {
 		this.password2 = password2;
-	}
-	public final String getHashedPassword() {
-		return hashedPassword;
-	}
-	public final void setHashedPassword(String hashedPassword) {
-		this.hashedPassword = hashedPassword;
-	}
-	public final String getFullName() {
-		return fullName;
-	}
-	public final void setFullName(String fullName) {
-		this.fullName = fullName;
 	}
 	public final String getEmail() {
 		return email;
@@ -63,11 +38,11 @@ public class NewUser {
 	public final void setBio(String bio) {
 		this.bio = bio;
 	}
-	public final LocalDate getBirthdate() {
-		return birthdate;
+	public final LocalDate getBirthDate() {
+		return birthDate;
 	}
-	public final void setBirthdate(LocalDate birthdate) {
-		this.birthdate = birthdate;
+	public final void setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
 	}
 	public final String getProfilePictureLink() {
 		return profilePictureLink;
@@ -75,6 +50,47 @@ public class NewUser {
 	public final void setProfilePictureLink(String profilePictureLink) {
 		this.profilePictureLink = profilePictureLink;
 	}
+	public final boolean passwordsMatch() {
+		return password1.equals(password2);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(userId, username, password1, password2, hashedPassword, fullName, 
+				email, bio, birthDate, profilePictureLink);
+	}
 	
-	
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) return true;
+		if (other == null || other.getClass() != getClass()) return false;
+			
+		NewUser newUser = (NewUser) other;
+		return Objects.equals(userId, newUser.userId)
+				&& Objects.equals(username, newUser.username)
+				&& Objects.equals(password1, newUser.password1)
+				&& Objects.equals(password2, newUser.password2)
+				&& Objects.equals(hashedPassword, newUser.hashedPassword)
+				&& Objects.equals(fullName, newUser.fullName)
+				&& Objects.equals(email, newUser.email)
+				&& Objects.equals(bio, newUser.bio)
+				&& Objects.equals(birthDate, newUser.birthDate)
+				&& Objects.equals(profilePictureLink, newUser.profilePictureLink);
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("userId", userId)
+				.add("username", username)
+				.add("password1", "*****")
+				.add("password2", "*****")
+				.add("hashedPassword", "*****")
+				.add("fullName", fullName)
+				.add("email", email)
+				.add("bio", bio)
+				.add("birthDate", birthDate)
+				.add("profilePictureLink", profilePictureLink)
+				.toString();
+	}
 }

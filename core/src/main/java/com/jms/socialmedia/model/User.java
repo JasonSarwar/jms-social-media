@@ -4,10 +4,10 @@ import com.google.common.base.MoreObjects;
 
 public class User {
 
-	private Integer userId;
-	private String username;
-	private String fullName;
-	private String hashedPassword;
+	protected Integer userId;
+	protected String username;
+	protected String fullName;
+	protected String hashedPassword;
 	
 	public User() {
 	}
@@ -57,7 +57,7 @@ public class User {
 				.add("userId", userId)
 				.add("username", username)
 				.add("fullName", fullName)
-				.add("hashedPassword", hashedPassword)
+				.add("hashedPassword", "*****")
 				.toString();
 	}
 }

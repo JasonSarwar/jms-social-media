@@ -72,6 +72,16 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
+	public boolean isUsernamePresent(String username) {
+		return usersById.values().stream().anyMatch(user -> user.getUsername().equals(username));
+	}
+
+	@Override
+	public boolean isEmailPresent(String email) {
+		return userPagesById.values().stream().anyMatch(userPage -> userPage.getEmail().equals(email));
+	}
+
+	@Override
 	public boolean addUser(NewUser newUser) {
 		User user = new User(usersById.size() + 1, newUser.getUsername(), newUser.getFullName(), newUser.getHashedPassword());
 		usersById.put(user.getUserId(), user);
@@ -81,7 +91,7 @@ public class MockDataService implements DataService {
 		userPage.setFullName(newUser.getFullName());
 		userPage.setEmail(newUser.getEmail());
 		userPage.setBio(newUser.getBio());
-		userPage.setBirthdate(newUser.getBirthdate());
+		userPage.setBirthDate(newUser.getBirthDate());
 		userPage.setProfilePictureLink(newUser.getProfilePictureLink());
 		userPage.setDateTimeJoined(LocalDateTime.now());
 		userPagesById.put(userPage.getUserId(), userPage);

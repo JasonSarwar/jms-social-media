@@ -45,6 +45,16 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
+	public boolean isUsernamePresent(String username) {
+		return dataService.isUsernamePresent(username);
+	}
+
+	@Override
+	public boolean isEmailPresent(String email) {
+		return dataService.isEmailPresent(email);
+	}
+
+	@Override
 	public boolean addUser(NewUser newUser) {
 		return dataService.addUser(newUser);
 	}
