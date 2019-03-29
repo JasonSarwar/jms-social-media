@@ -15,3 +15,9 @@ dockerbuild:
 	
 dockerrun: dockerbuild
 	docker run -p 4567:4567 --name jms-social-media jms-social-media
+
+mavenclean:
+	mvn clean
+
+gradleclean:
+	gradle clean
