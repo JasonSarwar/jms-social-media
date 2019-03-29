@@ -14,7 +14,7 @@ make mavenrun
 ```
 or run the maven_install script (maven_install.bat for Windows or maven_install.sh for Linux/Mac) and then run 
 ```bash
-mvn exec:java
+mvn exec:java -Dexec.mainClass="com.jms.socialmedia.app.App"
 ```
 
 To run with Gradle:

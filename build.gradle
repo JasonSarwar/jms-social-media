@@ -1,10 +1,16 @@
+// root
+
 allprojects {
-    version = '1.0'
+    version = '1.0-SNAPSHOT'
 }
 
 subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    sourceCompatibility='11.0.2'
+
     repositories {
-        // You can declare any Maven/Ivy/file repository here.
         mavenCentral()
     }
 }
