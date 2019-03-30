@@ -58,12 +58,20 @@ public class UserRequestHandler extends RequestHandler {
 		return dataService.getUsernamesByIds(userIds);
 	}
 
-	public Boolean handleGetIsUsernameTaken(Request request, Response response) throws IOException {
-		return dataService.isUsernameTaken(request.params(":username"));
+	public Boolean handleIsUsernameTaken(Request request, Response response) throws IOException {
+		String username = request.params(":username");
+		if (!username.matches("^[\\w\\d_]+$")) {
+			throw new BadRequestException("Invalid Username");
+		}
+		return dataService.isUsernameTaken(username);
 	}
 
-	public Boolean handleGetIsEmailTaken(Request request, Response response) throws IOException {
-		return dataService.isEmailTaken(request.params(":email"));
+	public Boolean handleIsEmailTaken(Request request, Response response) throws IOException {
+		String email = request.params(":email");
+		if (!email.matches("^[\\w\\d_.]+@[\\w\\d_.]+\\.[\\w\\d_.]+$")) {
+			throw new BadRequestException("Invalid Email Address");
+		}
+		return dataService.isEmailTaken(email);
 	}
 
 	public LoginSuccess handleAddUser(Request request, Response response) throws IOException {

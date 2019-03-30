@@ -118,9 +118,9 @@ public class RouteMappings {
 
 				Spark.get("/user/:username/pageinfo", contentType, userRequestHandler::handleGetUserPage, contentWriter);
 
-				Spark.get("/users/isUsernameTaken/:username", contentType, userRequestHandler::handleGetIsUsernameTaken, contentWriter);
+				Spark.get("/users/isUsernameTaken/:username", contentType, userRequestHandler::handleIsUsernameTaken, contentWriter);
 
-				Spark.get("/users/isEmailTaken/:email", contentType, userRequestHandler::handleGetIsEmailTaken, contentWriter);
+				Spark.get("/users/isEmailTaken/:email", contentType, userRequestHandler::handleIsEmailTaken, contentWriter);
 
 				Spark.post("/user/add", contentType, userRequestHandler::handleAddUser, contentWriter);
 
