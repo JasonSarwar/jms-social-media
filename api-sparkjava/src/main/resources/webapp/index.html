@@ -26,6 +26,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular-route.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular-sanitize.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular-messages.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular-cookies.min.js"></script>
 
 		<script src="js/app.js"></script>
 		<script src="js/controllers.js"></script>
@@ -33,7 +34,7 @@
 		<script src="js/filters.js"></script>
 	</head>
 
-	<body ng-app="mysocialmedia" ng-controller="MainController">
+	<body ng-app="mysocialmedia" ng-controller="MainController" ng-cloak>
 		<div ng-include="'partials/navbar.html'"></div>
 
 		<div class="padTop alert alert-{{alertType}}" role="alert" ng-show="alertText">{{alertText}}</div>

@@ -1,5 +1,4 @@
 <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -7,16 +6,16 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#!/posts">All Posts</a>
+        <a class="nav-link" href="#!/posts"><i class="fas fa-file-alt"></i> All Posts</a>
       </li>
       <li class="nav-item active" ng-hide="firstname">
-        <a class="nav-link" href="#!/login">Log in</a>
+        <a class="nav-link" href="#!/login"><i class="fas fa-sign-in-alt"></i> Log in</a>
       </li>
       <li class="nav-item active" ng-hide="firstname">
-        <a class="nav-link" href="#!/signup">Sign up</a>
+        <a class="nav-link" href="#!/signup"><i class="fas fa-user-plus"></i> Sign up</a>
       </li>
       <li class="nav-item dropdown" ng-show="firstname">
         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -30,12 +29,12 @@
         </div>
       </li>
       <li class="nav-item active" ng-show="firstname">
-        <a class="nav-link" href="#" ng-click="logout()">Log out</a>
+        <a class="nav-link" href="#" ng-click="logout()"><i class="fas fa-sign-out-alt"></i> Log out</a>
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i> Search</button>
     </form>
   </div>
 </nav>
