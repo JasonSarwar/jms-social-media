@@ -344,6 +344,36 @@
 	};
   };
 
+  	var signupService = function ($http) {
+		
+		var isUsernameTaken = function (username) {
+			return $http.get("/api/users/isUsernameTaken/" + username)
+		    	.then(function (response) {
+		    		return response.data;
+		    	});
+		};
+		
+		var isEmailTaken = function (email) {
+			return $http.get("/api/users/isEmailTaken/" + email)
+		    	.then(function (response) {
+		    		return response.data;
+		    	});
+		};
+
+		var addUser = function (newUser) {
+			return $http.post("/api/user/add", newUser)
+				.then(function (response) {
+		    		return response.data;
+		    	});
+		};
+
+		return {
+			isUsernameTaken: isUsernameTaken,
+			isEmailTaken: isEmailTaken,
+			addUser: addUser
+		};
+	};
+  
   var alertService = function($rootScope) {
 	
 	var error = function(errorText){
@@ -366,5 +396,6 @@
   	.factory("postsService", postsService)
   	.factory("usersService", usersService)
   	.factory("loginService", loginService)
+  	.factory("signupService", signupService)
   	.factory("alertService", alertService);
 }());

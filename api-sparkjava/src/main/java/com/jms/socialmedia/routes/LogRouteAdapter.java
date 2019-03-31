@@ -41,6 +41,9 @@ public class LogRouteAdapter implements RouteListener {
 	public void onResponse(Response response) {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("Response Status: " + response.status() + "\n");
+		stringBuilder.append("Headers:\n");
+		response.raw().getHeaderNames().stream().forEach(header -> stringBuilder.append(header).append(" - ").append(response.raw().getHeader(header)).append('\n'));
+		stringBuilder.append('\n');
 		stringBuilder.append(response.body());
 		stringBuilder.append("\n----------\n");
 		LOGGER.info(stringBuilder.toString());

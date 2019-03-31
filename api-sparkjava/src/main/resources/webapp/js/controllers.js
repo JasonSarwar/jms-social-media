@@ -1,6 +1,8 @@
 (function() {
 
-	var MainController = function($scope, $location, $route, alertService, loginService, usersService) {
+	let sessionCookie = "jms-social-media-session";
+
+	var MainController = function($scope, $location, $route, $cookies, alertService, loginService, usersService) {
 		$scope.$on('$routeChangeStart', function(scope, next, current){
 			alertService.clearAlerts();
 		});
@@ -8,46 +10,34 @@
 		loginService.retrieveSession()
 			.then(function (data) {
 				if (data) {
-					$scope.userId = data.userId;
-					$scope.username = data.username;
-					$scope.firstname = data.firstname;
-					$scope.token = data.token;
+					$scope.createSession(data);
 					$route.reload();
+				} else {
+					$cookies.remove(sessionCookie);
+					$location.path("/posts");
 				}
 		  	}, function (error) {
-	
+		  		$cookies.remove(sessionCookie);
+		  		$location.path("/posts");
 		  	});
 
-		$scope.attemptLogin = function (user, password) {
-			loginService.attemptLogin(user, password)
-				.then(function (data) {
-					$scope.loginError = null;
-					$scope.password = null;
-					$scope.userId = data.userId;
-					$scope.username = data.username;
-					$scope.firstname = data.firstname;
-					$scope.token = data.token;
-
-					if ($location.path() == "/login") {
-						$location.path("/home");
-					}
-			  	}, function (error) {
-			  		$scope.loginError = error.data;
-			  		$scope.password = null;
-			  	});
+		$scope.createSession = function (data) {
+			$scope.loginError = undefined;
+			$scope.password = undefined;
+			$scope.userId = data.userId;
+			$scope.username = data.username;
+			$scope.firstname = data.firstname;
+			$scope.token = data.token;
 		};
 
 		$scope.logout = function () {
 			loginService.logout()
-				.then(function (response) {
-					
-				}, function (error) {
-					
-				});
+
 			$scope.userId = null;
 			$scope.username = null;
 			$scope.firstname = null;
 			$scope.token = null;
+			$cookies.remove(sessionCookie);
 			$location.path("/home");
 		};
 
@@ -63,10 +53,26 @@
 										$scope.modalFollowingUserIds = data;
 									});
 							}
-							$('#usersModal').modal();
+							angular.element('#usersModal').modal();
 						}
 					});
 			}
+		};
+	};
+
+	var LoginController = function($scope, $location, loginService) {
+		$scope.attemptLogin = function (user, password) {
+			loginService.attemptLogin(user, password)
+				.then(function (data) {
+					$scope.createSession(data);
+
+					if ($location.path() == "/login") {
+						$location.path("/home");
+					}
+			  	}, function (error) {
+			  		$scope.loginError = error.data;
+			  		$scope.password = null;
+			  	});
 		};
 	};
 
@@ -265,7 +271,7 @@
 			} else {
 				usersService.editPassword($scope.userId, currentPassword, newPassword1, $scope.token)
 					.then(function (data) {
-						alert("Password Changed Successfully")
+						alert("Password Changed Successfully");
 						$location.path("/home");
 					}, function (error) {
 						$scope.errorText = error.data;
@@ -358,9 +364,114 @@
 		};
 	};
 
+	var SignupController = function($scope, $location, signupService) {
+		
+		if ($scope.userId) {
+			$location.path("/home");
+		}
+		
+		$scope.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		let monthsWith31Days = ["January", "March", "May", "July", "August", "October", "December"];
+		let monthsWith30Days = ["April", "June", "September", "November"];
+		
+		$scope.days = [];
+		for (let i = 1; i <= 31; i++) {
+			$scope.days.push(i);
+		}
+
+		$scope.years = [];
+		let lastYear = new Date().getFullYear() - 1;
+		for (let i = lastYear - 150; i <= lastYear; i++) {
+			$scope.years.push(i);
+		}
+
+		let adjustDays = function(noOfDays) {
+			while ($scope.days.length < noOfDays) {
+				$scope.days.push($scope.days.length + 1);
+			}
+			while ($scope.days.length > noOfDays) {
+				$scope.days.splice($scope.days.length -1, 1);
+			}
+		};
+		
+		let adjustIfFebruary = function() {
+			if ($scope.newUserMonth == "February") {
+				let noOfDays = 29;
+				if ($scope.newUserYear % 4 != 0) {
+					noOfDays = 28;
+				} else if ($scope.newUserYear % 100 != 0) {
+					noOfDays = 29
+				} else if ($scope.newUserYear % 400 != 0) {
+					noOfDays = 28
+				}
+				adjustDays(noOfDays);
+			}
+		};
+		
+		$scope.changeMonth = function() {
+			adjustIfFebruary();
+			if (monthsWith31Days.indexOf($scope.newUserMonth) > -1) {
+				adjustDays(31);
+			} else if (monthsWith30Days.indexOf($scope.newUserMonth) > -1) {
+				adjustDays(30);
+			}
+		};
+		
+		$scope.changeYear = function() {
+			adjustIfFebruary();
+		};
+
+		$scope.passwordStrength = function (field) {
+
+			if (!field.$error || angular.equals(field.$error, {})) {
+				let password = field.$viewValue;
+
+				let score = Math.floor(password.length / 10);
+				if (password.match(/\d/)) {
+					score++;
+				}
+				if (password.match(/[a-z]/)) {
+					score++;
+				}
+				if (password.match(/[A-Z]/)) {
+					score++;
+				}
+				if (password.match(/[~`!@#\$%\^&\*()\-_+=\[\]{}|\\:";',\.\/<>?]/g)) {
+					score += 2;
+				}
+
+				if (score > 6) {
+					$scope.passwordFeedback = "Strong";
+				} else if (score > 4) {
+					$scope.passwordFeedback = "Good";
+				} else if (score > 2) {
+					$scope.passwordFeedback = "Average";
+				} else {
+					$scope.passwordFeedback = "Weak";
+				}
+			};
+		};
+
+		$scope.signup = function() {
+			$scope.signupError = undefined;
+			if ($scope.signupForm.$valid) {
+				$scope.newUser.birthDate = $scope.newUserMonth + " " + $scope.newUserDay + ", " + $scope.newUserYear;
+				signupService.addUser($scope.newUser)
+					.then(function (data) {
+						$scope.createSession(data);
+						alert("Your account has been created!");
+						$location.path("/user/" + data.username);
+					}, function (error) {
+						$scope.signupError = error.data;
+					});
+			}
+		};
+	};
+
 	angular.module("mysocialmedia")
 		.controller("MainController", MainController)
 		.controller("HomeController", HomeController)
+		.controller("LoginController", LoginController)
 		.controller("LogoutController", LogoutController)
 		.controller("PostController", PostController)
 		.controller("PostsController", PostsController)
@@ -369,6 +480,7 @@
 		.controller("AddCommentController", AddCommentController)
 		.controller("EditPasswordController", EditPasswordController)
 		.controller("UserPageController", UserPageController)
-		.controller("UsersModalController", UsersModalController);
+		.controller("UsersModalController", UsersModalController)
+		.controller("SignupController", SignupController);
 	
 }());

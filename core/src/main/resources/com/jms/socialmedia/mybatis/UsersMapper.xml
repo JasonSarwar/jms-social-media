@@ -20,14 +20,14 @@
     	<selectKey keyProperty="userId" resultType="Integer" order="BEFORE">
     		select users_seq.nextval as userId from dual
     	</selectKey>
-        insert into users (user_id, username, hashed_password, full_name, email, bio, birth_date, profile_picture_link, date_time_joined) values (
-            #{userId}, #{username}, #{hashedPassword}, #{fullName}, #{email}, #{bio}, #{birthDate}, #{profilePictureLink}, systimestamp
+        insert into users (user_id, username, hashed_password, full_name, email, birth_date, profile_picture_link, date_time_joined) values (
+            #{userId}, #{username}, #{hashedPassword}, #{fullName}, #{email}, #{birthDate}, #{profilePictureLink}, systimestamp
         )
     </insert>
 
 	<insert id="addUser" parameterType="newUser" databaseId="mysql" useGeneratedKeys="true" keyProperty="userId" keyColumn="user_id">
-        insert into users (username, hashed_password, full_name, email, bio, birth_date, profile_picture_link, date_time_joined) values (
-            #{username}, #{hashedPassword}, #{fullName}, #{email}, #{bio}, #{birthDate}, #{profilePictureLink}, now()
+        insert into users (username, hashed_password, full_name, email, birth_date, profile_picture_link, date_time_joined) values (
+            #{username}, #{hashedPassword}, #{fullName}, #{email}, #{birthDate}, #{profilePictureLink}, now()
         )
     </insert>
 

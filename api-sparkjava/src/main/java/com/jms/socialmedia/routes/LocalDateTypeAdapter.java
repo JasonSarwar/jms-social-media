@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -14,27 +15,18 @@ import com.jms.socialmedia.exception.BadRequestException;
 
 public class LocalDateTypeAdapter implements JsonDeserializer<LocalDate>{
 
-	DateTimeFormatter formatter1 = DateTimeFormatter.ISO_LOCAL_DATE; // 1970-01-01 yyyy-mm-dd
-	String regex1 = "^\\d{4}-\\d{2}-\\d{2}$"; // January 01, 1970
-
-	DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("MMMM dd, yyyy"); // January 01, 1970
-	String regex2 = "^\\w{4,} \\d{2}, \\d{4}$"; // January 01, 1970
-
-	DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("MMM dd, yyyy"); // Jan 01, 1970
-	String regex3 = "^\\w{3} \\d{2}, \\d{4}$"; // Jan 01, 1970
-
-	DateTimeFormatter formatter4 = DateTimeFormatter.ofPattern("MM-dd-yyyy"); // 01-01-1970
-	String regex4 = "^\\d{2}-\\d{2}-\\d{4}$"; // 01-01-1970
-
-	DateTimeFormatter formatter5 = DateTimeFormatter.ofPattern("MM/dd/yyyy"); // 01/01/1970
-	String regex5 = "^\\d{2}/\\d{2}/\\d{4}$"; // 01/01/1970
-
-	DateTimeFormatter formatter6 = DateTimeFormatter.ofPattern("MM/dd/yy"); // 01/01/70
-	String regex6 = "^\\d{2}/\\d{2}/\\d{2}$"; // 01/01/70
-
-	private Map<String, DateTimeFormatter> formatters = Map.of(
-			regex1, formatter1, regex2, formatter2, regex3, formatter3, 
-			regex4, formatter4, regex5, formatter5, regex6, formatter6);
+	private Map<String, String> mappings = Map.of(
+			"^\\w{4,} \\d{2}, \\d{4}$", "MMMM dd, yyyy",	// January 01, 1970
+			"^\\w{4,} \\d{1}, \\d{4}$", "MMMM d, yyyy",		// January 1, 1970
+			"^\\w{3} \\d{2}, \\d{4}$", "MMM dd, yyyy",		// Jan 01, 1970
+			"^\\w{3} \\d{1}, \\d{4}$", "MMM d, yyyy",		// Jan 1, 1970
+			"^\\d{4}-\\d{2}-\\d{2}$", "yyyy-MM-dd",			// 1970-01-01
+			"^\\d{2}-\\d{2}-\\d{4}$", "MM-dd-yyyy",			// 01-01-1970
+			"^\\d{2}/\\d{2}/\\d{4}$", "MM/dd/yyyy", 			// 01/01/1970
+			"^\\d{2}/\\d{2}/\\d{2}$", "MM/dd/yy"			// 01/01/70
+			);
+	
+	private Map<String, DateTimeFormatter> formatters = mappings.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> DateTimeFormatter.ofPattern(e.getValue())));
 	
 	@Override
 	public LocalDate deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) 
@@ -48,7 +40,7 @@ public class LocalDateTypeAdapter implements JsonDeserializer<LocalDate>{
 			} else {
 				
 		        String dateString = json.getAsString();
-		        DateTimeFormatter formatter = formatter1;
+		        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
 		        
 		        for (Map.Entry<String, DateTimeFormatter> entry : formatters.entrySet()) {
 		        	if (dateString.matches(entry.getKey())) {

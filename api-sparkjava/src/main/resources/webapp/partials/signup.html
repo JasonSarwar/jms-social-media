@@ -1,0 +1,134 @@
+<div class="row">
+	<div class="col-md-1"></div>
+	<div class="card bg-light col-md-5">
+		<article class="card-body mx-auto" style="width: 425px;">
+			<h4 class="card-title mt-3 text-center">Create Account</h4>
+			<form name="signupForm" novalidate="novalidate">
+				<div class="form-group input-group">
+					<div class="input-group-prepend">
+					    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+					</div>
+			        <input name="username" class="form-control" ng-model="newUser.username" placeholder="Username"
+			        	ng-class="" validatable-field type="text" ng-pattern="/^[\w\d_]+$/" maxlength=15 required username>
+	
+			        <div class="valid-feedback">
+			        	Looks good!
+			        </div>
+			        <div class="invalid-feedback">
+			        	<div ng-messages="signupForm.username.$error">
+			        		<div ng-message="required">Username required</div>
+			        		<div ng-message="pattern">Invalid character</div>
+			        		<div ng-message="taken">Username taken</div>
+			        	</div>
+			        	<div ng-show="signupForm.username.$pending.taken"> Checking availability... </div>
+			        </div>
+			    </div>
+			    
+				<div class="form-group input-group">
+					<div class="input-group-prepend">
+					    <span class="input-group-text"> <i class="fa fa-user-alt"></i> </span>
+					</div>
+			        <input name="fullName" class="form-control" ng-model="newUser.fullName" placeholder="Full name" 
+			        		ng-class="" validatable-field type="text" required>
+			        
+			        <div class="valid-feedback">
+			        	Looks good!
+			        </div>
+			        <div class="invalid-feedback">
+			        	Full name required
+			        </div>
+			    </div>
+	
+			    <div class="form-group input-group">
+			    	<div class="input-group-prepend">
+					    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+					</div>
+			        <input name="email" class="form-control" ng-model="newUser.email" placeholder="Email address" 
+			        		ng-class="" validatable-field type="email" ng-pattern="/^[\w\d_.]+@[\w\d_.]+\.[\w\d_.]+$/" required email />
+			    
+			    	<div class="valid-feedback">
+			        	Looks good!
+			        </div>
+			        <div class="invalid-feedback">
+			        	<div ng-messages="signupForm.email.$error">
+			        		<div ng-message="required">Email address required</div>
+			        		<div ng-message="pattern">Invalid email address</div>
+			        		<div ng-message="taken">Email address taken</div>
+			        	</div>
+			        	<div ng-show="signupForm.email.$pending.taken"> Checking availability... </div>
+			        </div>
+	
+			    </div>
+	
+			    <div class="form-group input-group">
+			    	<div class="input-group-prepend">
+					    <span class="input-group-text"> <i class="fas fa-birthday-cake"></i> </span>
+					</div>
+					<select class="custom-select" name="month" ng-model="newUserMonth" ng-options="month for month in months" ng-change="changeMonth()" required>
+						<option value="" disabled selected>Month</option>
+					</select>
+					<select class="custom-select" name="day" ng-model="newUserDay" ng-options="day for day in days"  required>
+					    <option value="" disabled selected>Day</option>
+					</select>
+					<select class="custom-select" name="year" ng-model="newUserYear" ng-options="year for year in years" ng-change="changeYear()"  required>
+					    <option value="" disabled selected>Year</option>
+					</select>
+			    </div>
+	
+			    <div class="form-group input-group">
+			    	<div class="input-group-prepend">
+					    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+					</div>
+			        <input class="form-control" name="password1" ng-model="newUser.password1" placeholder="Create password" 
+			        	type="password" ng-pattern="/^[\S]+$/" ng-change="passwordStrength(signupForm.password1);signupForm.password2.$validate()" ng-class="" validatable-field minlength=5 maxlength=50 required>
+
+			        <div class="valid-feedback">
+			        	Password Strength: {{passwordFeedback}}
+			        </div>
+			        <div class="invalid-feedback">
+			        	<div ng-messages="signupForm.password1.$error">
+			        		<div ng-message="required">Password required</div>
+			        		<div ng-message="pattern">No spaces allowed</div>
+			        		<div ng-message="minlength">Password too short</div>
+			        		<div ng-message="maxlength">Password too long</div>
+			        	</div>
+			        </div>
+	
+			        <small id="passwordHelpBlock" class="form-text text-muted">
+					  Your password must be 5-50 characters long, can contain letters, numbers and special characters, and must not contain spaces.
+					</small>
+			    </div>
+	
+			    <div class="form-group input-group">
+			    	<div class="input-group-prepend">
+					    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+					</div>
+			        <input class="form-control" name="password2" ng-model="newUser.password2" placeholder="Repeat password" 
+			        	type="password" ng-pattern="/^[\S]+$/" ng-class="" validatable-field minlength=5 maxlength=50 required repeat-password>
+	
+			        <div class="valid-feedback">
+			        	Passwords Match!
+			        </div>
+			        <div class="invalid-feedback">
+			        	<div ng-messages="signupForm.password2.$error">
+			        		<div ng-message="required">Password required</div>
+			        		<div ng-message="pattern">No spaces allowed</div>
+			        		<div ng-message="minlength">Password too short</div>
+			        		<div ng-message="maxlength">Password too long</div>
+			        		<div ng-message="match">Passwords do not match</div>
+			        	</div>
+			        </div>
+			    </div>
+
+				<div class="alert alert-danger" role="alert" ng-show="signupError">{{signupError}}</div>
+			    <div class="form-group">
+			        <button type="submit" class="btn btn-primary btn-block" ng-click="signup()" ng-disabled="signupForm.$invalid"> Create Account  </button>
+			    </div>
+			</form>
+		</article>
+	</div>
+	<div class="card bg-light col-md-5">
+		<h4 class="card-title mt-3 text-center">Already have an account?</h4>
+		<div class="card-body" ng-include="'partials/login.html'"></div>
+	</div>
+</div>
