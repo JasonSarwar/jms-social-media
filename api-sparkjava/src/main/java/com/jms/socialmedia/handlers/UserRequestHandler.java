@@ -27,7 +27,7 @@ import spark.utils.StringUtils;
 
 public class UserRequestHandler extends RequestHandler {
 
-	private static final String SESSION_COOKIE = "my-social-media-session";
+	private static final String SESSION_COOKIE = "jms-social-media-session";
 
 	private final PasswordService passwordService;
 	
@@ -121,7 +121,7 @@ public class UserRequestHandler extends RequestHandler {
 	}
 	
 	public LoginSuccess handleSessionRetrieval(Request request, Response response) throws IOException {
-		
+
 		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
 			
 			String sessionKey = request.cookie(SESSION_COOKIE);
@@ -129,13 +129,9 @@ public class UserRequestHandler extends RequestHandler {
 			
 			if (user != null) {
 				return createLoginSuccess(user);
-			} else {
-				return null;
 			}
-			
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	public LoginSuccess handleLogin(Request request, Response response) throws IOException {
@@ -173,7 +169,7 @@ public class UserRequestHandler extends RequestHandler {
 		if (!dataService.addUserSession(user.getUserId(), sessionKey)) {
 			throw new DatabaseInsertException("Cannot create user session");
 		}
-		response.cookie(SESSION_COOKIE, sessionKey);
+		response.cookie("/", SESSION_COOKIE, sessionKey, 24 * 60 * 60 * 180, false);
 	}
 
 	private LoginSuccess createLoginSuccess(User user) throws IOException {
