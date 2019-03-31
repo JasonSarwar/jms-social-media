@@ -10,7 +10,6 @@ public class NewUser extends User {
 	private String password1;
 	private String password2;
 	private String email;
-	private String bio;
 	private LocalDate birthDate;
 	private String profilePictureLink;
 	
@@ -32,12 +31,6 @@ public class NewUser extends User {
 	public final void setEmail(String email) {
 		this.email = email;
 	}
-	public final String getBio() {
-		return bio;
-	}
-	public final void setBio(String bio) {
-		this.bio = bio;
-	}
 	public final LocalDate getBirthDate() {
 		return birthDate;
 	}
@@ -57,7 +50,7 @@ public class NewUser extends User {
 	@Override
 	public int hashCode() {
 		return Objects.hash(userId, username, password1, password2, hashedPassword, fullName, 
-				email, bio, birthDate, profilePictureLink);
+				email, birthDate, profilePictureLink);
 	}
 	
 	@Override
@@ -73,7 +66,6 @@ public class NewUser extends User {
 				&& Objects.equals(hashedPassword, newUser.hashedPassword)
 				&& Objects.equals(fullName, newUser.fullName)
 				&& Objects.equals(email, newUser.email)
-				&& Objects.equals(bio, newUser.bio)
 				&& Objects.equals(birthDate, newUser.birthDate)
 				&& Objects.equals(profilePictureLink, newUser.profilePictureLink);
 	}
@@ -88,7 +80,6 @@ public class NewUser extends User {
 				.add("hashedPassword", "*****")
 				.add("fullName", fullName)
 				.add("email", email)
-				.add("bio", bio)
 				.add("birthDate", birthDate)
 				.add("profilePictureLink", profilePictureLink)
 				.toString();

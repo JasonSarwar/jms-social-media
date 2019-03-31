@@ -57,12 +57,12 @@ public class MockDataService implements DataService {
 
 	@Override
 	public User getUserLoginInfoByString(String username) {
-		return usersById.values().stream().filter(user -> user.getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
+		return usersById.values().stream().filter(user -> username.equalsIgnoreCase(user.getUsername())).findFirst().orElse(null);
 	}
 
 	@Override
 	public User getHashedPasswordByUserId(Integer userId) {
-		return usersById.values().stream().filter(user -> user.getUserId().equals(userId)).findFirst().orElse(null);
+		return usersById.values().stream().filter(user -> userId.equals(user.getUserId())).findFirst().orElse(null);
 
 	}
 
@@ -73,28 +73,29 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean isUsernameTaken(String username) {
-		return usersById.values().stream().anyMatch(user -> user.getUsername().equalsIgnoreCase(username));
+		return usersById.values().stream().anyMatch(user -> username.equalsIgnoreCase(user.getUsername()));
 	}
 
 	@Override
 	public boolean isEmailTaken(String email) {
-		return userPagesById.values().stream().anyMatch(userPage -> userPage.getEmail().equalsIgnoreCase(email));
+		return userPagesById.values().stream().anyMatch(userPage -> email.equalsIgnoreCase(userPage.getEmail()));
 	}
 
 	@Override
 	public boolean addUser(NewUser newUser) {
-		User user = new User(usersById.size() + 1, newUser.getUsername(), newUser.getFullName(), newUser.getHashedPassword());
+		int userId = usersById.size() + 1;
+		newUser.setUserId(userId);
+		User user = new User(userId, newUser.getUsername(), newUser.getFullName(), newUser.getHashedPassword());
 		usersById.put(user.getUserId(), user);
 		UserPage userPage = new UserPage();
-		userPage.setUserId(user.getUserId());
+		userPage.setUserId(userId);
 		userPage.setUsername(newUser.getUsername());
 		userPage.setFullName(newUser.getFullName());
 		userPage.setEmail(newUser.getEmail());
-		userPage.setBio(newUser.getBio());
 		userPage.setBirthDate(newUser.getBirthDate());
 		userPage.setProfilePictureLink(newUser.getProfilePictureLink());
 		userPage.setDateTimeJoined(LocalDateTime.now());
-		userPagesById.put(userPage.getUserId(), userPage);
+		userPagesById.put(userId, userPage);
 		return true;
 	}
 
@@ -301,6 +302,7 @@ public class MockDataService implements DataService {
 		jasonPage.setUserId(2);
 		jasonPage.setUsername("Jason");
 		jasonPage.setFullName("Jason Sarwar");
+		jasonPage.setEmail("jason_sarwar@yahoo.com");
 		jasonPage.setBio("Trying to create this website.");
 		jasonPage.setDateTimeJoined(LocalDateTime.of(2019, 1, 1, 0, 0, 0));
 		userPagesById.put(2, jasonPage);
