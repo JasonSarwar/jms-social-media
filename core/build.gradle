@@ -21,8 +21,6 @@ dependencies {
 
 	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 
-	compile files('lib/ojdbc6.jar')
-
 	compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'
 
     // Use JUnit test framework
