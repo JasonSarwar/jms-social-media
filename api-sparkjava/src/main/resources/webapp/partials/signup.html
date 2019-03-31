@@ -29,7 +29,7 @@
 					    <span class="input-group-text"> <i class="fa fa-user-alt"></i> </span>
 					</div>
 			        <input name="fullName" class="form-control" ng-model="newUser.fullName" placeholder="Full name" 
-			        		ng-class="" validatable-field type="text" required>
+			        		ng-class="" validatable-field type="text" maxlength=64 required>
 			        
 			        <div class="valid-feedback">
 			        	Looks good!
@@ -43,7 +43,7 @@
 			    	<div class="input-group-prepend">
 					    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
 					</div>
-			        <input name="email" class="form-control" ng-model="newUser.email" placeholder="Email address" 
+			        <input name="email" class="form-control" ng-model="newUser.email" placeholder="Email address" maxlength=64 
 			        		ng-class="" validatable-field type="email" ng-pattern="/^[\w\d_.]+@[\w\d_.]+\.[\w\d_.]+$/" required email />
 			    
 			    	<div class="valid-feedback">
