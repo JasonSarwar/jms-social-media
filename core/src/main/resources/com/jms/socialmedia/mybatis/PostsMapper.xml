@@ -25,13 +25,13 @@
         <include refid="retrievePosts"></include>
         
         <if test="tag != null">
-        	inner join posts_tags
-        	on posts.post_id = posts_tags.post_id
+        	inner join post_tags
+        	on posts.post_id = post_tags.post_id
         </if>
         
         <where>
 	        <if test="userIds != null and !userIds.isEmpty()">
-	        	AND posts.user_id in
+	        	posts.user_id in
 	        	<foreach item="userId" collection="userIds" open="(" separator="," close=")">
 	        		#{userId}
 	        	</foreach>
@@ -40,26 +40,63 @@
 	        	AND lower(username) = lower(#{username})
 	        </if>
 	        <if test="tag != null">
-	        	AND posts_tags.tag = lower(#{tag})
+	        	AND post_tags.tag = lower(#{tag})
 	        </if>
 	        <if test="onDate != null">
 	        	<if test="_databaseId == 'oracle'">
 	        		AND TO_CHAR(timestamp, 'MM-DD-YYYY') = #{onDate}
+	        	</if>
+	        	<if test="_databaseId == 'mysql'">
+	        		AND DATE_FORMAT(timestamp, '%m-%d-%Y') = #{onDate}
 	        	</if>
 	        </if>
 	        <if test="beforeDate != null">
 	        	<if test="_databaseId == 'oracle'">
 	        		AND (TO_DATE(#{beforeDate}, 'MM-DD-YYYY') + INTERVAL '1' DAY) >= timestamp
 	        	</if>
+	        	<if test="_databaseId == 'mysql'">
+	        		AND DATE_ADD(STR_TO_DATE(#{beforeDate}, '%m-%d-%Y'), INTERVAL 1 DAY) >= timestamp
+	        	</if>
 	        </if>
 	        <if test="afterDate != null">
 	        	<if test="_databaseId == 'oracle'">
 	        		AND timestamp >= TO_DATE(#{afterDate}, 'MM-DD-YYYY')
 	        	</if>
+	        	<if test="_databaseId == 'mysql'">
+	        		AND timestamp >= STR_TO_DATE(#{afterDate}, '%m-%d-%Y')
+	        	</if>
+	        </if>
+	        <if test="sincePostId != null">
+	        	AND post_id > #{sincePostId}
 	        </if>
         </where>
 
-        order by timestamp desc
+        order by 
+        <choose>
+        	<when test="sortBy == 'postId'">
+        		post_id
+        	</when>
+        	<when test="sortBy == 'userId'">
+        		user_id
+        	</when>
+        	<when test="sortBy == 'username'">
+        		username
+        	</when>
+        	<when test="sortBy == 'fullName'">
+        		full_name
+        	</when>
+        	<when test="sortBy == 'text'">
+        		text
+        	</when>
+        	<when test="sortBy == 'timestamp'">
+        		timestamp
+        	</when>
+        	<otherwise>
+        		post_id
+        	</otherwise>
+        </choose>
+        <if test="sortOrderAsc == false">desc</if>
+        
     </select>
 
 	<select id="getUserIdFromPostId" parameterType="int" resultType="Integer">
@@ -76,7 +113,7 @@
         )
     </insert>
 
-	<insert id="addPost" parameterType="post" databaseId="mysql" useGeneratedKeys="true" keyProperty="postId" keyColumn="post_id">
+	<insert id="addPost" parameterType="post" databaseId="mysql" keyProperty="postId" keyColumn="post_id">
         insert into posts (user_id, text, timestamp) values (
             #{userId}, #{text}, now()
         )
@@ -95,31 +132,31 @@
 
 	<select id="getLikedPostsByUserId" parameterType="int" resultType="post">
 		<include refid="retrievePosts"></include>
-		inner join posts_likes
-		on posts.post_id = posts_likes.post_id
-		where posts_likes.user_id = #{id}
-		order by posts_likes.timestamp desc
+		inner join post_likes
+		on posts.post_id = post_likes.post_id
+		where post_likes.user_id = #{id}
+		order by post_likes.timestamp desc
 	</select>
 
 	<select id="getPostLikes" parameterType="int" resultType="Integer">
-		select user_id from posts_likes
+		select user_id from post_likes
 		where post_id = #{id}
 	</select>
 
 	<insert id="likePost" databaseId="oracle">
-		insert into posts_likes (post_id, user_id, timestamp) values (
+		insert into post_likes (post_id, user_id, timestamp) values (
             #{postId}, #{userId}, systimestamp
         )
 	</insert>
 
 	<insert id="likePost" databaseId="mysql">
-		insert into posts_likes (post_id, user_id, timestamp) values (
+		insert into post_likes (post_id, user_id, timestamp) values (
             #{postId}, #{userId}, now()
         )
 	</insert>
 
 	<delete id="unlikePost">
-        delete from posts_likes
+        delete from post_likes
         where post_id = #{postId} and user_id = #{userId}
     </delete>
 

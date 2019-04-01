@@ -5,32 +5,32 @@
 <mapper namespace="com.jms.socialmedia.mybatis.TagsMapper">
 
 	<select id="getTags" resultType="String">
-        select distinct tag from posts_tags
+        select distinct tag from post_tags
     </select>
 
     <select id="getPostTags" parameterType="int" resultType="String">
-        select tag from posts_tags
+        select tag from post_tags
         where post_id = #{id}
     </select>
 
     <insert id="addTags" databaseId="oracle">
     	insert all
     	<foreach item="tag" collection="tags">
-    		into posts_tags (post_id, tag) values
+    		into post_tags (post_id, tag) values
     		(#{postId}, #{tag})
     	</foreach>
     	select * from dual
     </insert>
 
     <insert id="addTags" databaseId="mysql">
-    	insert into posts_tags values
+    	insert into post_tags values
     	<foreach item="tag" collection="tags" separator=",">
     		(#{postId}, #{tag})
     	</foreach>
     </insert>
 
 	<delete id="removePostTags">
-		delete from posts_tags
+		delete from post_tags
 		where post_id = #{id}
 	</delete>
 

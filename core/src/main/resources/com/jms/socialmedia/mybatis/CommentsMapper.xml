@@ -46,7 +46,7 @@
         )
     </insert>
 
-	<insert id="addComment" parameterType="comment" databaseId="mysql" useGeneratedKeys="true" keyProperty="commentId" keyColumn="comment_id">
+	<insert id="addComment" parameterType="comment" databaseId="mysql" keyProperty="commentId" keyColumn="comment_id">
         insert into comments (post_id, user_id, text, timestamp) values (
             #{postId}, #{userId}, #{text}, now()
         )
@@ -64,24 +64,24 @@
     </delete>
 
     <select id="getCommentLikes" parameterType="int" resultType="Integer">
-		select user_id from comments_likes
+		select user_id from comment_likes
 		where comment_id = #{id}
 	</select>
 
 	<insert id="likeComment" databaseId="oracle">
-		insert into comments_likes (comment_id, user_id, timestamp) values (
+		insert into comment_likes (comment_id, user_id, timestamp) values (
             #{commentId}, #{userId}, systimestamp
         )
 	</insert>
 
 	<insert id="likeComment" databaseId="mysql">
-		insert into comments_likes (comment_id, user_id, timestamp) values (
+		insert into comment_likes (comment_id, user_id, timestamp) values (
             #{commentId}, #{userId}, now()
         )
 	</insert>
 
 	<delete id="unlikeComment">
-        delete from comments_likes
+        delete from comment_likes
         where comment_id = #{commentId} and user_id = #{userId}
     </delete>
 
