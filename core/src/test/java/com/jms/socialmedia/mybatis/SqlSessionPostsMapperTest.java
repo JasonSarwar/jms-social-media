@@ -1,4 +1,4 @@
-package com.mytwitter.mybatis;
+package com.jms.socialmedia.mybatis;
 
 import java.io.IOException;
 import java.io.InputStream;
