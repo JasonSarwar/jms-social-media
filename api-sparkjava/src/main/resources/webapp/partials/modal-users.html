@@ -20,10 +20,10 @@
 				</div>
 				<div class="col-sm-4" ng-if="userId && userId != user.userId">
 					<button type="button" class="btn btn-success" ng-hide="isFollowing(user.userId)" ng-click="followUser(user.userId)">
-						<span class="fas fa-plus-square"></span> Follow
+						<span class="fas fa-user-plus"></span> Follow
 					</button>
 					<button type="button" class="btn btn-danger" ng-show="isFollowing(user.userId)" ng-click="unfollowUser(user.userId)">
-						<span class="fas fa-minus-square"></span> Unfollow
+						<span class="fas fa-user-minus"></span> Unfollow
 					</button>
 				</div>
 				
