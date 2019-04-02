@@ -1,7 +1,7 @@
 # MySQL Table Scripts
 
 ## Run Script Order:
-create_users_table.sql
-create_posts_table.sql
-create_comments_table.sql
-Everything else
+1. create_users_table.sql
+2. create_posts_table.sql
+3. create_comments_table.sql
+4. Everything else
