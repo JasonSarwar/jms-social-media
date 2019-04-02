@@ -90,7 +90,7 @@
 			  		alertService.error(error.data);
 			  	});
 		} else {
-			postsService.getPosts("")
+			postsService.getPosts()
 				.then(function (data) {
 					$scope.posts = data;
 			  	}, function (error) {
@@ -117,9 +117,16 @@
 	};
 
 	var PostsController = function($scope, $location, postsService, alertService) {
+		let locationSearch = $location.search();
+		let params = {
+				username: locationSearch.username,
+				tag: locationSearch.tag,
+				on: locationSearch.on
+		}
+		$location.search({});
+		$location.search(params);
 
-		var queryParamsString = $location.url().split("?")[1];
-		postsService.getPosts(queryParamsString)
+		postsService.getPosts(params)
 			.then(function (data) {
 				$scope.posts = data;
 		  	}, function (error) {

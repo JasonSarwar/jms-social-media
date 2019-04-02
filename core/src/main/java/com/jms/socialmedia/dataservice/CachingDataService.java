@@ -81,8 +81,8 @@ public class CachingDataService implements DataService {
 
 	@Override
 	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate,
-			String afterDate) {
-		Collection<Post> posts = dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
+			String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
+		Collection<Post> posts = dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 		// Put the first 5 posts into cache
 		int i = 0;
 		for (Post post : posts) {

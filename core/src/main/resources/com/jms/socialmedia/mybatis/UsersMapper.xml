@@ -25,7 +25,7 @@
         )
     </insert>
 
-	<insert id="addUser" parameterType="newUser" databaseId="mysql" useGeneratedKeys="true" keyProperty="userId" keyColumn="user_id">
+	<insert id="addUser" parameterType="newUser" databaseId="mysql" keyProperty="userId" keyColumn="user_id">
         insert into users (username, hashed_password, full_name, email, birth_date, profile_picture_link, date_time_joined) values (
             #{username}, #{hashedPassword}, #{fullName}, #{email}, #{birthDate}, #{profilePictureLink}, now()
         )
@@ -65,12 +65,18 @@
         where user_id = #{id}
     </update>
     
-    <insert id="addUserSession">
+    <insert id="addUserSession" databaseId="oracle">
         insert into user_sessions (user_id, session_key, timestamp) values (
             #{userId}, #{sessionKey}, systimestamp
         )
     </insert>
-    
+
+    <insert id="addUserSession" databaseId="mysql">
+        insert into user_sessions (user_id, session_key, timestamp) values (
+            #{userId}, #{sessionKey}, now()
+        )
+    </insert>
+
     <select id="getUserBySessionKey" parameterType="String" resultType="user">
         select user_sessions.user_id as user_id, username, full_name from user_sessions, users 
         where session_key = #{id} and user_sessions.user_id = users.user_id

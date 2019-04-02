@@ -14,9 +14,15 @@
 		where follower_user_id = #{id}
 	</select>
 
-	<insert id="followUser">
+	<insert id="followUser" databaseId="oracle">
 		insert into followers (follower_user_id, following_user_id, timestamp) values (
             #{param1}, #{param2}, systimestamp
+        )
+	</insert>
+
+	<insert id="followUser" databaseId="mysql">
+		insert into followers (follower_user_id, following_user_id, timestamp) values (
+            #{param1}, #{param2}, now()
         )
 	</insert>
 

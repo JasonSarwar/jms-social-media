@@ -23,7 +23,7 @@
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava</artifactId>
 		</dependency>
-	
+
 		<dependency>
 		    <groupId>javax.xml.bind</groupId>
 		    <artifactId>jaxb-api</artifactId>
@@ -45,8 +45,8 @@
 		</dependency>
 	
 		<dependency>
-		    <groupId>oracle</groupId>
-		    <artifactId>ojdbc6</artifactId>
+	    	<groupId>mysql</groupId>
+	    	<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 	
 		<dependency>
@@ -60,7 +60,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-  
+
   	<build>
 	    <plugins>
 	        <plugin>

@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toSet;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
@@ -31,6 +32,9 @@ public class PostRequestHandler extends RequestHandler {
 	 * 	<li> on - Date the Posts were created </li>
 	 * 	<li> before - latest date of the Posts returned </li>
 	 * 	<li> after - earliest date of the Posts returned </li>
+	 * 	<li> sortBy - Field to Sort by </li>
+	 * 	<li> order - asc or desc </li>
+	 * 	<li> sincePostId - return posts after this Post ID </li>
 	 * </ul>
 	 * 
 	 * @param request		Spark Request
@@ -46,7 +50,13 @@ public class PostRequestHandler extends RequestHandler {
 		String onDate = request.queryParams("on");
 		String beforeDate = request.queryParams("before");
 		String afterDate = request.queryParams("after");
-		return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
+		String strSincePostId = request.queryParams("sincePostId");
+		Integer sincePostId = strSincePostId == null ? null : Integer.parseInt(strSincePostId);
+		String sortBy = Optional.ofNullable(request.queryParams("sortBy")).orElse("postId");
+		String order = request.queryParams("order");
+		boolean sortOrderAsc = order == null ? false : order.equalsIgnoreCase("asc");
+
+		return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 	}
 
 	/**

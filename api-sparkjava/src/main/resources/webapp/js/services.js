@@ -16,8 +16,20 @@
               });
     };
 
-    var getPosts = function (queryParamString) {
-    	return $http.get("/api/posts?" + queryParamString)
+    var getPosts = function (queryParams) {
+    	let queryParamString = "?sortBy=postId&order=desc";
+    	if (queryParams) {
+    		if (queryParams.username) {
+    			queryParamString = queryParamString + "&username=" + queryParams.username;
+    		}
+    		if (queryParams.tag) {
+    			queryParamString = queryParamString + "&tag=" + queryParams.tag;
+    		}
+    		if (queryParams.on) {
+    			queryParamString = queryParamString + "&on=" + queryParams.on;
+    		}
+    	}
+    	return $http.get("/api/posts" + queryParamString)
               .then(function(response) {
             	  return response.data;
               });
