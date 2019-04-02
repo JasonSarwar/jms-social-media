@@ -11,7 +11,7 @@
   <artifactId>api-sparkjava</artifactId>
   <packaging>jar</packaging>
   <name>api-sparkjava</name>
-  <url>http://maven.apache.org</url>
+  <url>https://github.com/JasonSarwar/jms-social-media</url>
   
   <dependencies>
 
@@ -60,6 +60,10 @@
 	            <groupId>org.codehaus.mojo</groupId>
 	            <artifactId>exec-maven-plugin</artifactId>
 	        </plugin>
+	        <plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
 	    </plugins>
 	</build>
   

@@ -23,7 +23,7 @@
 				Bio
 			</div>
 			<div class="card-body">
-				<p class="card-text">{{ user.bio }}</p>
+				<p class="card-text" ng-if="user.bio">{{ user.bio }}</p>
 				<p class="card-text">Joined {{ user ? (user.dateTimeJoined  | dateWithMonthYear) : date }}</p>
 			</div>
 		</div>

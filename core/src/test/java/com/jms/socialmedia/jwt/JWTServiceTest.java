@@ -1,4 +1,4 @@
-package com.mytwitter.jwt;
+package com.jms.socialmedia.jwt;
 
 import static org.junit.Assert.assertThat;
 

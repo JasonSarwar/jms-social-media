@@ -1,4 +1,4 @@
-package com.mytwitter.password;
+package com.jms.socialmedia.password;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

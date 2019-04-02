@@ -1,125 +1,125 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>com.jms.socialmedia</groupId>
-  <artifactId>jms-social-media</artifactId>
-  <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
-  
-  <name>jms-social-media</name>
-  <url>http://maven.apache.org</url>
-  
-  <properties>
-	<maven.compiler.source>1.9</maven.compiler.source>
-	<maven.compiler.target>1.9</maven.compiler.target>
-  	<java.version>11.0.2</java.version>
-  	<spark-core.version>2.9.0</spark-core.version>
-  	<guava.version>27.0.1-jre</guava.version>
-  	<javax-xml.version>2.3.1</javax-xml.version>
-  	<gson.version>2.8.5</gson.version>
-  	<jackson.version>2.9.8</jackson.version>
-  	<mybatis.version>3.4.6</mybatis.version>
-  	<jjwt.version>0.9.1</jjwt.version>
-  	<spring-security.version>5.1.3.RELEASE</spring-security.version>
-  	<mysql-connector.version>8.0.15</mysql-connector.version>
-  	<logging.version>2.11.1</logging.version>
- 	<junit.version>4.12</junit.version>
-  </properties>
-  
-  <modules>
-  	<module>core</module>
-  	<module>api-sparkjava</module>
-  </modules>
-  
+	<modelVersion>4.0.0</modelVersion>
+	 
+	<groupId>com.jms.socialmedia</groupId>
+	<artifactId>jms-social-media</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0-SNAPSHOT</version>
+	 
+	<name>jms-social-media</name>
+	<url>https://github.com/JasonSarwar/jms-social-media</url>
+	 
+	<properties>
+	 	<java.version>11</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+	 	<spark-core.version>2.9.0</spark-core.version>
+	 	<guava.version>27.0.1-jre</guava.version>
+	 	<javax-xml.version>2.3.1</javax-xml.version>
+	 	<gson.version>2.8.5</gson.version>
+	 	<jackson.version>2.9.8</jackson.version>
+	 	<mybatis.version>3.4.6</mybatis.version>
+	 	<jjwt.version>0.9.1</jjwt.version>
+	 	<spring-security.version>5.1.3.RELEASE</spring-security.version>
+	 	<mysql-connector.version>8.0.15</mysql-connector.version>
+	 	<logging.version>2.11.1</logging.version>
+		<junit.version>4.12</junit.version>
+		<jacoco.version>0.8.3</jacoco.version>
+	</properties>
+
+	<modules>
+		<module>core</module>
+		<module>api-sparkjava</module>
+	</modules>
+
 	<dependencyManagement>
-	  <dependencies>
+		<dependencies>
 
-	    <!-- https://mvnrepository.com/artifact/com.sparkjava/spark-core -->
-	    <dependency>
-	      <groupId>com.sparkjava</groupId>
-	      <artifactId>spark-core</artifactId>
-	      <version>${spark-core.version}</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-		<dependency>
-		    <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>${guava.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-		<dependency>
-	      <groupId>com.google.code.gson</groupId>
-	      <artifactId>gson</artifactId>
-	      <version>${gson.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
-		<dependency>
-		    <groupId>org.mybatis</groupId>
-		    <artifactId>mybatis</artifactId>
-		    <version>${mybatis.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
-		<dependency>
-		    <groupId>javax.xml.bind</groupId>
-		    <artifactId>jaxb-api</artifactId>
-		    <version>${javax-xml.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
-		<dependency>
-		    <groupId>com.fasterxml.jackson.dataformat</groupId>
-		    <artifactId>jackson-dataformat-xml</artifactId>
-		    <version>${jackson.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-afterburner -->
-		<dependency>
-		    <groupId>com.fasterxml.jackson.module</groupId>
-		    <artifactId>jackson-module-afterburner</artifactId>
-		    <version>${jackson.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
-		<dependency>
-		    <groupId>io.jsonwebtoken</groupId>
-		    <artifactId>jjwt</artifactId>
-		    <version>${jjwt.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
-		<dependency>
-		    <groupId>org.springframework.security</groupId>
-		    <artifactId>spring-security-crypto</artifactId>
-		    <version>${spring-security.version}</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-		<dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
-		    <version>${mysql-connector.version}</version>
-		</dependency>
-
-		<!-- For Logging -->
-		<dependency>
-	      <groupId>org.apache.logging.log4j</groupId>
-	      <artifactId>log4j-slf4j-impl</artifactId>
-	      <version>${logging.version}</version>
-	    </dependency>
-
-	    <dependency>
-	      <groupId>junit</groupId>
-	      <artifactId>junit</artifactId>
-	      <version>${junit.version}</version>
-	      <scope>test</scope>
-	    </dependency>
-	    
-	  </dependencies>
+		    <!-- https://mvnrepository.com/artifact/com.sparkjava/spark-core -->
+		    <dependency>
+		      <groupId>com.sparkjava</groupId>
+		      <artifactId>spark-core</artifactId>
+		      <version>${spark-core.version}</version>
+			</dependency>
+			
+			<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+			<dependency>
+			    <groupId>com.google.guava</groupId>
+			    <artifactId>guava</artifactId>
+			    <version>${guava.version}</version>
+			</dependency>
+	
+			<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+			<dependency>
+		      <groupId>com.google.code.gson</groupId>
+		      <artifactId>gson</artifactId>
+		      <version>${gson.version}</version>
+			</dependency>
+	
+			<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
+			<dependency>
+			    <groupId>org.mybatis</groupId>
+			    <artifactId>mybatis</artifactId>
+			    <version>${mybatis.version}</version>
+			</dependency>
+	
+			<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+			<dependency>
+			    <groupId>javax.xml.bind</groupId>
+			    <artifactId>jaxb-api</artifactId>
+			    <version>${javax-xml.version}</version>
+			</dependency>
+	
+			<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
+			<dependency>
+			    <groupId>com.fasterxml.jackson.dataformat</groupId>
+			    <artifactId>jackson-dataformat-xml</artifactId>
+			    <version>${jackson.version}</version>
+			</dependency>
+	
+			<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-afterburner -->
+			<dependency>
+			    <groupId>com.fasterxml.jackson.module</groupId>
+			    <artifactId>jackson-module-afterburner</artifactId>
+			    <version>${jackson.version}</version>
+			</dependency>
+	
+			<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+			<dependency>
+			    <groupId>io.jsonwebtoken</groupId>
+			    <artifactId>jjwt</artifactId>
+			    <version>${jjwt.version}</version>
+			</dependency>
+	
+			<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
+			<dependency>
+			    <groupId>org.springframework.security</groupId>
+			    <artifactId>spring-security-crypto</artifactId>
+			    <version>${spring-security.version}</version>
+			</dependency>
+	
+			<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+			<dependency>
+		    	<groupId>mysql</groupId>
+		    	<artifactId>mysql-connector-java</artifactId>
+		    	<version>${mysql-connector.version}</version>
+			</dependency>
+	
+			<!-- For Logging -->
+			<dependency>
+		      <groupId>org.apache.logging.log4j</groupId>
+		      <artifactId>log4j-slf4j-impl</artifactId>
+		      <version>${logging.version}</version>
+		    </dependency>
+	
+		    <dependency>
+		      <groupId>junit</groupId>
+		      <artifactId>junit</artifactId>
+		      <version>${junit.version}</version>
+		      <scope>test</scope>
+		    </dependency>
+		</dependencies>
 	</dependencyManagement>
 
 	<build>
@@ -140,6 +140,33 @@
 	        			<mainClass>com.jms.socialmedia.app.App</mainClass>
 	        		</configuration>
 	            </plugin>
+				<plugin>
+			        <groupId>org.apache.maven.plugins</groupId>
+			        <artifactId>maven-compiler-plugin</artifactId>
+			        <version>3.8.0</version>
+				</plugin>
+      
+	            <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+	            <plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+						</execution>
+						<!-- attached to Maven test phase -->
+						<execution>
+							<id>report</id>
+							<phase>test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 	        </plugins>
 	    </pluginManagement>
 	</build>
