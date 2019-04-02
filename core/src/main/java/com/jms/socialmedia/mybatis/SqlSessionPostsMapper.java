@@ -17,7 +17,7 @@ public class SqlSessionPostsMapper implements PostsMapper {
 
 	@Override
 	public int getNumberOfPosts() {
-		try(SqlSession session = sessionfactory.openSession(true)) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
 			return mapper.getNumberOfPosts();
 		}
@@ -25,17 +25,18 @@ public class SqlSessionPostsMapper implements PostsMapper {
 
 	@Override
 	public Collection<Post> getPosts(Collection<Integer> userIds, String username, 
-			String tag, String onDate, String beforeDate, String afterDate) {
+			String tag, String onDate, String beforeDate, String afterDate, Integer sincePostId,
+			String sortBy, boolean sortOrderAsc) {
 		
-		try(SqlSession session = sessionfactory.openSession(true)) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			return mapper.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
+			return mapper.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 		}
 	}
 
 	@Override
 	public Post getPost(int postId) {
-		try(SqlSession session = sessionfactory.openSession(true)) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
 			return mapper.getPost(postId);
 		}
@@ -51,7 +52,7 @@ public class SqlSessionPostsMapper implements PostsMapper {
 
 	@Override
 	public int addPost(Post post) {
-		try(SqlSession session = sessionfactory.openSession(true)) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
 			return mapper.addPost(post);
 		}
@@ -59,7 +60,7 @@ public class SqlSessionPostsMapper implements PostsMapper {
 
 	@Override
 	public int editPost(int postId, String postText) {
-		try(SqlSession session = sessionfactory.openSession(true)) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
 			return mapper.editPost(postId, postText);
 		}
@@ -67,7 +68,7 @@ public class SqlSessionPostsMapper implements PostsMapper {
 
 	@Override
 	public int deletePost(int postId) {
-		try(SqlSession session = sessionfactory.openSession(true)) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
 			return mapper.deletePost(postId);
 		}

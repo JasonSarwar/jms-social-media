@@ -36,10 +36,15 @@ public interface DataService {
 
 	void removeSessionKey(String sessionKey);
 
-	Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate, String afterDate);
+	Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate, 
+			String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc);
 
 	default Collection<Post> getPosts(Integer userId) {
-		return getPosts(singleton(userId), null, null, null, null, null);
+		return getPosts(singleton(userId), null, null, null, null, null, null, "postId", false);
+	}
+
+	default Collection<Post> getPosts(Integer userId, Integer sincePostId) {
+		return getPosts(singleton(userId), null, null, null, null, null, sincePostId, "postId", false);
 	}
 
 	Post getPost(int postId);

@@ -12,7 +12,9 @@ public interface PostsMapper {
 
 	Collection<Post> getPosts(@Param(value="userIds") Collection<Integer> userIds, @Param(value="username") String username, 
 			@Param(value="tag") String tag, @Param(value="onDate") String onDate, 
-			@Param(value="beforeDate") String beforeDate, @Param(value="afterDate") String afterDate);
+			@Param(value="beforeDate") String beforeDate, @Param(value="afterDate") String afterDate, 
+			@Param(value="sincePostId") Integer sincePostId,
+			@Param(value="sortBy") String sortBy, @Param(value="sortOrderAsc") boolean sortOrderAsc);
 
 	Post getPost(int postId);
 

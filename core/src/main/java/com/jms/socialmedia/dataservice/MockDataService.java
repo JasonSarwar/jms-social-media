@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
@@ -31,6 +33,7 @@ public class MockDataService implements DataService {
 	private final Map<Integer, Post> postsById;
 	private final Map<Integer, Comment> commentsById;
 	private final Multimap<Integer, Comment> commentsByPostId;
+	private final Map<String, Comparator<Post>> postSorters;
 	
 	public MockDataService() {
 
@@ -40,6 +43,14 @@ public class MockDataService implements DataService {
 		postsById = new TreeMap<>((a, b) -> b.compareTo(a));
 		commentsById = new HashMap<>();
 		commentsByPostId = TreeMultimap.create(Ordering.natural(), (a, b) -> a.getCommentId().compareTo(b.getCommentId()));
+		postSorters = Map.of(
+				"postId", (a, b) -> a.getPostId().compareTo(b.getPostId()),
+				"userId", (a, b) -> a.getUserId().compareTo(b.getUserId()),
+				"username", (a, b) -> a.getUsername().compareTo(b.getUsername()),
+				"fullName", (a, b) -> a.getFullName().compareTo(b.getFullName()),
+				"text", (a, b) -> a.getText().compareTo(b.getText()),
+				"timestamp", (a, b) -> a.getTimestamp().compareTo(b.getTimestamp())
+				);
 		setupUsers();
 		setupPosts();
 		setupComments();
@@ -122,14 +133,22 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate, String afterDate) {
+	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, 
+			String beforeDate, String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
 		DateTimeFormatter formatter =  DateTimeFormatter.ofPattern("MM-dd-yyyy");
+		
+		Comparator<Post> comparator = postSorters.get(Optional.ofNullable(sortBy).orElse("postId"));
+		if (!sortOrderAsc) {
+			comparator = comparator.reversed();
+		}
 		return postsById.values().stream().filter(post -> userIds == null || userIds.contains(post.getUserId()))
 				.filter(post -> username == null || post.getUsername().equals(username))
+				.filter(post -> sincePostId == null || sincePostId < post.getPostId())
 				.filter(post -> tag == null || post.getText().contains(tag))
 				.filter(post -> onDate == null || post.getTimestamp().toLocalDate().equals(LocalDate.parse(onDate,formatter)))
 				.filter(post -> beforeDate == null || post.getTimestamp().toLocalDate().isAfter(LocalDate.parse(beforeDate, formatter)))
 				.filter(post -> afterDate == null || post.getTimestamp().toLocalDate().isAfter(LocalDate.parse(afterDate, formatter)))
+				.sorted(comparator)
 				.collect(toList());
 	}
 
@@ -172,13 +191,15 @@ public class MockDataService implements DataService {
 	public Collection<Post> getCommentedPostsByUserId(int userId) {
 		Collection<Integer> postIds = commentsByPostId.entries().stream()
 				.filter(entry -> entry.getValue().getUserId() == userId).map(Map.Entry::getKey).collect(toList());
-		return postsById.values().stream().filter(post -> postIds.contains(post.getPostId())).collect(toList());
+		return postsById.values().stream().filter(post -> postIds.contains(post.getPostId()))
+				.sorted((a, b) -> b.getPostId().compareTo(a.getPostId())).collect(toList());
 	}
 
 	@Override
 	public Collection<Post> getLikedPostsByUserId(int userId) {
 		return postsById.values().stream()
 				.filter(post -> post.getLikes().contains(userId))
+				.sorted((a, b) -> b.getPostId().compareTo(a.getPostId()))
 				.collect(toList());
 	}
 

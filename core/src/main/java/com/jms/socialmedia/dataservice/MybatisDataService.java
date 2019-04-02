@@ -106,8 +106,9 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate, String afterDate) {
-		Collection<Post> posts = postsMapper.getPosts(userIds, username, tag, onDate, beforeDate, afterDate);
+	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, 
+			String beforeDate, String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
+		Collection<Post> posts = postsMapper.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 		posts.forEach(post -> post.setLikes(getPostLikes(post.getPostId())));
 		return posts;
 	}

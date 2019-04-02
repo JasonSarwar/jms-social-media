@@ -46,7 +46,7 @@ public class FollowRequestHandler extends RequestHandler {
 		if (followingUserIds == null || followingUserIds.isEmpty()) {
 			return Collections.emptySet();
 		}
-		return dataService.getPosts(followingUserIds, null, null, null, null, null);
+		return dataService.getPosts(followingUserIds, null, null, null, null, null, null, null, false);
 	}
 
 }
