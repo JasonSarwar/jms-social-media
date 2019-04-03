@@ -1,3 +1,3 @@
 rootProject.name = 'jms-social-media'
 include 'core'
-include 'api-sparkjava'
+include 'api'
