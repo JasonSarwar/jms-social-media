@@ -2,13 +2,10 @@ package com.jms.socialmedia.handlers;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
-
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
 import com.jms.socialmedia.model.FollowRequest;
-import com.jms.socialmedia.model.Post;
 import spark.Request;
 import spark.Response;
 
@@ -38,15 +35,4 @@ public class FollowRequestHandler extends RequestHandler {
 		Integer userId = Integer.parseInt(request.params("userid"));
 		return dataService.getFollowingUserIds(userId);
 	}
-
-	public Collection<Post> handleGetFollowingPosts(Request request, Response response) {
-
-		Integer userId = Integer.parseInt(request.params("userid"));
-		Collection<Integer> followingUserIds = dataService.getFollowingUserIds(userId);
-		if (followingUserIds == null || followingUserIds.isEmpty()) {
-			return Collections.emptySet();
-		}
-		return dataService.getPosts(followingUserIds, null, null, null, null, null, null, null, false);
-	}
-
 }

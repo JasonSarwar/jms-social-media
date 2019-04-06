@@ -83,7 +83,7 @@
 	var HomeController = function ($scope, postsService, alertService) {
 		
 		if ($scope.userId) {
-			postsService.getFollowingPosts($scope.userId)
+			postsService.getFeedPosts($scope.userId)
 				.then(function (data) {
 					$scope.posts = data;
 			  	}, function (error) {

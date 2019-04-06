@@ -35,8 +35,8 @@
               });
     };
 
-    var getFollowingPosts = function (userId) {
-    	return $http.get("/api/user/" + userId + "/following/posts")
+    var getFeedPosts = function (userId) {
+    	return $http.get("/api/user/" + userId + "/feed")
               .then(function(response) {
             	  return response.data;
               });
@@ -229,7 +229,7 @@
     	getPost: getPost,
     	getComments: getComments,
     	getPosts: getPosts,
-    	getFollowingPosts: getFollowingPosts,
+    	getFeedPosts: getFeedPosts,
     	addPost: addPost,
     	editPost: editPost,
     	deletePost: deletePost,

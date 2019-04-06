@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toSet;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 
 import com.google.gson.Gson;
@@ -57,6 +58,29 @@ public class PostRequestHandler extends RequestHandler {
 		boolean sortOrderAsc = order == null ? false : order.equalsIgnoreCase("asc");
 
 		return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+	}
+
+	/**
+	 * <h1> GET /api/user/:userid/feed
+	 * 
+	 * <ul>
+	 * 	<li> userid - ID of User </li>
+	 * </ul>
+	 * 
+	 * @param request		Spark Request
+	 * @param response		Spark Response
+	 * @return 				Collection of {@link Post}s
+	 */
+	public Collection<Post> handleGetFeedPosts(Request request, Response response) {
+
+		Integer userId = Integer.parseInt(request.params("userid"));
+		String strSincePostId = request.queryParams("sincePostId");
+		Integer sincePostId = strSincePostId == null ? null : Integer.parseInt(strSincePostId);
+		
+		Collection<Integer> userIds = new HashSet<>(dataService.getFollowingUserIds(userId));
+		userIds.add(userId);
+
+		return dataService.getPosts(userIds, null, null, null, null, null, sincePostId, "postId", false);
 	}
 
 	/**

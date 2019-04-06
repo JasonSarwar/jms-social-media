@@ -71,6 +71,8 @@ public class RouteMappings {
 
 				Spark.get("/user/:userid/commentedposts", contentType, postRequestHandler::handleGetCommentedPosts, contentWriter);
 
+				Spark.get("/user/:userid/feed", contentType, postRequestHandler::handleGetFeedPosts, contentWriter);
+
 				/** Comments Request Mappings **/
 
 				Spark.get("/post/:id/comments", contentType, commentRequestHandler::handleGetComments, contentWriter);
@@ -105,8 +107,6 @@ public class RouteMappings {
 				/** Follow Request Mappings **/
 
 				Spark.get("/user/:userid/following", contentType, followRequestHandler::handleGetFollowingUserIds, contentWriter);
-
-				Spark.get("/user/:userid/following/posts", contentType, followRequestHandler::handleGetFollowingPosts, contentWriter);
 
 				Spark.post("/user/follow", contentType, followRequestHandler::handleFollowUser, contentWriter);
 
