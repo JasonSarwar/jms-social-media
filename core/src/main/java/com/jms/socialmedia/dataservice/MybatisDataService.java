@@ -7,6 +7,8 @@ import java.util.Collection;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jms.socialmedia.configuration.Configurations;
 import com.jms.socialmedia.configuration.CoreSettings;
@@ -19,6 +21,7 @@ import com.jms.socialmedia.mybatis.CommentsMapper;
 import com.jms.socialmedia.mybatis.FollowersMapper;
 import com.jms.socialmedia.mybatis.PostsMapper;
 import com.jms.socialmedia.mybatis.SqlSessionCommentsMapper;
+import com.jms.socialmedia.mybatis.SqlSessionCreateTablesMapper;
 import com.jms.socialmedia.mybatis.SqlSessionFollowersMapper;
 import com.jms.socialmedia.mybatis.SqlSessionPostsMapper;
 import com.jms.socialmedia.mybatis.SqlSessionTagsMapper;
@@ -29,6 +32,8 @@ import com.jms.socialmedia.utils.TagsUtils;
 
 public class MybatisDataService implements DataService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(MybatisDataService.class);
+
 	private final UsersMapper usersMapper;
 	private final PostsMapper postsMapper;
 	private final CommentsMapper commentsMapper;
@@ -38,11 +43,17 @@ public class MybatisDataService implements DataService {
 	public MybatisDataService(Configurations configuration) throws IOException {
 		InputStream inputStream = Resources.getResourceAsStream(configuration.get(CoreSettings.MYBATIS_CONFIG_FILE_PATH));
 		SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(inputStream, configuration.getProperties());
+
 		usersMapper = new SqlSessionUsersMapper(factory);
 		postsMapper = new SqlSessionPostsMapper(factory);
 		commentsMapper = new SqlSessionCommentsMapper(factory);
 		tagsMapper = new SqlSessionTagsMapper(factory);
 		followersMapper = new SqlSessionFollowersMapper(factory);
+
+		if (configuration.get(CoreSettings.CREATE_TABLES)) {
+			LOGGER.info("Creating SQL Tables");
+			new SqlSessionCreateTablesMapper(factory).createTables();
+		}
 	}
 
 	@Override
