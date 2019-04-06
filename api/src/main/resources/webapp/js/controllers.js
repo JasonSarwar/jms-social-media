@@ -100,17 +100,24 @@
 	};
 	
 	var PostController = function($scope, $routeParams, postsService, alertService) {
-		
+		let comments;
 		var postId = $routeParams.postId;
 		postsService.getPost(postId)
 			.then(function (data) {
 				$scope.entry = data;
+				if (comments) {
+					$scope.entry.comments = comments;
+				}
 		  	}, function (error) {
 		  		alertService.error(error.data);
 		  	});
 		postsService.getComments(postId)
 			.then(function (data) {
-				$scope.entry.comments = data;
+				if ($scope.entry) {
+					$scope.entry.comments = data;
+				} else {
+					comments = data;
+				}
 		  	}, function (error) {
 		  		alertService.error(error.data);
 		  	});

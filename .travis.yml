@@ -3,14 +3,32 @@ language: java
 jdk:
   - openjdk11
 
-install: 
+install:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script:
   - mvn test -B
 
 after_success:
-    - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
+
+services:
+  - docker
+
+before_deploy:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - mvn -P assemble-jars package -B
+  - DOCKERTAG="${TRAVIS_TAG}-${TRAVIS_COMMIT:0:6}"
+  - docker build --build-arg PATH_TO_LIB=./api/target/libs/ -t jms-social-media -l commit="$TRAVIS_COMMIT" -l version="$TRAVIS_TAG" -l tag="$DOCKERTAG" .
+  - docker tag jms-social-media "${DOCKER_USERNAME}"/jms-social-media:"${DOCKERTAG}"
+  - docker tag jms-social-media "${DOCKER_USERNAME}"/jms-social-media:latest
+
+deploy:
+  provider: script
+  script: docker push "${DOCKER_USERNAME}"/jms-social-media:"${DOCKERTAG}" && "${DOCKER_USERNAME}"/jms-social-media:latest
+  skip_cleanup: true
+  on:
+    tags: true
 
 cache:
   directories:

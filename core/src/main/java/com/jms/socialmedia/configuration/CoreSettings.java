@@ -12,6 +12,7 @@ public class CoreSettings {
 	public static final Setting<Boolean> USE_MOCK_DATA_SERVICE = booleanSettingWithDefault("mock_data_service.use", false);
 	public static final Setting<Boolean> USE_CACHING = booleanSettingWithDefault("caching.use", true);
 	public static final Setting<String> CACHING_IMPLEMENTATION = stringSettingWithDefault("caching.implementation", "guava");
+	public static final Setting<Boolean> CREATE_TABLES = booleanSettingWithDefault("db.create_tables", false);
 
 	private CoreSettings() {
 		throw new IllegalStateException();

@@ -145,7 +145,7 @@
 			        <artifactId>maven-compiler-plugin</artifactId>
 			        <version>3.8.0</version>
 				</plugin>
-      
+
 	            <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
 	            <plugin>
 					<groupId>org.jacoco</groupId>

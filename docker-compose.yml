@@ -1,0 +1,33 @@
+version: '3'
+services:
+  web:
+    image: jms-social-media
+    command: ./wait-for-it.sh -h db -p 3306 -t 90 -- ./start.sh
+    ports:
+      - "4567:4567"
+    environment:
+      PROPERTIES_FILE: application-docker.properties
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - db
+    networks:
+      - net
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: db
+    expose:
+      - "3306"
+    volumes:
+      - ./mysqldata:/var/lib/mysql
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - net
+networks:
+  net:
