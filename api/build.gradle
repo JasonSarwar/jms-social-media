@@ -21,5 +21,11 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+task allJars(type: Copy) {
+    into "$buildDir/libs"
+    from configurations.runtime
+}
+allJars.dependsOn(build)
+
 // Define the main class for the application
 mainClassName = 'com.jms.socialmedia.app.App'
