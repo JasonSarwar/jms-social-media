@@ -30,196 +30,117 @@
     		}
     	}
     	return $http.get("/api/posts" + queryParamString)
-              .then(function(response) {
+              .then(function (response) {
             	  return response.data;
               });
     };
 
     var getFeedPosts = function (userId) {
     	return $http.get("/api/user/" + userId + "/feed")
-              .then(function(response) {
+              .then(function (response) {
             	  return response.data;
               });
     };
 
-    var addPost = function (userId, text, token) {
-    	var data = {
-			userId: userId,
-			text: text
-    	};
-
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.post("/api/post/add", data, configs)
-        	.then(function(response) {
+    var addPost = function (userId, text) {
+    	return $http.post("/api/post/add", {userId: userId, text: text})
+        	.then(function (response) {
         		return response.data;
         });
     };
 
-    var editPost = function (postId, text, token) {
-    	var data = {
-			text: text
-    	};
-
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.put("/api/post/" + postId, data, configs)
-        	.then(function(response) {
+    var editPost = function (postId, text) {
+    	return $http.put("/api/post/" + postId, {text: text})
+        	.then(function (response) {
         		return response.data;
         });
     };
 
-    var deletePost = function (postId, token) {
-
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.delete("/api/post/" + postId, configs)
-        	.then(function(response) {
+    var deletePost = function (postId) {
+    	return $http.delete("/api/post/" + postId)
+        	.then(function (response) {
         		return response.data;
         });
     };
 
-    var likePost = function (postId, userId, token) {
-
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.post("/api/post/" + postId + "/like/" + userId, null, configs)
-        	.then(function(response) {
+    var likePost = function (postId, userId) {
+    	return $http.post("/api/post/" + postId + "/like/" + userId, null)
+        	.then(function (response) {
         		return response.data;
         });
     };
 
-    var unlikePost = function (postId, userId, token) {
-
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.delete("/api/post/" + postId + "/unlike/" + userId, configs)
-        	.then(function(response) {
+    var unlikePost = function (postId, userId) {
+    	return $http.delete("/api/post/" + postId + "/unlike/" + userId)
+        	.then(function (response) {
         		return response.data;
         });
     };
 
     var getPostsByUserId = function (userId) {
     	return $http.get("/api/user/" + userId + "/posts")
-              .then(function(response) {
+              .then(function (response) {
             	  return response.data;
               });
     };
     
     var getLikedPostsByUserId = function (userId) {
     	return $http.get("/api/user/" + userId + "/likedposts")
-              .then(function(response) {
+              .then(function (response) {
             	  return response.data;
               });
     };
 
     var getCommentedPostsByUserId = function (userId) {
     	return $http.get("/api/user/" + userId + "/commentedposts")
-              .then(function(response) {
+              .then(function (response) {
             	  return response.data;
               });
     };
 
     var getCommentsByUserId = function (userId) {
     	return $http.get("/api/user/" + userId + "/comments")
-              .then(function(response) {
+              .then(function (response) {
             	  return response.data;
               });
     };
 
-    var addComment = function (userId, postId, text, token) {
+    var addComment = function (userId, postId, text) {
     	var data = {
 			userId: userId,
 			postId: postId,
 			text: text
     	};
 
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.post("/api/comment/add", data, configs)
+    	return $http.post("/api/comment/add", data)
         	.then(function(response) {
         		return response.data;
         });
     };
 
-    var editComment = function (commentId, text, token) {
-    	var data = {
-			text: text
-    	};
-
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.put("/api/comment/" + commentId, data, configs)
+    var editComment = function (commentId, text) {
+    	return $http.put("/api/comment/" + commentId, {text: text}, configs)
         	.then(function(response) {
         		return response.data;
         });
     };
 
-    var deleteComment = function (commentId, token) {
-
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.delete("/api/comment/" + commentId, configs)
+    var deleteComment = function (commentId) {
+    	return $http.delete("/api/comment/" + commentId)
         	.then(function(response) {
         		return response.data;
         });
     };
 
-    var likeComment = function (commentId, userId, token) {
-
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.post("/api/comment/" + commentId + "/like/" + userId, null, configs)
+    var likeComment = function (commentId, userId) {
+    	return $http.post("/api/comment/" + commentId + "/like/" + userId, null)
         	.then(function(response) {
         		return response.data;
         });
     };
 
-    var unlikeComment = function (commentId, userId, token) {
-
-    	var configs = {
-    		headers: {
-    			"Authorization": "Bearer " + token
-    		}
-    	};
-
-    	return $http.delete("/api/comment/" + commentId + "/unlike/" + userId, configs)
+    var unlikeComment = function (commentId, userId) {
+    	return $http.delete("/api/comment/" + commentId + "/unlike/" + userId)
         	.then(function(response) {
         		return response.data;
         });
@@ -263,46 +184,28 @@
 				});
 		}
 		
-	    var editPassword = function (userId, oldPassword, newPassword, token) {
+	    var editPassword = function (userId, oldPassword, newPassword) {
 	    	var data = {
 	    		userId: userId,
 	    		oldPassword: oldPassword,
 	    		newPassword: newPassword
 	    	};
 
-	    	var configs = {
-        		headers: {
-        			"Authorization": "Bearer " + token
-        		}
-        	};
-
-	    	return $http.put("/api/user/password", data, configs)
+	    	return $http.put("/api/user/password", data)
 	        	.then(function (response) {
 	        		return response.data;
 	        });
 	    };
 	
-	    var followUser = function (followerUserId, followingUserId, token) {
-	    	var configs = {
-	    		headers: {
-	    			"Authorization": "Bearer " + token
-	    		}
-	    	};
-	    	
-	    	return $http.post("/api/user/follow", {followerUserId: followerUserId, followingUserId: followingUserId}, configs)
+	    var followUser = function (followerUserId, followingUserId) {
+	    	return $http.post("/api/user/follow", {followerUserId: followerUserId, followingUserId: followingUserId})
 		    	.then(function (response) {
 		    		return response.data;
 		    	});
 	    };
     
-	    var unfollowUser = function (followerUserId, followingUserId, token) {
-	    	var configs = {
-	    		headers: {
-	    			"Authorization": "Bearer " + token
-	    		}
-	    	};
-
-	    	return $http.post("/api/user/unfollow", {followerUserId: followerUserId, followingUserId: followingUserId}, configs)
+	    var unfollowUser = function (followerUserId, followingUserId) {
+	    	return $http.post("/api/user/unfollow", {followerUserId: followerUserId, followingUserId: followingUserId})
 		    	.then(function (response) {
 		    		return response.data;
 		    	});
@@ -325,8 +228,10 @@
 		};
     };
 
-  var loginService = function($http) {
+  var loginService = function ($http, $cookies) {
 
+	let sessionCookie = "jms-social-media-session";
+  
     var attemptLogin = function (user, password) {
     	var data = {
     		user: user,
@@ -334,19 +239,30 @@
     	};
     	return $http.post("/api/login", data)
         	.then(function (response) {
+        		$http.defaults.headers.common.Authorization = "Bearer " + response.data.token;
         		return response.data;
         });
     };
 
     var logout = function () {
+    	$http.defaults.headers.common.Authorization = undefined;
+    	$cookies.remove(sessionCookie);
     	return $http.post("/api/logout");
     };
     
     var retrieveSession = function () {
     	return $http.post("/api/retrieveSession")
         	.then(function (response) {
+        		if (response.data) {
+        			$http.defaults.headers.common.Authorization = "Bearer " + response.data.token;
+        		} else {
+        			$cookies.remove(sessionCookie);
+        		}
         		return response.data;
-        });
+        	}, function (error) {
+        		$cookies.remove(sessionCookie);
+        		return null;
+        	});
     };
     
 	return {

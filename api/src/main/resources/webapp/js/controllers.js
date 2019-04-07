@@ -1,8 +1,6 @@
 (function() {
 
-	let sessionCookie = "jms-social-media-session";
-
-	var MainController = function($scope, $location, $route, $cookies, alertService, loginService, usersService) {
+	var MainController = function($scope, $location, $route, alertService, loginService, usersService) {
 		$scope.$on('$routeChangeStart', function(scope, next, current){
 			alertService.clearAlerts();
 		});
@@ -13,12 +11,8 @@
 					$scope.createSession(data);
 					$route.reload();
 				} else {
-					$cookies.remove(sessionCookie);
 					$location.path("/posts");
 				}
-		  	}, function (error) {
-		  		$cookies.remove(sessionCookie);
-		  		$location.path("/posts");
 		  	});
 
 		$scope.createSession = function (data) {
@@ -27,7 +21,6 @@
 			$scope.userId = data.userId;
 			$scope.username = data.username;
 			$scope.firstname = data.firstname;
-			$scope.token = data.token;
 		};
 
 		$scope.logout = function () {
@@ -36,8 +29,6 @@
 			$scope.userId = null;
 			$scope.username = null;
 			$scope.firstname = null;
-			$scope.token = null;
-			$cookies.remove(sessionCookie);
 			$location.path("/home");
 		};
 
@@ -150,7 +141,7 @@
 	var AddPostController = function($scope, $route, postsService, alertService) {
 		
 		$scope.addPost = function (userId, postText) {
-			postsService.addPost(userId, postText, $scope.token)
+			postsService.addPost(userId, postText)
 				.then(function (data) {
 					$route.reload();
 				}, function (error) {
@@ -177,7 +168,7 @@
 		$scope.editEntry = function (postId, commentId, text) {
 			
 			if (commentId) {
-				postsService.editComment(commentId, text, $scope.token)
+				postsService.editComment(commentId, text)
 					.then(function (data) {
 						$route.reload();
 					}, function (error) {
@@ -185,7 +176,7 @@
 					});
 				
 			} else {
-				postsService.editPost(postId, text, $scope.token)
+				postsService.editPost(postId, text)
 					.then(function (data) {
 						$route.reload();
 					}, function (error) {
@@ -198,7 +189,7 @@
 			
 			if (commentId) {
 				if (confirm("Are you sure you want to delete your comment?")) {
-					postsService.deleteComment(commentId, $scope.token)
+					postsService.deleteComment(commentId)
 					.then(function (data) {
 						$route.reload();
 					}, function (error) {
@@ -208,7 +199,7 @@
 
 			} else {
 				if (confirm("Are you sure you want to delete your post?")) {
-					postsService.deletePost(postId, $scope.token)
+					postsService.deletePost(postId)
 						.then(function (data) {
 							$location.path("/posts");
 						}, function (error) {
@@ -228,14 +219,14 @@
 		$scope.likeEntry = function (entry) {
 			
 			if (entry.commentId) {
-				postsService.likeComment(entry.commentId, $scope.userId, $scope.token)
+				postsService.likeComment(entry.commentId, $scope.userId)
 					.then(function (data) {
 						entry.likes.push($scope.userId);
 					}, function (error) {
 						alertService.error(error.data);
 					});
 			} else {
-				postsService.likePost(entry.postId, $scope.userId, $scope.token)
+				postsService.likePost(entry.postId, $scope.userId)
 					.then(function (data) {
 						entry.likes.push($scope.userId);
 					}, function (error) {
@@ -247,14 +238,14 @@
 		$scope.unlikeEntry = function (entry) {
 
 			if (entry.commentId) {
-				postsService.unlikeComment(entry.commentId, $scope.userId, $scope.token)
+				postsService.unlikeComment(entry.commentId, $scope.userId)
 					.then(function (data) {
 						removeLikeFromEntry(entry);
 					}, function (error) {
 						alertService.error(error.data);
 					});
 			} else {
-				postsService.unlikePost(entry.postId, $scope.userId, $scope.token)
+				postsService.unlikePost(entry.postId, $scope.userId)
 					.then(function (data) {
 						removeLikeFromEntry(entry);
 					}, function (error) {
@@ -267,7 +258,7 @@
 	var AddCommentController = function($scope, $route, postsService, alertService) {
 		
 		$scope.addComment = function (userId, postId, commentText) {
-			postsService.addComment(userId, postId, commentText, $scope.token)
+			postsService.addComment(userId, postId, commentText)
 				.then(function (data) {
 					$route.reload();
 				}, function (error) {
@@ -283,7 +274,7 @@
 			if (newPassword1 != newPassword2) {
 				$scope.errorText = 'New Passwords Do Not Match';
 			} else {
-				usersService.editPassword($scope.userId, currentPassword, newPassword1, $scope.token)
+				usersService.editPassword($scope.userId, currentPassword, newPassword1)
 					.then(function (data) {
 						alert("Password Changed Successfully");
 						$location.path("/home");
@@ -360,12 +351,12 @@
 		};
 		
 		$scope.followUser = function (userId) {
-			usersService.followUser($scope.userId, userId, $scope.token);
+			usersService.followUser($scope.userId, userId);
 			$scope.modalFollowingUserIds.push(userId);
 		};
 		
 		$scope.unfollowUser = function (userId) {
-			usersService.unfollowUser($scope.userId, userId, $scope.token);
+			usersService.unfollowUser($scope.userId, userId);
 			let index = $scope.modalFollowingUserIds.indexOf(userId);
 			if (index > -1) {
 				$scope.modalFollowingUserIds.splice(index, 1);
