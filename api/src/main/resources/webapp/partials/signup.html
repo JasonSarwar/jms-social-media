@@ -67,7 +67,7 @@
 					<select class="custom-select" name="month" ng-model="newUserMonth" ng-options="month for month in months" ng-change="changeMonth()" required>
 						<option value="" disabled selected>Month</option>
 					</select>
-					<select class="custom-select" name="day" ng-model="newUserDay" ng-options="day for day in days"  required>
+					<select class="custom-select" name="day" ng-model="newUserDay" ng-options="day for day in days" required style="max-width: 90px">
 					    <option value="" disabled selected>Day</option>
 					</select>
 					<select class="custom-select" name="year" ng-model="newUserYear" ng-options="year for year in years" ng-change="changeYear()"  required>

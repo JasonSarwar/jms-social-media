@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -8,7 +8,7 @@
       <li class="nav-item active">
         <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item active">
         <a class="nav-link" href="#!/posts"><i class="fas fa-file-alt"></i> All Posts</a>
       </li>
       <li class="nav-item active" ng-hide="firstname">
@@ -17,7 +17,7 @@
       <li class="nav-item active" ng-hide="firstname">
         <a class="nav-link" href="#!/signup"><i class="fas fa-user-plus"></i> Sign up</a>
       </li>
-      <li class="nav-item dropdown" ng-show="firstname">
+      <li class="nav-item active dropdown" ng-show="firstname">
         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Hi {{firstname}}!
         </a>
@@ -25,7 +25,6 @@
           <a class="dropdown-item" ng-href="#!/user/{{username}}">My Profile</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#!/editpassword">Change Password</a>
-          <a class="dropdown-item" href="#">Something else here</a>
         </div>
       </li>
       <li class="nav-item active" ng-show="firstname">

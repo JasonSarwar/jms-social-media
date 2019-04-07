@@ -10,10 +10,7 @@
       </div>
       <div class="modal-body">
         <div ng-repeat="user in modalUsers">
-	        <!-- a ng-href="#!/user/{{user.username}}" data-dismiss="modal">
-				@{{user.username}}
-				<hr>
-			</a-->
+
 			<div class="row">
 				<div class="col-sm-8">
 					<button type="button" class="btn btn-link" ng-click=goToUser(user.username)>@{{user.username}}</button>
@@ -28,8 +25,8 @@
 				</div>
 				
 			</div>
-			<hr>
-         </div> 
+			<hr ng-if="!$last">
+         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -49,6 +49,12 @@
 					});
 			}
 		};
+
+		$scope.showMessageBox = function(messageTitle, messageText) {
+			$scope.messageTitle = messageTitle;
+			$scope.messageText = messageText;
+			angular.element('#messageBox').modal();
+		}
 	};
 
 	var LoginController = function($scope, $location, loginService) {
@@ -73,17 +79,30 @@
 	
 	var HomeController = function ($scope, postsService, alertService) {
 		
-		if ($scope.userId) {
+		let noPostsMessage = function (data, text) {
+			if (!data || !data.length) {
+				$scope.noPostsMessage = text;
+			}
+		};
+		
+		$scope.getFeedPosts = function() {
+			$scope.noPostsMessage = undefined;
 			postsService.getFeedPosts($scope.userId)
 				.then(function (data) {
 					$scope.posts = data;
+					noPostsMessage(data, "Start following people to see Posts here!");
 			  	}, function (error) {
 			  		alertService.error(error.data);
 			  	});
+		};
+		
+		if ($scope.userId) {
+			$scope.getFeedPosts();
 		} else {
 			postsService.getPosts()
 				.then(function (data) {
 					$scope.posts = data;
+					noPostsMessage(data, "No Posts were found!");
 			  	}, function (error) {
 			  		alertService.error(error.data);
 			  	});
@@ -91,6 +110,7 @@
 	};
 	
 	var PostController = function($scope, $routeParams, postsService, alertService) {
+
 		let comments;
 		var postId = $routeParams.postId;
 		postsService.getPost(postId)
@@ -127,6 +147,9 @@
 		postsService.getPosts(params)
 			.then(function (data) {
 				$scope.posts = data;
+				if (!data || !data.length) {
+					$scope.noPostsMessage = "No Posts were found!";
+				}
 		  	}, function (error) {
 		  		alertService.error(error.data);
 		  	});
@@ -276,7 +299,7 @@
 			} else {
 				usersService.editPassword($scope.userId, currentPassword, newPassword1)
 					.then(function (data) {
-						alert("Password Changed Successfully");
+						$scope.showMessageBox("Edit Password", "Password Changed Successfully");
 						$location.path("/home");
 					}, function (error) {
 						$scope.errorText = error.data;
@@ -332,12 +355,12 @@
 		};
 		
 		$scope.followUser = function () {
-			usersService.followUser($scope.userId, $scope.user.userId, $scope.token);
+			usersService.followUser($scope.userId, $scope.user.userId);
 			$scope.user.followersUserIds.push($scope.userId);
 		};
 		
 		$scope.unfollowUser = function () {
-			usersService.unfollowUser($scope.userId, $scope.user.userId, $scope.token);
+			usersService.unfollowUser($scope.userId, $scope.user.userId);
 			let index = $scope.user.followersUserIds.indexOf($scope.userId);
 			if (index > -1) {
 				$scope.user.followersUserIds.splice(index, 1);
@@ -346,6 +369,7 @@
 	};
 
 	var UsersModalController = function($scope, $location, usersService) {
+
 		$scope.isFollowing = function (userId) {
 			return $scope.modalFollowingUserIds && $scope.modalFollowingUserIds.indexOf(userId) > -1;
 		};
@@ -464,7 +488,7 @@
 				signupService.addUser($scope.newUser)
 					.then(function (data) {
 						$scope.createSession(data);
-						alert("Your account has been created!");
+						$scope.showMessageBox("New Account", "Your account has been created!");
 						$location.path("/user/" + data.username);
 					}, function (error) {
 						$scope.signupError = error.data;
@@ -472,6 +496,28 @@
 			}
 		};
 	};
+
+	var UsersToFollowController = function($scope, usersService) {
+
+		usersService.getUsersToFollow($scope.userId, 20)
+		.then(function (data) {
+			$scope.usersToFollow = data;
+		});
+		
+		$scope.followUser = function (userId) {
+			usersService.followUser($scope.userId, userId)
+			.then(function (data) {
+				$scope.getFeedPosts();
+			});
+			let len = $scope.usersToFollow.length;
+			for (i = 0; i < len; i++) {
+				if ($scope.usersToFollow[i].userId == userId) {
+					$scope.usersToFollow.splice(i, 1);
+					break;
+				}
+			}
+		};
+	}
 
 	angular.module("mysocialmedia")
 		.controller("MainController", MainController)
@@ -486,6 +532,7 @@
 		.controller("EditPasswordController", EditPasswordController)
 		.controller("UserPageController", UserPageController)
 		.controller("UsersModalController", UsersModalController)
-		.controller("SignupController", SignupController);
+		.controller("SignupController", SignupController)
+		.controller("UsersToFollowController", UsersToFollowController);
 	
 }());

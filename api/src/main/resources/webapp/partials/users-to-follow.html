@@ -1,0 +1,19 @@
+<!-- Users To Follow Section -->
+<div class="card" ng-if="usersToFollow && usersToFollow.length">
+	<h5 class="card-header">Users You May Like</h5>
+	<div class="card-body">
+		<div ng-repeat="user in usersToFollow|limitTo:5">
+			<div class="row">
+				<div class="col-sm-6">
+					<a ng-href="#!/user/{{user.username}}">@{{user.username}}</a>
+				</div>
+				<div class="col-sm-6">
+					<button type="button" class="btn btn-sm btn-outline-success" ng-click="followUser(user.userId)">
+						<span class="fas fa-user-plus"></span> Follow
+					</button>
+				</div>
+			</div>
+			<hr ng-if="!$last">
+         </div> 
+	</div>
+</div>

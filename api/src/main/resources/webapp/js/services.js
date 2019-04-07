@@ -182,8 +182,19 @@
 				.then(function (response) {
 					return response.data;
 				});
-		}
-		
+		};
+
+		var getUsersToFollow = function (userId, max) {
+			let url = "/api/user/" + userId + "/userstofollow";
+			if (max) {
+				url = url + "?max=" + max
+			}
+			return $http.get(url)
+				.then(function (response) {
+					return response.data;
+				});
+		};
+
 	    var editPassword = function (userId, oldPassword, newPassword) {
 	    	var data = {
 	    		userId: userId,
@@ -221,6 +232,7 @@
 		return {
 			getUserPageInfo: getUserPageInfo,
 			getUsernames: getUsernames,
+			getUsersToFollow: getUsersToFollow,
 	    	editPassword: editPassword,
 	    	followUser: followUser,
 	    	unfollowUser: unfollowUser,
