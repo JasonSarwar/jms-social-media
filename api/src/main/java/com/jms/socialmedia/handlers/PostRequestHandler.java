@@ -79,7 +79,6 @@ public class PostRequestHandler extends RequestHandler {
 		
 		Collection<Integer> userIds = new HashSet<>(dataService.getFollowingUserIds(userId));
 		userIds.add(userId);
-
 		return dataService.getPosts(userIds, null, null, null, null, null, sincePostId, "postId", false);
 	}
 

@@ -82,6 +82,11 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
+	public Collection<User> getUsersToFollow(int userId) {
+		return followersMapper.getUsersToFollow(userId);
+	}
+
+	@Override
 	public boolean isUsernameTaken(String username) {
 		return usersMapper.isUsernameTaken(username) > 0;
 	}

@@ -45,6 +45,11 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
+	public Collection<User> getUsersToFollow(int userId) {
+		return dataService.getUsersToFollow(userId);
+	}
+
+	@Override
 	public boolean isUsernameTaken(String username) {
 		return dataService.isUsernameTaken(username);
 	}

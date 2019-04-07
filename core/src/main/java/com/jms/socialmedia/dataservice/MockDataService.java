@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.Optional;
@@ -80,6 +81,13 @@ public class MockDataService implements DataService {
 	@Override
 	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
 		return usersById.values().stream().filter(user -> userIds.contains(user.getUserId())).collect(toList());
+	}
+
+	@Override
+	public Collection<User> getUsersToFollow(int userId) {
+		Collection<Integer> userIds = new HashSet<>(getFollowingUserIds(userId));
+		userIds.add(userId);
+		return usersById.values().stream().filter(user -> !userIds.contains(user.getUserId())).collect(toList());
 	}
 
 	@Override
@@ -316,7 +324,6 @@ public class MockDataService implements DataService {
 		userPage.setFullName("Visitor");
 		userPage.setBio("Awesome person visiting Jason's website!");
 		userPage.setDateTimeJoined(LocalDateTime.now());
-		userPage.addFollowingUserIds(Collections.singleton(2));
 		userPagesById.put(1, userPage);
 		
 		UserPage jasonPage = new UserPage();

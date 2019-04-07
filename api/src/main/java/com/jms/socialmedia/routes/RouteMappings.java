@@ -108,6 +108,8 @@ public class RouteMappings {
 
 				Spark.get("/user/:userid/following", contentType, followRequestHandler::handleGetFollowingUserIds, contentWriter);
 
+				Spark.get("/user/:userid/userstofollow", contentType, followRequestHandler::handleGetUsersToFollow, contentWriter);
+
 				Spark.post("/user/follow", contentType, followRequestHandler::handleFollowUser, contentWriter);
 
 				Spark.post("/user/unfollow", contentType, followRequestHandler::handleUnfollowUser, contentWriter);

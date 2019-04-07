@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import com.jms.socialmedia.model.User;
+
 public class SqlSessionFollowersMapper implements FollowersMapper {
 
 	private final SqlSessionFactory sessionfactory;
@@ -42,6 +44,14 @@ public class SqlSessionFollowersMapper implements FollowersMapper {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			FollowersMapper mapper = session.getMapper(FollowersMapper.class);
 			return mapper.unfollowUser(followerUserId, followingUserId);
+		}
+	}
+
+	@Override
+	public Collection<User> getUsersToFollow(int userId) {
+		try (SqlSession session = sessionfactory.openSession(true)) {
+			FollowersMapper mapper = session.getMapper(FollowersMapper.class);
+			return mapper.getUsersToFollow(userId);
 		}
 	}
 }

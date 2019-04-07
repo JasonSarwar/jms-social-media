@@ -22,6 +22,8 @@ public interface DataService {
 
 	Collection<User> getUsernamesByIds(Collection<Integer> userIds);
 
+	Collection<User> getUsersToFollow(int userId);
+
 	boolean isUsernameTaken(String username);
 
 	boolean isEmailTaken(String email);

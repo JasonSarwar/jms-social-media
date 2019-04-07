@@ -9,9 +9,13 @@
 		where following_user_id = #{id}
 	</select>
 
-	<select id="getFollowingUserIds" parameterType="int" resultType="Integer">
+	<sql id="getFollowingUserIdsSQL">
 		select following_user_id from followers
 		where follower_user_id = #{id}
+	</sql>
+
+	<select id="getFollowingUserIds" parameterType="int" resultType="Integer">
+		<include refid="getFollowingUserIdsSQL"></include>
 	</select>
 
 	<insert id="followUser" databaseId="oracle">
@@ -31,4 +35,10 @@
         where follower_user_id = #{param1} and following_user_id = #{param2}
     </delete>
 
+	<select id="getUsersToFollow" parameterType="Integer" resultType="User">
+		select user_id, username from users
+		where user_id != #{id}
+		and user_id not in
+		(<include refid="getFollowingUserIdsSQL"></include>)
+	</select>
 </mapper>
