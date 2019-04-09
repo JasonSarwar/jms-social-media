@@ -9,13 +9,16 @@ import com.jms.socialmedia.exception.BadRequestException;
 import com.jms.socialmedia.exception.NotFoundException;
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Entry;
+import com.jms.socialmedia.token.Permission;
+import com.jms.socialmedia.token.TokenService;
+
 import spark.Request;
 import spark.Response;
 
 public class CommentRequestHandler extends RequestHandler {
 
-	public CommentRequestHandler(DataService dataService, Gson gson) {
-		super(dataService, gson);
+	public CommentRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
+		super(dataService, tokenService, gson);
 	}
 
 	public Collection<Comment> handleGetComments(Request request, Response response) {
@@ -51,7 +54,7 @@ public class CommentRequestHandler extends RequestHandler {
 			newComment.setPostId(postId);
 		}
 		validateAddEntryRequest(newComment);
-		authorizeRequest(request, newComment.getUserId(), "Add Comment");
+		authorizeRequest(request, newComment.getUserId(), Permission.ADD_COMMENT);
 		return dataService.addComment(newComment);
 	}
 
@@ -60,7 +63,7 @@ public class CommentRequestHandler extends RequestHandler {
 		String strCommentId = request.params(":id");
 		int commentId = Integer.parseInt(strCommentId);
 		Entry body = extractBodyContent(request, Comment.class);
-		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), "Edit Comment");
+		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), Permission.EDIT_COMMENT);
 		if (!dataService.editComment(commentId, body.getText())) {
 			throw new NotFoundException("Comment Not Found");
 		}
@@ -71,7 +74,7 @@ public class CommentRequestHandler extends RequestHandler {
 
 		String strCommentId = request.params(":id");
 		int commentId = Integer.parseInt(strCommentId);
-		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), "Edit Comment");
+		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), Permission.DELETE_COMMENT);
 		if (!dataService.deleteComment(commentId)) {
 			throw new NotFoundException("Comment Not Found");
 		}

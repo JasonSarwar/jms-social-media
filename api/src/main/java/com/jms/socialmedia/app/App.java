@@ -20,6 +20,7 @@ import com.jms.socialmedia.password.NonEncryptionPasswordService;
 import com.jms.socialmedia.password.PasswordService;
 import com.jms.socialmedia.routes.LogRouteAdapter;
 import com.jms.socialmedia.routes.RouteMappings;
+import com.jms.socialmedia.token.JWTService;
 
 import spark.Spark;
 
@@ -37,7 +38,7 @@ public class App {
 		DataService dataService = createDataService(configurations);
 		PasswordService passwordService = createPasswordService(configurations);
 
-		RouteMappings routes = new RouteMappings(dataService, passwordService);
+		RouteMappings routes = new RouteMappings(dataService, passwordService, new JWTService());
 		routes.addRouteListener(new LogRouteAdapter());
 		routes.start();
 		LOGGER.info("Starting up at port:{}", Spark.port());

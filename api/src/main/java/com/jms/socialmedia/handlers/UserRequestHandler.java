@@ -20,6 +20,9 @@ import com.jms.socialmedia.model.NewUser;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.model.UserPage;
 import com.jms.socialmedia.password.PasswordService;
+import com.jms.socialmedia.token.Permission;
+import com.jms.socialmedia.token.Token;
+import com.jms.socialmedia.token.TokenService;
 
 import spark.Request;
 import spark.Response;
@@ -31,8 +34,8 @@ public class UserRequestHandler extends RequestHandler {
 
 	private final PasswordService passwordService;
 	
-	public UserRequestHandler(DataService dataService, PasswordService passwordService, Gson gson) {
-		super(dataService, gson);
+	public UserRequestHandler(DataService dataService, PasswordService passwordService, TokenService tokenService, Gson gson) {
+		super(dataService, tokenService, gson);
 		this.passwordService = passwordService;
 	}
 
@@ -101,7 +104,7 @@ public class UserRequestHandler extends RequestHandler {
 	public Boolean handleEditUserPassword(Request request, Response response) throws IOException {
 		ChangePassword changePassword = extractBodyContent(request, ChangePassword.class);
 		
-		authorizeRequest(request, changePassword.getUserId(), "Edit Password");
+		authorizeRequest(request, changePassword.getUserId(), Permission.EDIT_PASSWORD);
 		
 		User user = dataService.getHashedPasswordByUserId(changePassword.getUserId());
 		if (!passwordService.checkPassword(changePassword, user)) {
@@ -176,8 +179,10 @@ public class UserRequestHandler extends RequestHandler {
 		LoginSuccess loginSuccess = new LoginSuccess();
 		loginSuccess.setUserId(user.getUserId());
 		loginSuccess.setUsername(user.getUsername());
-		loginSuccess.setToken(jwtService.createJWT(user.getUserId()));
 		loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
+		Token token = Token.newBuilder().setUserId(user.getUserId())
+				.setPermission(Permission.getRegularPermissions()).build();
+		loginSuccess.setToken(tokenService.createTokenString(token));
 		return loginSuccess;
 	}
 	

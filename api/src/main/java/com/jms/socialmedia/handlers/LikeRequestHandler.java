@@ -6,13 +6,16 @@ import java.util.Collection;
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.model.Post;
+import com.jms.socialmedia.token.Permission;
+import com.jms.socialmedia.token.TokenService;
+
 import spark.Request;
 import spark.Response;
 
 public class LikeRequestHandler extends RequestHandler {
 
-	public LikeRequestHandler(DataService dataService, Gson gson) {
-		super(dataService, gson);
+	public LikeRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
+		super(dataService, tokenService, gson);
 	}
 
 	public Collection<Post> handleGetLikedPosts(Request request, Response response) {
@@ -31,7 +34,7 @@ public class LikeRequestHandler extends RequestHandler {
 
 		int postId = Integer.parseInt(request.params(":postid"));
 		int userId = Integer.parseInt(request.params(":userid"));
-		authorizeRequest(request, userId, "Like Post");
+		authorizeRequest(request, userId, Permission.LIKE_POST);
 		return dataService.likePost(postId, userId);
 	}
 
@@ -39,7 +42,7 @@ public class LikeRequestHandler extends RequestHandler {
 
 		int postId = Integer.parseInt(request.params(":postid"));
 		int userId = Integer.parseInt(request.params(":userid"));
-		authorizeRequest(request, userId, "Unlike Post");
+		authorizeRequest(request, userId, Permission.UNLIKE_POST);
 		return dataService.unlikePost(postId, userId);
 	}
 
@@ -53,7 +56,7 @@ public class LikeRequestHandler extends RequestHandler {
 
 		int commentId = Integer.parseInt(request.params(":commentid"));
 		int userId = Integer.parseInt(request.params(":userid"));
-		authorizeRequest(request, userId, "Like Comment");
+		authorizeRequest(request, userId, Permission.LIKE_COMMENT);
 		return dataService.likeComment(commentId, userId);
 	}
 
@@ -61,7 +64,7 @@ public class LikeRequestHandler extends RequestHandler {
 
 		int commentId = Integer.parseInt(request.params(":commentid"));
 		int userId = Integer.parseInt(request.params(":userid"));
-		authorizeRequest(request, userId, "Unlike Comment");
+		authorizeRequest(request, userId, Permission.UNLIKE_COMMENT);
 		return dataService.unlikeComment(commentId, userId);
 	}
 	

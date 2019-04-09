@@ -5,7 +5,10 @@ import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.UnauthorizedException;
 import com.jms.socialmedia.exception.UnsupportedContentTypeException;
-import com.jms.socialmedia.jwt.JWTService;
+import com.jms.socialmedia.token.Permission;
+import com.jms.socialmedia.token.Token;
+import com.jms.socialmedia.token.TokenService;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -19,25 +22,25 @@ public abstract class RequestHandler {
 	private static final String BEARER = "Bearer ";
 	
 	protected final DataService dataService;
-	protected final JWTService jwtService;
+	protected final TokenService tokenService;
 	private final Gson gson;
 	
-	public RequestHandler(DataService dataService, Gson gson) {
+	public RequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
 		this.dataService = dataService;
+		this.tokenService = tokenService;
 		this.gson = gson;
-		jwtService = new JWTService();
 	}
 
-	protected void authorizeRequest(Request request, Integer userIdFromRequest, String action) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	protected void authorizeRequest(Request request, Integer userIdFromRequest, Permission permission) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
 		
 		String auth = request.headers(AUTHORIZATION);
 		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
-			throw new UnauthorizedException("Not authorized to " + action);
+			throw new UnauthorizedException("Not authorized to " + permission.getAction());
 		} else {
-			String jwt = auth.substring(BEARER.length());
-			Integer userIdFromJWT = jwtService.validateJWTAndRetrieveUserId(jwt);
-			if (!userIdFromRequest.equals(userIdFromJWT)) {
-				throw new UnauthorizedException("User not authorized to " + action);
+			String tokenString = auth.substring(BEARER.length());
+			Token token = tokenService.createTokenFromString(tokenString);
+			if (!token.hasPermission(Permission.ADMIN) && (!userIdFromRequest.equals(token.getUserId()) || !token.hasPermission(permission))) {
+				throw new UnauthorizedException("User not authorized to " + permission.getAction());
 			}
 		}
 	}

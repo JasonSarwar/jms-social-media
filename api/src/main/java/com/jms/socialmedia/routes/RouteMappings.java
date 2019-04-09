@@ -17,6 +17,7 @@ import com.jms.socialmedia.handlers.LikeRequestHandler;
 import com.jms.socialmedia.handlers.PostRequestHandler;
 import com.jms.socialmedia.handlers.UserRequestHandler;
 import com.jms.socialmedia.password.PasswordService;
+import com.jms.socialmedia.token.TokenService;
 
 import spark.Request;
 import spark.Response;
@@ -27,22 +28,24 @@ public class RouteMappings {
 	
 	private final DataService dataService;
 	private final PasswordService passwordService;
+	private final TokenService tokenService;
 	private Set<RouteListener> routeListeners;
 
-	public RouteMappings(DataService dataService, PasswordService passwordService) {
+	public RouteMappings(DataService dataService, PasswordService passwordService, TokenService tokenService) {
 		this.dataService = dataService;
 		this.passwordService = passwordService;
+		this.tokenService = tokenService;
 		routeListeners = new HashSet<>();
 	}
 	
 	public final void start() {
 
 		Gson gson = createGson();
-		UserRequestHandler userRequestHandler = new UserRequestHandler(dataService, passwordService, gson);
-		PostRequestHandler postRequestHandler = new PostRequestHandler(dataService, gson);
-		CommentRequestHandler commentRequestHandler = new CommentRequestHandler(dataService, gson);
-		LikeRequestHandler likeRequestHandler = new LikeRequestHandler(dataService, gson);
-		FollowRequestHandler followRequestHandler = new FollowRequestHandler(dataService, gson);
+		UserRequestHandler userRequestHandler = new UserRequestHandler(dataService, passwordService, tokenService, gson);
+		PostRequestHandler postRequestHandler = new PostRequestHandler(dataService, tokenService, gson);
+		CommentRequestHandler commentRequestHandler = new CommentRequestHandler(dataService, tokenService, gson);
+		LikeRequestHandler likeRequestHandler = new LikeRequestHandler(dataService, tokenService, gson);
+		FollowRequestHandler followRequestHandler = new FollowRequestHandler(dataService, tokenService, gson);
 		ExceptionHandler exceptionHandler = new ExceptionHandler();
 
 		ObjectWriter xmlWriter = new XmlMapper().registerModule(new AfterburnerModule()).writer();

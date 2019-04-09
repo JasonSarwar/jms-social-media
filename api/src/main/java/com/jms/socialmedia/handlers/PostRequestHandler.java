@@ -14,13 +14,16 @@ import com.jms.socialmedia.exception.BadRequestException;
 import com.jms.socialmedia.exception.NotFoundException;
 import com.jms.socialmedia.model.Entry;
 import com.jms.socialmedia.model.Post;
+import com.jms.socialmedia.token.Permission;
+import com.jms.socialmedia.token.TokenService;
+
 import spark.Request;
 import spark.Response;
 
 public class PostRequestHandler extends RequestHandler {
 
-	public PostRequestHandler(DataService dataService, Gson gson) {
-		super(dataService, gson);
+	public PostRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
+		super(dataService, tokenService, gson);
 	}
 
 	/**
@@ -144,7 +147,7 @@ public class PostRequestHandler extends RequestHandler {
 		
 		Post newPost = extractBodyContent(request, Post.class);
 		validateAddEntryRequest(newPost);
-		authorizeRequest(request, newPost.getUserId(), "Add Post");
+		authorizeRequest(request, newPost.getUserId(), Permission.ADD_POST);
 		return dataService.addPost(newPost);
 	}
 
@@ -164,7 +167,7 @@ public class PostRequestHandler extends RequestHandler {
 
 		int postId = Integer.parseInt(request.params(":id"));
 		Entry body = extractBodyContent(request, Post.class);
-		authorizeRequest(request, dataService.getUserIdFromPostId(postId), "Edit Post");
+		authorizeRequest(request, dataService.getUserIdFromPostId(postId), Permission.EDIT_POST);
 		if (!dataService.editPost(postId, body.getText())) {
 			throw new NotFoundException("Post Not Found");
 		}
@@ -186,7 +189,7 @@ public class PostRequestHandler extends RequestHandler {
 	public Boolean handleDeletePost(Request request, Response response) throws IOException {
 
 		int postId = Integer.parseInt(request.params(":id"));
-		authorizeRequest(request, dataService.getUserIdFromPostId(postId), "Delete Post");
+		authorizeRequest(request, dataService.getUserIdFromPostId(postId), Permission.DELETE_POST);
 		if (!dataService.deletePost(postId)) {
 			throw new NotFoundException("Post Not Found");
 		}

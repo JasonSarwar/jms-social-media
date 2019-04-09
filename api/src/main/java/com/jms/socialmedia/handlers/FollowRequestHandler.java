@@ -12,6 +12,8 @@ import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
 import com.jms.socialmedia.model.FollowRequest;
 import com.jms.socialmedia.model.User;
+import com.jms.socialmedia.token.Permission;
+import com.jms.socialmedia.token.TokenService;
 
 import spark.Request;
 import spark.Response;
@@ -21,13 +23,13 @@ public class FollowRequestHandler extends RequestHandler {
 
 	private Random random = new Random();
 	
-	public FollowRequestHandler(DataService dataService, Gson gson) {
-		super(dataService, gson);
+	public FollowRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
+		super(dataService, tokenService, gson);
 	}
 
 	public Boolean handleFollowUser(Request request, Response response) throws IOException {
 		FollowRequest followRequest = extractBodyContent(request, FollowRequest.class);
-		authorizeRequest(request, followRequest.getFollowerUserId(), "Follow User");
+		authorizeRequest(request, followRequest.getFollowerUserId(), Permission.FOLLOW_USER);
 		if (followRequest.getFollowerUserId().equals(followRequest.getFollowingUserId())) {
 			throw new BadRequestException("A User cannot follow themselves");
 		}
@@ -36,7 +38,7 @@ public class FollowRequestHandler extends RequestHandler {
 
 	public Boolean handleUnfollowUser(Request request, Response response) throws IOException {
 		FollowRequest followRequest = extractBodyContent(request, FollowRequest.class);
-		authorizeRequest(request, followRequest.getFollowerUserId(), "Unollow User");
+		authorizeRequest(request, followRequest.getFollowerUserId(), Permission.UNFOLLOW_USER);
 		return dataService.unfollowUser(followRequest.getFollowerUserId(), followRequest.getFollowingUserId());
 	}
 
