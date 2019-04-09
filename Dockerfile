@@ -23,6 +23,9 @@ COPY ${PATH_TO_LIB} lib
 COPY docker_scripts/wait-for-it.sh .
 COPY docker_scripts/start.sh .
 
+# To mount for properties file
+RUN mkdir properties
+
 # Allow them to be executed
 RUN chmod +x wait-for-it.sh
 RUN chmod +x start.sh
