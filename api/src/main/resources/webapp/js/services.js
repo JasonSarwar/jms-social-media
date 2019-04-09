@@ -119,7 +119,7 @@
     };
 
     var editComment = function (commentId, text) {
-    	return $http.put("/api/comment/" + commentId, {text: text}, configs)
+    	return $http.put("/api/comment/" + commentId, {text: text})
         	.then(function(response) {
         		return response.data;
         });
