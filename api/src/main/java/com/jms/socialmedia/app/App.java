@@ -38,7 +38,7 @@ public class App {
 		DataService dataService = createDataService(configurations);
 		PasswordService passwordService = createPasswordService(configurations);
 
-		RouteMappings routes = new RouteMappings(dataService, passwordService, new JWTService());
+		RouteMappings routes = new RouteMappings(dataService, passwordService, new JWTService(), configurations.get(CoreSettings.ADMIN_USER_IDS));
 		routes.addRouteListener(new LogRouteAdapter());
 		routes.start();
 		LOGGER.info("Starting up at port:{}", Spark.port());

@@ -16,7 +16,7 @@ public class JWTServiceTest {
 	@Test
 	public void testJWTService() throws IOException {
 		JWTService jwtService = new JWTService();
-		Token token = Token.newBuilder().setUserId(5).setPermission(Permission.ADD_POST, Permission.DELETE_COMMENT).build();
+		Token token = Token.newBuilder().setUserId(5).addPermissions(Permission.ADD_POST, Permission.DELETE_COMMENT).build();
 		String jwt = jwtService.createTokenString(token);
 		Token token2 = jwtService.createTokenFromString(jwt);
 		assertThat(token2.getUserId(), is(5));

@@ -40,12 +40,12 @@ public class Token {
 			return this;
 		}
 		
-		public Builder setPermission(Permission... permissions) {
+		public Builder addPermissions(Permission... permissions) {
 			Collections.addAll(this.permissions, permissions);
 			return this;
 		}
 
-		public Builder setPermission(Set<Permission> permissions) {
+		public Builder addPermissions(Set<Permission> permissions) {
 			this.permissions.addAll(permissions);
 			return this;
 		}

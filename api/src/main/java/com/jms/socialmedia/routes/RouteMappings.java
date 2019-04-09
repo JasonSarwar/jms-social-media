@@ -29,19 +29,21 @@ public class RouteMappings {
 	private final DataService dataService;
 	private final PasswordService passwordService;
 	private final TokenService tokenService;
+	private final Set<Integer> adminUserIds;
 	private Set<RouteListener> routeListeners;
 
-	public RouteMappings(DataService dataService, PasswordService passwordService, TokenService tokenService) {
+	public RouteMappings(DataService dataService, PasswordService passwordService, TokenService tokenService, Set<Integer> adminUserIds) {
 		this.dataService = dataService;
 		this.passwordService = passwordService;
 		this.tokenService = tokenService;
+		this.adminUserIds = adminUserIds;
 		routeListeners = new HashSet<>();
 	}
 	
 	public final void start() {
 
 		Gson gson = createGson();
-		UserRequestHandler userRequestHandler = new UserRequestHandler(dataService, passwordService, tokenService, gson);
+		UserRequestHandler userRequestHandler = new UserRequestHandler(dataService, passwordService, tokenService, adminUserIds, gson);
 		PostRequestHandler postRequestHandler = new PostRequestHandler(dataService, tokenService, gson);
 		CommentRequestHandler commentRequestHandler = new CommentRequestHandler(dataService, tokenService, gson);
 		LikeRequestHandler likeRequestHandler = new LikeRequestHandler(dataService, tokenService, gson);

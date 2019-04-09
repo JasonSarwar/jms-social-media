@@ -79,7 +79,7 @@ public class JWTService implements TokenService {
 	       .setSigningKey(DatatypeConverter.parseBase64Binary(JWT_KEY))
 	       .parseClaimsJws(jwt).getBody();
 			Set<Permission> permissions = (Set<Permission>) claims.get(CLAIM_PERMISSIONS, ArrayList.class).stream().map(e -> Permission.valueOf((String) e)).collect(Collectors.toSet());
-	    	return Token.newBuilder().setUserId(claims.get(CLAIM_USERID, Integer.class)).setPermission(permissions).build();
+	    	return Token.newBuilder().setUserId(claims.get(CLAIM_USERID, Integer.class)).addPermissions(permissions).build();
 	}
 
 }

@@ -3,6 +3,7 @@ package com.jms.socialmedia.handlers;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,10 +34,12 @@ public class UserRequestHandler extends RequestHandler {
 	private static final String SESSION_COOKIE = "jms-social-media-session";
 
 	private final PasswordService passwordService;
+	private final Set<Integer> adminUserIds;
 	
-	public UserRequestHandler(DataService dataService, PasswordService passwordService, TokenService tokenService, Gson gson) {
+	public UserRequestHandler(DataService dataService, PasswordService passwordService, TokenService tokenService, Set<Integer> adminUserIds, Gson gson) {
 		super(dataService, tokenService, gson);
 		this.passwordService = passwordService;
+		this.adminUserIds = adminUserIds;
 	}
 
 	public UserPage handleGetUserPage(Request request, Response response) {
@@ -180,9 +183,14 @@ public class UserRequestHandler extends RequestHandler {
 		loginSuccess.setUserId(user.getUserId());
 		loginSuccess.setUsername(user.getUsername());
 		loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
-		Token token = Token.newBuilder().setUserId(user.getUserId())
-				.setPermission(Permission.getRegularPermissions()).build();
-		loginSuccess.setToken(tokenService.createTokenString(token));
+		Token.Builder tokenBuilder = Token.newBuilder().setUserId(user.getUserId())
+				.addPermissions(Permission.getRegularPermissions());
+
+		if (adminUserIds.contains(user.getUserId())) {
+			tokenBuilder.addPermissions(Permission.ADMIN);
+		}
+
+		loginSuccess.setToken(tokenService.createTokenString(tokenBuilder.build()));
 		return loginSuccess;
 	}
 	

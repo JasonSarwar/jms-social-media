@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Settings {
@@ -65,27 +66,51 @@ public class Settings {
 	public static Setting<List<String>> stringListSetting(String name) {
 		return new StringListSettingBuilder().setName(name).build();
 	}
-	
+
 	public static Setting<List<String>> requiredStringListSetting(String name) {
 		return new StringListSettingBuilder().setName(name).isRequired().build();
 	}
-	
-	public static Setting<List<String>> stringListWithDefault(String name, List<String> defaultValue) {
+
+	public static Setting<List<String>> stringListSettingWithDefault(String name, List<String> defaultValue) {
 		return new StringListSettingBuilder().setName(name).setDefaultValue(defaultValue).build();
 	}
-	
+
 	public static Setting<List<Integer>> integerListSetting(String name) {
 		return new IntegerListSettingBuilder().setName(name).build();
 	}
-	
+
 	public static Setting<List<Integer>> requiredIntegerListSetting(String name) {
 		return new IntegerListSettingBuilder().setName(name).isRequired().build();
 	}
-	
-	public static Setting<List<Integer>> stringIntegerWithDefault(String name, List<Integer> defaultValue) {
+
+	public static Setting<List<Integer>> integerListSettingWithDefault(String name, List<Integer> defaultValue) {
 		return new IntegerListSettingBuilder().setName(name).setDefaultValue(defaultValue).build();
 	}
-	
+
+	public static Setting<Set<String>> stringSetSetting(String name) {
+		return new StringSetSettingBuilder().setName(name).build();
+	}
+
+	public static Setting<Set<String>> requiredStringSetSetting(String name) {
+		return new StringSetSettingBuilder().setName(name).isRequired().build();
+	}
+
+	public static Setting<Set<String>> stringSetSettingWithDefault(String name, Set<String> defaultValue) {
+		return new StringSetSettingBuilder().setName(name).setDefaultValue(defaultValue).build();
+	}
+
+	public static Setting<Set<Integer>> integerSetSetting(String name) {
+		return new IntegerSetSettingBuilder().setName(name).build();
+	}
+
+	public static Setting<Set<Integer>> requiredIntegerSetSetting(String name) {
+		return new IntegerSetSettingBuilder().setName(name).isRequired().build();
+	}
+
+	public static Setting<Set<Integer>> integerSetSettingWithDefault(String name, Set<Integer> defaultValue) {
+		return new IntegerSetSettingBuilder().setName(name).setDefaultValue(defaultValue).build();
+	}
+
 	private static abstract class AbstractSetting<T> implements Setting<T> {
 		protected final String name;
 		protected final boolean required;
@@ -219,7 +244,7 @@ public class Settings {
 		}
 		@Override
 		public List<T> convertRawValue(String rawValue) {
-			return Arrays.stream(rawValue.split(DELIMITER)).map(this::convertListItem).collect(Collectors.toList());
+			return rawValue == null ? null : Arrays.stream(rawValue.split(DELIMITER)).map(this::convertListItem).collect(Collectors.toList());
 		}
 		
 		protected abstract T convertListItem(String item);
@@ -258,6 +283,55 @@ public class Settings {
 	private static class IntegerListSettingBuilder extends AbstractSettingBuilder<List<Integer>>{
 		IntegerListSetting build() {
 			return new IntegerListSetting(this);
+		}
+	}
+
+	private static abstract class AbstractSetSetting<T> extends AbstractSetting<Set<T>> {
+		
+		AbstractSetSetting(AbstractSettingBuilder<Set<T>>  builder) {
+			super(builder);
+		}
+		@Override
+		public Set<T> convertRawValue(String rawValue) {
+			return rawValue == null ? null : Arrays.stream(rawValue.split(DELIMITER)).map(this::convertSetItem).collect(Collectors.toSet());
+		}
+		
+		protected abstract T convertSetItem(String item);
+	}
+
+	private static class StringSetSetting extends AbstractSetSetting<String> {
+
+		StringSetSetting(StringSetSettingBuilder builder) {
+			super(builder);
+		}
+		@Override
+		protected String convertSetItem(String item) {
+			return item.trim();
+		}
+
+	}
+	
+	private static class StringSetSettingBuilder extends AbstractSettingBuilder<Set<String>>{
+		StringSetSetting build() {
+			return new StringSetSetting(this);
+		}
+	}
+	
+	private static class IntegerSetSetting extends AbstractSetSetting<Integer> {
+
+		IntegerSetSetting(IntegerSetSettingBuilder builder) {
+			super(builder);
+		}
+		@Override
+		protected Integer convertSetItem(String item) {
+			return Integer.parseInt(item.trim());
+		}
+
+	}
+	
+	private static class IntegerSetSettingBuilder extends AbstractSettingBuilder<Set<Integer>>{
+		IntegerSetSetting build() {
+			return new IntegerSetSetting(this);
 		}
 	}
 }
