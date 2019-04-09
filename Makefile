@@ -9,11 +9,11 @@ mavenbuild:
 
 mavenrun: mavenbuild
 	mvn exec:java -Dexec.mainClass="com.jms.socialmedia.app.App"
-	
+
 dockerbuild:
 	mvn -P assemble-jars package
 	docker build --build-arg PATH_TO_LIB=./api/target/libs/ --tag jms-social-media .
-	
+
 dockerbuildwithgradle:
 	gradle clean allJars
 	docker build --build-arg PATH_TO_LIB=./api/build/libs/ --tag jms-social-media .
@@ -32,7 +32,7 @@ mavenclean:
 
 gradleclean:
 	gradle clean
-	
+
 clean: mavenclean gradleclean
 	docker-compose down
 	docker rm -f jms-social-media | true

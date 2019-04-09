@@ -16,16 +16,18 @@ services:
   - docker
 
 before_deploy:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
   - mvn -P assemble-jars package -B
   - DOCKERTAG="${TRAVIS_TAG:1}-${TRAVIS_COMMIT:0:6}"
-  - docker build --build-arg PATH_TO_LIB=./api/target/libs/ -t jms-social-media --label "commit=$TRAVIS_COMMIT" --label "version=${TRAVIS_TAG:1}" --label "tag=$DOCKERTAG" .
-  - docker tag jms-social-media "${DOCKER_USERNAME}"/jms-social-media:"${DOCKERTAG}"
-  - docker tag jms-social-media "${DOCKER_USERNAME}"/jms-social-media:latest
+  - SEMVER=( ${DOCKERTAG//./ } )
+  - docker build --build-arg PATH_TO_LIB=./api/target/libs/ -t ${DOCKER_USERNAME}/jms-social-media --label "commit=$TRAVIS_COMMIT" --label "version=${TRAVIS_TAG:1}" --label "tag=$DOCKERTAG" .
+  - docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG}
+  - docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${SEMVER[0]}
+  - docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:"${SEMVER[0]}.${SEMVER[1]}"
 
 deploy:
   provider: script
-  script: docker push "${DOCKER_USERNAME}"/jms-social-media:"${DOCKERTAG}" && "${DOCKER_USERNAME}"/jms-social-media:latest
+  script: docker push ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG} && docker push ${DOCKER_USERNAME}/jms-social-media:${SEMVER[0]} && docker push ${DOCKER_USERNAME}/jms-social-media:"${SEMVER[0]}.${SEMVER[1]}" && docker push ${DOCKER_USERNAME}/jms-social-media:latest
   skip_cleanup: true
   on:
     tags: true
