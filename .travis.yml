@@ -7,7 +7,7 @@ install:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script:
-  - mvn test -B
+  - mvn test sonar:sonar -B
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
@@ -18,7 +18,7 @@ services:
 before_deploy:
   - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
   - mvn -P assemble-jars package -B
-  - DOCKERTAG="${TRAVIS_TAG:1}-${TRAVIS_COMMIT:0:6}"
+  - DOCKERTAG="${TRAVIS_TAG:1}-${TRAVIS_COMMIT:0:7}"
   - SEMVER=( ${DOCKERTAG//./ } )
   - docker build --build-arg PATH_TO_LIB=./api/target/libs/ -t ${DOCKER_USERNAME}/jms-social-media --label "commit=$TRAVIS_COMMIT" --label "version=${TRAVIS_TAG:1}" --label "tag=$DOCKERTAG" .
   - docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG}
@@ -35,3 +35,13 @@ deploy:
 cache:
   directories:
     - $HOME/.m2
+    - $HOME/.sonar/cache
+
+addons:
+  sonarcloud:
+    organization: "jasonsarwar-github"
+    token:
+      secure: "$SONAR_TOKEN"
+
+notifications:
+  webhooks: $DISCORD_WEBHOOK
