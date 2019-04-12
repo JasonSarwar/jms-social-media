@@ -107,9 +107,21 @@
 			  		alertService.error(error.data);
 			  	});
 		}
+		
+		$scope.deletePost = function (postId) {
+			let noOfPosts = $scope.posts.length;
+			for (i = 0; i < noOfPosts; i++) {
+				console.log("Post ID: " + postId);
+				console.log($scope.posts[i]);
+				if ($scope.posts[i].postId === postId) {
+					$scope.posts.splice(i, 1);
+					break;
+				}
+			}
+		};
 	};
 	
-	var PostController = function($scope, $routeParams, postsService, alertService) {
+	var PostController = function($scope, $location, $routeParams, postsService, alertService) {
 
 		let comments;
 		var postId = $routeParams.postId;
@@ -132,6 +144,20 @@
 		  	}, function (error) {
 		  		alertService.error(error.data);
 		  	});
+		
+		$scope.deletePost = function (postId) {
+			$location.path("/home")
+		};
+
+		$scope.deleteComment = function (commentId) {
+			let noOfComments = $scope.entry.comments.length;
+			for (i = 0; i < noOfComments; i++) {
+				if ($scope.entry.comments[i].commentId === commentId) {
+					$scope.entry.comments.splice(i, 1);
+					break;
+				}
+			}
+		};
 	};
 
 	var PostsController = function($scope, $location, postsService, alertService) {
@@ -159,6 +185,16 @@
 		$scope.goToPost = function (postId) {
 			$location.path("/post/" + postId);
 		};
+		
+		$scope.deletePost = function (postId) {
+			let noOfPosts = $scope.posts.length;
+			for (i = 0; i < noOfPosts; i++) {
+				if ($scope.posts[i].postId === postId) {
+					$scope.posts.splice(i, 1);
+					break;
+				}
+			}
+		};
 	};
 
 	var AddPostController = function($scope, $route, postsService, alertService) {
@@ -173,15 +209,17 @@
 		};
 	};
 	
-	var EntryController = function($scope, $route, $location, postsService, alertService) {
+	var EntryController = function($scope, $location, postsService, alertService) {
 
 		$scope.liked = function (entry) {
 			return entry.likes.indexOf($scope.userId) > -1;
 		}
 		
 		$scope.startEditing = function (entry) {
-			entry.editing = true;
-			$scope.editText = entry.text;
+			if ($scope.userId === entry.userId) {
+				entry.editing = true;
+				$scope.editText = entry.text;
+			}
 		};
 
 		$scope.cancelEditing = function (entry) {
@@ -193,7 +231,8 @@
 			if (commentId) {
 				postsService.editComment(commentId, text)
 					.then(function (data) {
-						$route.reload();
+						$scope.entry.text = text;
+						$scope.entry.editing = false;
 					}, function (error) {
 						alertService.error(error.data);
 					});
@@ -201,7 +240,8 @@
 			} else {
 				postsService.editPost(postId, text)
 					.then(function (data) {
-						$route.reload();
+						$scope.entry.text = text;
+						$scope.entry.editing = false;
 					}, function (error) {
 						alertService.error(error.data);
 					});
@@ -214,7 +254,7 @@
 				if (confirm("Are you sure you want to delete your comment?")) {
 					postsService.deleteComment(commentId)
 					.then(function (data) {
-						$route.reload();
+						$scope.deleteComment(commentId);
 					}, function (error) {
 						alertService.error(error.data);
 					});
@@ -224,7 +264,7 @@
 				if (confirm("Are you sure you want to delete your post?")) {
 					postsService.deletePost(postId)
 						.then(function (data) {
-							$location.path("/posts");
+							$scope.deletePost(postId);
 						}, function (error) {
 							alertService.error(error.data);
 						});
