@@ -52,7 +52,7 @@ public class App {
 
 				CachingService cachingService;
 				String cachingImplementation = configurations.get(CoreSettings.CACHING_IMPLEMENTATION);
-				if (cachingImplementation.toLowerCase().equals("javamap")) {
+				if (cachingImplementation.equalsIgnoreCase("javamap")) {
 					cachingService = new JavaMapCachingService();
 				} else {
 					cachingService = new GuavaCachingService();

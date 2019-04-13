@@ -65,7 +65,7 @@ public class UserRequestHandler extends RequestHandler {
 	}
 
 	public Boolean handleIsUsernameTaken(Request request, Response response) throws IOException {
-		String username = request.params(":username");
+		String username = request.params("username");
 		if (!username.matches("^[\\w\\d_]+$")) {
 			throw new BadRequestException("Invalid Username");
 		}
@@ -73,7 +73,7 @@ public class UserRequestHandler extends RequestHandler {
 	}
 
 	public Boolean handleIsEmailTaken(Request request, Response response) throws IOException {
-		String email = request.params(":email");
+		String email = request.params("email");
 		if (!email.matches("^[\\w\\d_.]+@[\\w\\d_.]+\\.[\\w\\d_.]+$")) {
 			throw new BadRequestException("Invalid Email Address");
 		}
@@ -163,7 +163,7 @@ public class UserRequestHandler extends RequestHandler {
 
 	}
 	
-	public Object handleLogout(Request request, Response response) throws IOException {
+	public Object handleLogout(Request request, Response response) {
 
 		dataService.removeSessionKey(request.cookie(SESSION_COOKIE));
 		response.removeCookie(SESSION_COOKIE);

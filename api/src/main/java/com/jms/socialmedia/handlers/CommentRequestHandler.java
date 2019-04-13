@@ -16,6 +16,8 @@ import spark.Request;
 import spark.Response;
 
 public class CommentRequestHandler extends RequestHandler {
+	
+	private static final String NOT_FOUND_MESSAGE = "Comment Not Found";
 
 	public CommentRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
 		super(dataService, tokenService, gson);
@@ -23,32 +25,32 @@ public class CommentRequestHandler extends RequestHandler {
 
 	public Collection<Comment> handleGetComments(Request request, Response response) {
 
-		int postId = Integer.parseInt(request.params(":id"));
+		int postId = Integer.parseInt(request.params("postId"));
 		return dataService.getComments(postId);
 	}
 
 	public Collection<Comment> handleGetCommentsByUserId(Request request, Response response) {
 
-		int userid = Integer.parseInt(request.params(":userid"));
-		return dataService.getCommentsByUserId(userid);
+		int userId = Integer.parseInt(request.params("userId"));
+		return dataService.getCommentsByUserId(userId);
 	}
 
 	public Comment handleGetComment(Request request, Response response) {
 
-		String strCommentId = request.params(":id");
+		String strCommentId = request.params("commentId");
 		int commentId = Integer.parseInt(strCommentId);
 		Comment comment = dataService.getComment(commentId);
 		if(comment != null) {
 			return comment;
 		} else {
-			throw new NotFoundException("Comment Not Found");
+			throw new NotFoundException(NOT_FOUND_MESSAGE);
 		}
 	}
 
 	public Boolean handleAddComment(Request request, Response response) throws IOException {
 		
 		Comment newComment = extractBodyContent(request, Comment.class);
-		String strPostId = request.params(":id");
+		String strPostId = request.params("postId");
 		if (strPostId != null) {
 			int postId = Integer.parseInt(strPostId);
 			newComment.setPostId(postId);
@@ -60,23 +62,23 @@ public class CommentRequestHandler extends RequestHandler {
 
 	public Boolean handleEditComment(Request request, Response response) throws IOException {
 
-		String strCommentId = request.params(":id");
+		String strCommentId = request.params("commentId");
 		int commentId = Integer.parseInt(strCommentId);
 		Entry body = extractBodyContent(request, Comment.class);
 		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), Permission.EDIT_COMMENT);
 		if (!dataService.editComment(commentId, body.getText())) {
-			throw new NotFoundException("Comment Not Found");
+			throw new NotFoundException(NOT_FOUND_MESSAGE);
 		}
 		return true;
 	}
 
 	public Boolean handleDeleteComment(Request request, Response response) throws IOException {
 
-		String strCommentId = request.params(":id");
+		String strCommentId = request.params("commentId");
 		int commentId = Integer.parseInt(strCommentId);
 		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), Permission.DELETE_COMMENT);
 		if (!dataService.deleteComment(commentId)) {
-			throw new NotFoundException("Comment Not Found");
+			throw new NotFoundException(NOT_FOUND_MESSAGE);
 		}
 		return true;
 	}

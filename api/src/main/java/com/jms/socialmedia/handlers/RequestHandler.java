@@ -31,7 +31,19 @@ public abstract class RequestHandler {
 		this.gson = gson;
 	}
 
-	protected void authorizeRequest(Request request, Integer userIdFromRequest, Permission permission) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	/**
+	 * 
+	 * @param request
+	 * @param userIdFromRequest
+	 * @param permission
+	 * @throws ExpiredJwtException
+	 * @throws UnsupportedJwtException
+	 * @throws MalformedJwtException
+	 * @throws SignatureException
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	protected void authorizeRequest(Request request, Integer userIdFromRequest, Permission permission) throws IOException {
 		
 		String auth = request.headers(AUTHORIZATION);
 		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
@@ -47,8 +59,8 @@ public abstract class RequestHandler {
 	
 	protected <T> T extractBodyContent(Request request, Class<T> aClass) throws IOException {
 
-		if (request.contentType().toLowerCase().startsWith("application/json") 
-				|| StringUtils.isBlank(request.contentType())) {
+		if (StringUtils.isBlank(request.contentType()) || 
+				request.contentType().toLowerCase().startsWith("application/json")) {
 			return gson.fromJson(request.body(), aClass);
 		} else if (request.contentType().toLowerCase().startsWith("application/xml")) {
 			return null;

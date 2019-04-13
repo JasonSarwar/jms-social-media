@@ -12,7 +12,7 @@ public class LogRouteAdapter implements RouteListener {
 	
 	@Override
 	public void onRequest(Request request) {
-		StringBuilder stringBuilder = new StringBuilder('\n');
+		StringBuilder stringBuilder = new StringBuilder("\n");
 		stringBuilder.append("Received: " + request.protocol() + " " + request.requestMethod() + " " + request.uri());
 		stringBuilder.append('\n');
 		stringBuilder.append("Headers:\n");

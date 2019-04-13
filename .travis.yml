@@ -1,47 +1,41 @@
 language: java
-
 jdk:
-  - openjdk11
-
+- openjdk11
 install:
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-
+- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 script:
-  - mvn test sonar:sonar -B
-
+- mvn test sonar:sonar -B
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
+- bash <(curl -s https://codecov.io/bash)
 services:
-  - docker
-
+- docker
 before_deploy:
-  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-  - mvn -P assemble-jars package -B
-  - DOCKERTAG="${TRAVIS_TAG:1}-${TRAVIS_COMMIT:0:7}"
-  - SEMVER=( ${DOCKERTAG//./ } )
-  - docker build --build-arg PATH_TO_LIB=./api/target/libs/ -t ${DOCKER_USERNAME}/jms-social-media --label "commit=$TRAVIS_COMMIT" --label "version=${TRAVIS_TAG:1}" --label "tag=$DOCKERTAG" .
-  - docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG}
-  - docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${SEMVER[0]}
-  - docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:"${SEMVER[0]}.${SEMVER[1]}"
-
+- echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+- mvn -P assemble-jars package -B
+- DOCKERTAG="${TRAVIS_TAG:1}-${TRAVIS_COMMIT:0:7}"
+- SEMVER=( ${DOCKERTAG//./ } )
+- docker build --build-arg PATH_TO_LIB=./api/target/libs/ -t ${DOCKER_USERNAME}/jms-social-media
+  --label "commit=$TRAVIS_COMMIT" --label "version=${TRAVIS_TAG:1}" --label "tag=$DOCKERTAG" .
+- docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG}
+- docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${SEMVER[0]}
+- docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:"${SEMVER[0]}.${SEMVER[1]}"
 deploy:
   provider: script
-  script: docker push ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG} && docker push ${DOCKER_USERNAME}/jms-social-media:${SEMVER[0]} && docker push ${DOCKER_USERNAME}/jms-social-media:"${SEMVER[0]}.${SEMVER[1]}" && docker push ${DOCKER_USERNAME}/jms-social-media:latest
+  script: docker push ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG} && docker push
+    ${DOCKER_USERNAME}/jms-social-media:${SEMVER[0]} && docker push ${DOCKER_USERNAME}/jms-social-media:"${SEMVER[0]}.${SEMVER[1]}"
+    && docker push ${DOCKER_USERNAME}/jms-social-media:latest
   skip_cleanup: true
   on:
     tags: true
-
 cache:
   directories:
-    - $HOME/.m2
-    - $HOME/.sonar/cache
-
+  - "$HOME/.m2"
+  - "$HOME/.sonar/cache"
 addons:
   sonarcloud:
-    organization: "jasonsarwar-github"
+    organization: jasonsarwar-github
     token:
       secure: "$SONAR_TOKEN"
-
 notifications:
-  webhooks: $DISCORD_WEBHOOK
+  webhooks:
+    secure: Iy2eNkdT61ZveXorAjKapnviphTlM74rj2RrJxW8ij/l/hfHo8aXDFKH/Zfa1Km+zOkm5tuBTLwoSs/RXmwqOploLfWJzWKVDl1C5LLCzxq4XHOccXNz6yNznmKrYFb5uu6ySjBNH63Ikkl9s4phP/ROiokUH/nCO2CO2Hl5keuYKXrsS1vYAQSSN5sDm5/01CaaJABaMQdwVvp5ljv6PNTbBHn+vpdkG/PJWKaleDJ3hn0scvUYbSMcNJtQhUAFmn5lXDYLA33k2LJVMHO30+AQmiry5/gZywm227x0Moc0rmp+0pBfIcbGB+1OLnnyE4rBhpUJsdzzlG1s+2Nojz9XEgux///zFMghIU4vfA8T6NxG+OxcfrX5uoiC+z/huk8zhJytG1XPn10DwymJqxJFGXnpIZrJ66y23eitPXX0MqHP9coBIQ+qyRBi3bmvITXqM/9F0b7kvmXQOg3D8smC+PDsnQFzjSlxkNb73Jy0PaKr8DukvlBmVUyr975Q2t506qKVo8cWsFbPCSY87cE2hG7mYPz+OR49ouLzPk8KY0UsJY/kPeFIZNu1cd11BFP9dk/WLUAQOGICncKHXtM2NpBRg68HAuuoqM0EsNPwn9D3HEjFiZWeJF5m9dCrmNIde4neSkl4e7PhRe4LEiLXrXrDCKXzZWsyD/7hUNk=

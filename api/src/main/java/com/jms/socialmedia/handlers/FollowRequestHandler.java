@@ -44,13 +44,13 @@ public class FollowRequestHandler extends RequestHandler {
 
 	public Collection<Integer> handleGetFollowingUserIds(Request request, Response response) {
 
-		Integer userId = Integer.parseInt(request.params("userid"));
+		Integer userId = Integer.parseInt(request.params("userId"));
 		return dataService.getFollowingUserIds(userId);
 	}
 	
 	public Collection<User> handleGetUsersToFollow(Request request, Response response) {
 
-		Integer userId = Integer.parseInt(request.params("userid"));
+		Integer userId = Integer.parseInt(request.params("userId"));
 		
 		List<User> users = new ArrayList<>(dataService.getUsersToFollow(userId));
 		

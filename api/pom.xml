@@ -1,72 +1,77 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-  	<groupId>com.jms.socialmedia</groupId>
-  	<artifactId>jms-social-media</artifactId>
-  	<version>1.0.2-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <artifactId>api</artifactId>
-  <packaging>jar</packaging>
-  <name>JMS Social Media API</name>
-  <url>https://github.com/JasonSarwar/jms-social-media</url>
-  
-  <dependencies>
-
-	<dependency>
+	<parent>
 		<groupId>com.jms.socialmedia</groupId>
-		<artifactId>core</artifactId>
+		<artifactId>jms-social-media</artifactId>
 		<version>1.0.2-SNAPSHOT</version>
-	</dependency>
+	</parent>
 
-    <dependency>
-      <groupId>com.sparkjava</groupId>
-      <artifactId>spark-core</artifactId>
-	</dependency>
-	
-	<dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-	</dependency>
+	<artifactId>api</artifactId>
+	<packaging>jar</packaging>
+	<name>JMS Social Media API</name>
+	<url>https://github.com/JasonSarwar/jms-social-media</url>
 
-	<dependency>
-	    <groupId>com.fasterxml.jackson.dataformat</groupId>
-	    <artifactId>jackson-dataformat-xml</artifactId>
-	</dependency>
+	<dependencies>
+		<dependency>
+			<groupId>com.jms.socialmedia</groupId>
+			<artifactId>core</artifactId>
+			<version>1.0.2-SNAPSHOT</version>
+		</dependency>
 
-	<dependency>
-	    <groupId>com.fasterxml.jackson.module</groupId>
-	    <artifactId>jackson-module-afterburner</artifactId>
-	</dependency>
+		<dependency>
+			<groupId>com.sparkjava</groupId>
+			<artifactId>spark-core</artifactId>
+		</dependency>
 
-	<dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-  </dependencies>
-  
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-afterburner</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 	<build>
-	    <plugins>
-	        <plugin>
-	            <groupId>org.codehaus.mojo</groupId>
-	            <artifactId>exec-maven-plugin</artifactId>
-	        </plugin>
-	        <plugin>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 			</plugin>
-	    </plugins>
+		</plugins>
 	</build>
-  
+
 	<profiles>
 		<profile>
 			<id>assemble-jars</id>
@@ -97,5 +102,5 @@
 			</build>
 		</profile>
 	</profiles>
-  
+
 </project>
