@@ -26,6 +26,9 @@ COPY docker_scripts/start.sh .
 # To mount for properties file
 RUN mkdir properties
 
+# For log files
+RUN mkdir logs
+
 # Allow them to be executed
 RUN chmod +x wait-for-it.sh
 RUN chmod +x start.sh
