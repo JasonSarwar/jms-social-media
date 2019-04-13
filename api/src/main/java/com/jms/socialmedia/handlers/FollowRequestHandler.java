@@ -21,6 +21,7 @@ import spark.utils.StringUtils;
 
 public class FollowRequestHandler extends RequestHandler {
 
+	private static final String USER_ID_PARAM = "userId";
 	private Random random = new Random();
 	
 	public FollowRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
@@ -44,13 +45,13 @@ public class FollowRequestHandler extends RequestHandler {
 
 	public Collection<Integer> handleGetFollowingUserIds(Request request, Response response) {
 
-		Integer userId = Integer.parseInt(request.params("userId"));
+		Integer userId = Integer.parseInt(request.params(USER_ID_PARAM));
 		return dataService.getFollowingUserIds(userId);
 	}
 	
 	public Collection<User> handleGetUsersToFollow(Request request, Response response) {
 
-		Integer userId = Integer.parseInt(request.params("userId"));
+		Integer userId = Integer.parseInt(request.params(USER_ID_PARAM));
 		
 		List<User> users = new ArrayList<>(dataService.getUsersToFollow(userId));
 		

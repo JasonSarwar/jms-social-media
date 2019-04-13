@@ -29,7 +29,7 @@
 		<mockito.version>2.25.1</mockito.version>
 		<jacoco.version>0.8.3</jacoco.version>
 		<sonar.projectKey>JasonSarwar_jms-social-media</sonar.projectKey>
-		<sonar.moduleKey>${artifactId}</sonar.moduleKey>
+		<sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
 	</properties>
 
 	<modules>

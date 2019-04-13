@@ -21,7 +21,6 @@ public class ExceptionHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandler.class);
 	
 	public ExceptionHandler() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void handleException(Exception exception, Request request, Response response) {

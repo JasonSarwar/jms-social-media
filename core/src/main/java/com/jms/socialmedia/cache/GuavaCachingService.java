@@ -19,13 +19,13 @@ public class GuavaCachingService implements CachingService {
 	public GuavaCachingService() {
 		this.commentsById = CacheBuilder.newBuilder().build();
 		this.commentsByPostId = CacheBuilder.newBuilder().maximumSize(100)
-				.<Integer, Collection<Comment>>removalListener(removal -> {
-					commentsById.invalidateAll(removal.getValue().stream().map(Comment::getCommentId).collect(toSet()));
-				}).build();
+				.<Integer, Collection<Comment>>removalListener(removal -> 
+					commentsById.invalidateAll(removal.getValue().stream().map(Comment::getCommentId).collect(toSet()))
+				).build();
 		this.postsById = CacheBuilder.newBuilder().maximumSize(100)
-				.removalListener(removal -> {
-					commentsByPostId.invalidate(removal.getKey());
-				}).build();
+				.removalListener(removal -> 
+					commentsByPostId.invalidate(removal.getKey())
+				).build();
 	}
 
 	@Override

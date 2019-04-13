@@ -25,7 +25,10 @@ import spark.Response;
 public class PostRequestHandler extends RequestHandler {
 
 	private static final String NOT_FOUND_MESSAGE = "Post Not Found";
-	
+	private static final String USER_ID_PARAM = "userId";
+	private static final String POST_ID_PARAM = "postId";
+	private static final String SINCE_POST_ID_PARAM = "sincePostId";
+
 	public PostRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
 		super(dataService, tokenService, gson);
 	}
@@ -51,16 +54,16 @@ public class PostRequestHandler extends RequestHandler {
 	 */
 	public Collection<Post> handleGetPosts(Request request, Response response) {
 
-		String userIdStr = request.queryParams("userId");
+		String userIdStr = request.queryParams(USER_ID_PARAM);
 		Collection<Integer> userIds = userIdStr == null ? null : Arrays.stream(userIdStr.split("[,|]")).map(Integer::parseInt).collect(toSet());
 		String username = request.queryParams("username");
 		String tag = request.queryParams("tag");
 		String onDate = request.queryParams("on");
 		String beforeDate = request.queryParams("before");
 		String afterDate = request.queryParams("after");
-		String strSincePostId = request.queryParams("sincePostId");
+		String strSincePostId = request.queryParams(SINCE_POST_ID_PARAM);
 		Integer sincePostId = strSincePostId == null ? null : Integer.parseInt(strSincePostId);
-		String sortBy = Optional.ofNullable(request.queryParams("sortBy")).orElse("postId");
+		String sortBy = Optional.ofNullable(request.queryParams("sortBy")).orElse(POST_ID_PARAM);
 		String order = request.queryParams("order");
 		boolean sortOrderAsc = order == null ? false : order.equalsIgnoreCase("asc");
 
@@ -80,13 +83,13 @@ public class PostRequestHandler extends RequestHandler {
 	 */
 	public Collection<Post> handleGetFeedPosts(Request request, Response response) {
 
-		Integer userId = Integer.parseInt(request.params("userId"));
-		String strSincePostId = request.queryParams("sincePostId");
+		Integer userId = Integer.parseInt(request.params(USER_ID_PARAM));
+		String strSincePostId = request.queryParams(SINCE_POST_ID_PARAM);
 		Integer sincePostId = strSincePostId == null ? null : Integer.parseInt(strSincePostId);
 		
 		Collection<Integer> userIds = new HashSet<>(dataService.getFollowingUserIds(userId));
 		userIds.add(userId);
-		return dataService.getPosts(userIds, null, null, null, null, null, sincePostId, "postId", false);
+		return dataService.getPosts(userIds, null, null, null, null, null, sincePostId, POST_ID_PARAM, false);
 	}
 
 	/**
@@ -102,7 +105,7 @@ public class PostRequestHandler extends RequestHandler {
 	 */
 	public Collection<Post> handleGetPostsByUserId(Request request, Response response) {
 
-		int userId = Integer.parseInt(request.params("userId"));
+		int userId = Integer.parseInt(request.params(USER_ID_PARAM));
 		return dataService.getPosts(userId);
 	}
 
@@ -120,7 +123,7 @@ public class PostRequestHandler extends RequestHandler {
 	 */
 	public Post handleGetPost(Request request, Response response) {
 		
-		int postId = Integer.parseInt(request.params("postId"));
+		int postId = Integer.parseInt(request.params(POST_ID_PARAM));
 		Post post = dataService.getPost(postId);
 
 		if(post != null) {
@@ -169,7 +172,7 @@ public class PostRequestHandler extends RequestHandler {
 	 */
 	public Boolean handleEditPost(Request request, Response response) throws IOException {
 
-		int postId = Integer.parseInt(request.params("postId"));
+		int postId = Integer.parseInt(request.params(POST_ID_PARAM));
 		Entry body = extractBodyContent(request, Post.class);
 		if (StringUtil.isBlank(body.getText())) {
 			throw new BadRequestException("Edit Post Request requires 'text'");
@@ -196,7 +199,7 @@ public class PostRequestHandler extends RequestHandler {
 	 */
 	public Boolean handleDeletePost(Request request, Response response) throws IOException {
 
-		int postId = Integer.parseInt(request.params("postId"));
+		int postId = Integer.parseInt(request.params(POST_ID_PARAM));
 		authorizeRequest(request, dataService.getUserIdFromPostId(postId), Permission.DELETE_POST);
 		if (!dataService.deletePost(postId)) {
 			throw new NotFoundException(NOT_FOUND_MESSAGE);
@@ -216,7 +219,7 @@ public class PostRequestHandler extends RequestHandler {
 	 */
 	public Collection<Post> handleGetCommentedPosts(Request request, Response response) {
 
-		int userId = Integer.parseInt(request.params("userId"));
+		int userId = Integer.parseInt(request.params(USER_ID_PARAM));
 		return dataService.getCommentedPostsByUserId(userId);
 	}
 	
