@@ -1,6 +1,9 @@
 package com.jms.socialmedia.configuration;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.apache.ibatis.io.Resources;
@@ -14,12 +17,25 @@ public class ConfigurationsFromFile implements Configurations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationsFromFile.class);
 	private final Properties properties;
 	
-	public ConfigurationsFromFile(String propertiesFilePath) throws IOException {
+	public ConfigurationsFromFile(String filePath) throws IOException {
 		properties = new Properties();
-		properties.load(Resources.getResourceAsStream(propertiesFilePath));
-		LOGGER.info("Loaded Configurations from {}", propertiesFilePath);
+		try (InputStream inputStream = createInputStreamForFile(filePath)) {
+			properties.load(inputStream);
+			LOGGER.info("Loaded Configurations from {}", filePath);
+		} catch (Exception e) {
+			LOGGER.error("Could not load Configurations from " + filePath, e);
+			System.exit(1);
+		}
 	}
-	
+
+	private InputStream createInputStreamForFile(String filePath) throws IOException {
+		if (filePath.startsWith(".") || filePath.contains("/") || filePath.contains("\\")) {
+			return Files.newInputStream(Paths.get(filePath));
+		} else {
+			return Resources.getResourceAsStream(filePath);
+		}
+	}
+
 	public final Properties getProperties() {
 		return properties;
 	}
