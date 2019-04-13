@@ -195,11 +195,12 @@
 				});
 		};
 
-	    var editPassword = function (userId, oldPassword, newPassword) {
+	    var editPassword = function (userId, oldPassword, newPassword1, newPassword2) {
 	    	var data = {
 	    		userId: userId,
 	    		oldPassword: oldPassword,
-	    		newPassword: newPassword
+	    		newPassword1: newPassword1,
+	    		newPassword2: newPassword2
 	    	};
 
 	    	return $http.put("/api/user/password", data)
@@ -240,41 +241,37 @@
 		};
     };
 
-  var loginService = function ($http, $cookies) {
+    var loginService = function ($http, $cookies) {
 
-	let sessionCookie = "jms-social-media-session";
-  
-    var attemptLogin = function (user, password) {
-    	var data = {
-    		user: user,
-    		password: password
-    	};
-    	return $http.post("/api/login", data)
-        	.then(function (response) {
-        		$http.defaults.headers.common.Authorization = "Bearer " + response.data.token;
-        		return response.data;
-        });
-    };
-
-    var logout = function () {
-    	$http.defaults.headers.common.Authorization = undefined;
-    	$cookies.remove(sessionCookie);
-    	return $http.post("/api/logout");
-    };
-    
-    var retrieveSession = function () {
-    	return $http.post("/api/retrieveSession")
-        	.then(function (response) {
-        		if (response.data) {
-        			$http.defaults.headers.common.Authorization = "Bearer " + response.data.token;
-        		} else {
-        			$cookies.remove(sessionCookie);
-        		}
-        		return response.data;
-        	}, function (error) {
-        		$cookies.remove(sessionCookie);
-        		return null;
-        	});
+		let sessionCookie = "jms-social-media-session";
+	  
+	    var attemptLogin = function (user, password) {
+	    	return $http.post("/api/login?createSession", {user: user, password: password})
+	        	.then(function (response) {
+	        		$http.defaults.headers.common.Authorization = "Bearer " + response.data.token;
+	        		return response.data;
+	        });
+	    };
+	
+	    var logout = function () {
+	    	$http.defaults.headers.common.Authorization = undefined;
+	    	$cookies.remove(sessionCookie);
+	    	return $http.post("/api/logout");
+	    };
+	    
+	    var retrieveSession = function () {
+	    	return $http.post("/api/retrieveSession")
+	        	.then(function (response) {
+	        		if (response.data) {
+	        			$http.defaults.headers.common.Authorization = "Bearer " + response.data.token;
+	        		} else {
+	        			$cookies.remove(sessionCookie);
+	        		}
+	        		return response.data;
+	        	}, function (error) {
+	        		$cookies.remove(sessionCookie);
+	        		return null;
+	        	});
     };
     
 	return {
@@ -314,28 +311,27 @@
 		};
 	};
   
-  var alertService = function($rootScope) {
+	var alertService = function($rootScope) {
 	
-	var error = function(errorText){
-		$rootScope.alertType = 'danger';
-		$rootScope.alertText = errorText;
-	};
+		var error = function (errorText) {
+			$rootScope.alertType = 'danger';
+			$rootScope.alertText = errorText;
+		};
 	
-	var clearAlerts = function(){
-		$rootScope.alertText = null;
+		var clearAlerts = function() {
+			$rootScope.alertText = null;
+		};
+		
+		return {
+			error: error,
+			clearAlerts, clearAlerts
+		};
 	};
-	
-	return {
-		error: error,
-		clearAlerts, clearAlerts
-	};
-  };
 
-	  
-  angular.module("mysocialmedia")
-  	.factory("postsService", postsService)
-  	.factory("usersService", usersService)
-  	.factory("loginService", loginService)
-  	.factory("signupService", signupService)
-  	.factory("alertService", alertService);
+	angular.module("mysocialmedia")
+		.factory("postsService", postsService)
+		.factory("usersService", usersService)
+		.factory("loginService", loginService)
+		.factory("signupService", signupService)
+		.factory("alertService", alertService);
 }());

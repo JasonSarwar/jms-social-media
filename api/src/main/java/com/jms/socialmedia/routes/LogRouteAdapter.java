@@ -1,5 +1,7 @@
 package com.jms.socialmedia.routes;
 
+import java.util.Locale;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +33,7 @@ public class LogRouteAdapter implements RouteListener {
 
 		if(request.body() != null && !request.body().isEmpty()) {
 			stringBuilder.append("Body:\n");
-			stringBuilder.append(request.body());
+			stringBuilder.append(request.body().replaceAll("(\".*?[pP]assword.?\":)(.*?)(,|})", "$1[REDACTED]$3"));
 			stringBuilder.append('\n');
 		}
 		LOGGER.info(stringBuilder.toString());

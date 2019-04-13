@@ -332,12 +332,12 @@
 
 	var EditPasswordController = function($scope, $location, usersService) {
 		
-		$scope.editPassword = function (currentPassword, newPassword1, newPassword2) {
+		$scope.editPassword = function (oldPassword, newPassword1, newPassword2) {
 
 			if (newPassword1 != newPassword2) {
 				$scope.errorText = 'New Passwords Do Not Match';
 			} else {
-				usersService.editPassword($scope.userId, currentPassword, newPassword1)
+				usersService.editPassword($scope.userId, oldPassword, newPassword1, newPassword2)
 					.then(function (data) {
 						$scope.showMessageBox("Edit Password", "Password Changed Successfully");
 						$location.path("/home");

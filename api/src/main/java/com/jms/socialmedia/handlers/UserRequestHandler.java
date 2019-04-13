@@ -83,10 +83,6 @@ public class UserRequestHandler extends RequestHandler {
 	public LoginSuccess handleAddUser(Request request, Response response) throws IOException {
 		NewUser newUser = extractBodyContent(request, NewUser.class);
 
-		if (!newUser.passwordsMatch()) {
-			throw new BadRequestException("Passwords do not match");
-		}
-
 		if (dataService.isUsernameTaken(newUser.getUsername())) {
 			throw new BadRequestException("Username is taken");
 		}
@@ -95,6 +91,17 @@ public class UserRequestHandler extends RequestHandler {
 			throw new BadRequestException("Email is taken");
 		}
 
+		int len = newUser.getPassword1().length();
+		if (len < 5) {
+			throw new BadRequestException("New Password Too Short");
+		}
+		if (len > 50) {
+			throw new BadRequestException("New Password Too Long");
+		}
+		if (!newUser.passwordsMatch()) {
+			throw new BadRequestException("Passwords do not match");
+		}
+		
 		createHashedPassword(newUser);
 		if (!dataService.addUser(newUser)) {
 			throw new DatabaseInsertException("Cannot create new user");
@@ -114,16 +121,19 @@ public class UserRequestHandler extends RequestHandler {
 			throw new BadRequestException("Incorrect Old Password");
 		}
 
-		int len = changePassword.getNewPassword().length();
+		int len = changePassword.getNewPassword1().length();
 		if (len < 5) {
 			throw new BadRequestException("New Password Too Short");
 		}
 		if (len > 50) {
 			throw new BadRequestException("New Password Too Long");
 		}
-		
+		if (!changePassword.passwordsMatch()) {
+			throw new BadRequestException("Passwords do not match");
+		}
+
 		return dataService.editPassword(changePassword.getUserId(), 
-				passwordService.encryptPassword(changePassword.getNewPassword()));
+				passwordService.encryptPassword(changePassword.getNewPassword1()));
 	}
 	
 	public LoginSuccess handleSessionRetrieval(Request request, Response response) throws IOException {
