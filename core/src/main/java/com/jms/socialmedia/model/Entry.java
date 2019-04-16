@@ -2,6 +2,7 @@ package com.jms.socialmedia.model;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 
 import com.google.common.base.MoreObjects;
 
@@ -17,9 +18,11 @@ public abstract class Entry {
 	protected Collection<Integer> likes;
 	
 	public Entry() {
+		this.likes = new HashSet<>();
 	}
 	
 	public Entry(Integer postId, Integer userId, String username, String fullName, String text, LocalDateTime timestamp) {
+		this();
 		this.postId = postId;
 		this.userId = userId;
 		this.username = username;

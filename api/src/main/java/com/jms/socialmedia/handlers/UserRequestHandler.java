@@ -35,8 +35,10 @@ public class UserRequestHandler extends RequestHandler {
 
 	private final PasswordService passwordService;
 	private final Set<Integer> adminUserIds;
-	
-	public UserRequestHandler(DataService dataService, PasswordService passwordService, TokenService tokenService, Set<Integer> adminUserIds, Gson gson) {
+
+	public UserRequestHandler(DataService dataService, PasswordService passwordService, TokenService tokenService,
+			Set<Integer> adminUserIds, Gson gson) {
+
 		super(dataService, tokenService, gson);
 		this.passwordService = passwordService;
 		this.adminUserIds = adminUserIds;
@@ -54,13 +56,14 @@ public class UserRequestHandler extends RequestHandler {
 			throw new NotFoundException("User not found");
 		}
 	}
-	
+
 	public Collection<User> handleGetUsernamesAndIds(Request request, Response response) throws IOException {
 		String queryParam = request.queryParams("ids");
 		if (StringUtils.isBlank(queryParam)) {
 			throw new BadRequestException("No User IDs included");
 		}
-		Collection<Integer> userIds = Arrays.stream(queryParam.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+		Collection<Integer> userIds = Arrays.stream(queryParam.split(",")).map(Integer::parseInt)
+				.collect(Collectors.toList());
 		return dataService.getUsernamesByIds(userIds);
 	}
 
@@ -101,7 +104,7 @@ public class UserRequestHandler extends RequestHandler {
 		if (!newUser.passwordsMatch()) {
 			throw new BadRequestException("Passwords do not match");
 		}
-		
+
 		createHashedPassword(newUser);
 		if (!dataService.addUser(newUser)) {
 			throw new DatabaseInsertException("Cannot create new user");
@@ -113,9 +116,9 @@ public class UserRequestHandler extends RequestHandler {
 
 	public Boolean handleEditUserPassword(Request request, Response response) throws IOException {
 		ChangePassword changePassword = extractBodyContent(request, ChangePassword.class);
-		
+
 		authorizeRequest(request, changePassword.getUserId(), Permission.EDIT_PASSWORD);
-		
+
 		User user = dataService.getHashedPasswordByUserId(changePassword.getUserId());
 		if (!passwordService.checkPassword(changePassword, user)) {
 			throw new BadRequestException("Incorrect Old Password");
@@ -132,30 +135,30 @@ public class UserRequestHandler extends RequestHandler {
 			throw new BadRequestException("Passwords do not match");
 		}
 
-		return dataService.editPassword(changePassword.getUserId(), 
+		return dataService.editPassword(changePassword.getUserId(),
 				passwordService.encryptPassword(changePassword.getNewPassword1()));
 	}
-	
+
 	public LoginSuccess handleSessionRetrieval(Request request, Response response) throws IOException {
 
 		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
-			
+
 			String sessionKey = request.cookie(SESSION_COOKIE);
 			User user = dataService.getUserBySessionKey(sessionKey);
-			
+
 			if (user != null) {
 				return createLoginSuccess(user);
 			}
 		}
 		return null;
 	}
-	
+
 	public LoginSuccess handleLogin(Request request, Response response) throws IOException {
 
 		if (request.cookie(SESSION_COOKIE) != null) {
 			throw new InvalidUserLoginStateException("A User is already logged in");
 		}
-		
+
 		LoginRequest loginRequest = extractBodyContent(request, LoginRequest.class);
 
 		User user = dataService.getUserLoginInfoByString(loginRequest.getUser());
@@ -172,7 +175,7 @@ public class UserRequestHandler extends RequestHandler {
 		return createLoginSuccess(user);
 
 	}
-	
+
 	public Object handleLogout(Request request, Response response) {
 
 		dataService.removeSessionKey(request.cookie(SESSION_COOKIE));
@@ -203,7 +206,7 @@ public class UserRequestHandler extends RequestHandler {
 		loginSuccess.setToken(tokenService.createTokenString(tokenBuilder.build()));
 		return loginSuccess;
 	}
-	
+
 	private void createHashedPassword(NewUser newUser) {
 		String hashedPassword = passwordService.encryptPassword(newUser.getPassword1());
 		newUser.setPassword1(null);

@@ -23,7 +23,7 @@ public class FollowRequestHandler extends RequestHandler {
 
 	private static final String USER_ID_PARAM = "userId";
 	private Random random = new Random();
-	
+
 	public FollowRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
 		super(dataService, tokenService, gson);
 	}
@@ -48,20 +48,20 @@ public class FollowRequestHandler extends RequestHandler {
 		Integer userId = Integer.parseInt(request.params(USER_ID_PARAM));
 		return dataService.getFollowingUserIds(userId);
 	}
-	
+
 	public Collection<User> handleGetUsersToFollow(Request request, Response response) {
 
 		Integer userId = Integer.parseInt(request.params(USER_ID_PARAM));
-		
+
 		List<User> users = new ArrayList<>(dataService.getUsersToFollow(userId));
-		
+
 		int noOfUsers = users.size();
-		
+
 		String strMax = request.queryParams("max");
 		int max = StringUtils.isBlank(strMax) ? noOfUsers : Integer.parseInt(strMax);
 		max = max > noOfUsers ? noOfUsers : max;
 
-		Collection<User> randomizedUsers = new HashSet<>();
+		Collection<User> randomizedUsers = new HashSet<>(max);
 		while (randomizedUsers.size() < max) {
 			randomizedUsers.add(users.get(random.nextInt(noOfUsers)));
 		}

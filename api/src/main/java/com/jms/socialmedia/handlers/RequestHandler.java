@@ -20,11 +20,11 @@ public abstract class RequestHandler {
 
 	private static final String AUTHORIZATION = "Authorization";
 	private static final String BEARER = "Bearer ";
-	
+
 	protected final DataService dataService;
 	protected final TokenService tokenService;
 	private final Gson gson;
-	
+
 	public RequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
 		this.dataService = dataService;
 		this.tokenService = tokenService;
@@ -43,24 +43,26 @@ public abstract class RequestHandler {
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
-	protected void authorizeRequest(Request request, Integer userIdFromRequest, Permission permission) throws IOException {
-		
+	protected void authorizeRequest(Request request, Integer userIdFromRequest, Permission permission)
+			throws IOException {
+
 		String auth = request.headers(AUTHORIZATION);
 		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
 			throw new UnauthorizedException("Not authorized to " + permission.getAction());
 		} else {
 			String tokenString = auth.substring(BEARER.length());
 			Token token = tokenService.createTokenFromString(tokenString);
-			if (!token.hasPermission(Permission.ADMIN) && (!userIdFromRequest.equals(token.getUserId()) || !token.hasPermission(permission))) {
+			if (!token.hasPermission(Permission.ADMIN)
+					&& (!userIdFromRequest.equals(token.getUserId()) || !token.hasPermission(permission))) {
 				throw new UnauthorizedException("User not authorized to " + permission.getAction());
 			}
 		}
 	}
-	
+
 	protected <T> T extractBodyContent(Request request, Class<T> aClass) throws IOException {
 
-		if (StringUtils.isBlank(request.contentType()) || 
-				request.contentType().toLowerCase().startsWith("application/json")) {
+		if (StringUtils.isBlank(request.contentType())
+				|| request.contentType().toLowerCase().startsWith("application/json")) {
 			return gson.fromJson(request.body(), aClass);
 		} else if (request.contentType().toLowerCase().startsWith("application/xml")) {
 			return null;

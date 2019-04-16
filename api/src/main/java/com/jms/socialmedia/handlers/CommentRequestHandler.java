@@ -3,6 +3,8 @@ package com.jms.socialmedia.handlers;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.eclipse.jetty.util.StringUtil;
+
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
@@ -16,10 +18,11 @@ import spark.Request;
 import spark.Response;
 
 public class CommentRequestHandler extends RequestHandler {
-	
+
 	private static final String NOT_FOUND_MESSAGE = "Comment Not Found";
 	private static final String POST_ID_PARAM = "postId";
 	private static final String COMMENT_ID_PARAM = "commentId";
+	private static final String USER_ID_PARAM = "userId";
 
 	public CommentRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
 		super(dataService, tokenService, gson);
@@ -33,16 +36,15 @@ public class CommentRequestHandler extends RequestHandler {
 
 	public Collection<Comment> handleGetCommentsByUserId(Request request, Response response) {
 
-		int userId = Integer.parseInt(request.params("userId"));
+		int userId = Integer.parseInt(request.params(USER_ID_PARAM));
 		return dataService.getCommentsByUserId(userId);
 	}
 
 	public Comment handleGetComment(Request request, Response response) {
 
-		String strCommentId = request.params(COMMENT_ID_PARAM);
-		int commentId = Integer.parseInt(strCommentId);
+		int commentId = Integer.parseInt(request.params(COMMENT_ID_PARAM));
 		Comment comment = dataService.getComment(commentId);
-		if(comment != null) {
+		if (comment != null) {
 			return comment;
 		} else {
 			throw new NotFoundException(NOT_FOUND_MESSAGE);
@@ -50,7 +52,7 @@ public class CommentRequestHandler extends RequestHandler {
 	}
 
 	public Boolean handleAddComment(Request request, Response response) throws IOException {
-		
+
 		Comment newComment = extractBodyContent(request, Comment.class);
 		String strPostId = request.params(POST_ID_PARAM);
 		if (strPostId != null) {
@@ -64,9 +66,11 @@ public class CommentRequestHandler extends RequestHandler {
 
 	public Boolean handleEditComment(Request request, Response response) throws IOException {
 
-		String strCommentId = request.params(COMMENT_ID_PARAM);
-		int commentId = Integer.parseInt(strCommentId);
+		int commentId = Integer.parseInt(request.params(COMMENT_ID_PARAM));
 		Entry body = extractBodyContent(request, Comment.class);
+		if (StringUtil.isBlank(body.getText())) {
+			throw new BadRequestException("Edit Comment Request requires 'text'");
+		}
 		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), Permission.EDIT_COMMENT);
 		if (!dataService.editComment(commentId, body.getText())) {
 			throw new NotFoundException(NOT_FOUND_MESSAGE);
@@ -76,8 +80,7 @@ public class CommentRequestHandler extends RequestHandler {
 
 	public Boolean handleDeleteComment(Request request, Response response) throws IOException {
 
-		String strCommentId = request.params(COMMENT_ID_PARAM);
-		int commentId = Integer.parseInt(strCommentId);
+		int commentId = Integer.parseInt(request.params(COMMENT_ID_PARAM));
 		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), Permission.DELETE_COMMENT);
 		if (!dataService.deleteComment(commentId)) {
 			throw new NotFoundException(NOT_FOUND_MESSAGE);
@@ -88,7 +91,7 @@ public class CommentRequestHandler extends RequestHandler {
 	/**
 	 * 
 	 * @param newComment
-	 * @throws BadRequestException	if request does not have a userId, postId or text
+	 * @throws BadRequestException if request does not have a userId, postId or text
 	 */
 	private void validateAddEntryRequest(Comment newComment) {
 		StringBuilder sb = new StringBuilder();

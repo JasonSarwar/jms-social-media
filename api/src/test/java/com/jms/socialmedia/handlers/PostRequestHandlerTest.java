@@ -44,6 +44,20 @@ import java.util.Set;
 
 public class PostRequestHandlerTest {
 
+	private static final String AUTHORIZATION = "Authorization";
+	private static final String USER_ID_PARAM = "userId";
+	private static final String USERNAME_PARAM = "username";
+	private static final String POST_ID_PARAM = "postId";
+	private static final String TAG_PARAM = "tag";
+	private static final String ON_PARAM = "on";
+	private static final String BEFORE_PARAM = "before";
+	private static final String AFTER_PARAM = "after";
+	private static final String SINCE_POST_ID_PARAM = "sincePostId";
+	private static final String SORT_BY_PARAM = "sortBy";
+	private static final String ORDER_PARAM = "order";
+	private static final String ADD_POST_REQUEST = "{\"userId\":1, \"text\":\"A Cool Post!\"}";
+	private static final String EDIT_POST_REQUEST = "{\"text\":\"Editing this Post!\"}";
+
 	@Mock
 	private DataService dataService;
 	@Mock
@@ -53,15 +67,11 @@ public class PostRequestHandlerTest {
 	@Mock
 	private Response response;
 	@Captor
-	ArgumentCaptor<Collection<Integer>> userIdsCaptor;
+	private ArgumentCaptor<Collection<Integer>> userIdsCaptor;
 
-	private static final String AUTHORIZATION = "Authorization";
-	private static final String ADD_POST_REQUEST = "{\"userId\":1, \"text\":\"A Cool Post!\"}";
-	private static final String EDIT_POST_REQUEST = "{\"text\":\"Editing this Post!\"}";
+	private Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter()).create();
 
-	Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter()).create();
-
-	PostRequestHandler postRequestHandler;
+	private PostRequestHandler postRequestHandler;
 
 	@Before
 	public void setup() {
@@ -76,24 +86,24 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool Post", LocalDateTime.of(2019, 4, 17, 7, 34)),
 				new Post(3, 34, "Jason", "Jason Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 2, 15, 6, 12)));
 
-		when(request.queryParams("userId")).thenReturn("34");
+		when(request.queryParams(USER_ID_PARAM)).thenReturn("34");
 		when(dataService.getPosts(anyCollection(), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
-				eq("postId"), eq(false))).thenReturn(posts);
+				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).queryParams("userId");
-		verify(request, times(1)).queryParams("username");
-		verify(request, times(1)).queryParams("tag");
-		verify(request, times(1)).queryParams("on");
-		verify(request, times(1)).queryParams("before");
-		verify(request, times(1)).queryParams("after");
-		verify(request, times(1)).queryParams("sincePostId");
-		verify(request, times(1)).queryParams("sortBy");
-		verify(request, times(1)).queryParams("order");
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq(null), eq(null), eq(null), eq(null),
-				eq(null), eq(null), eq("postId"), eq(false));
+				eq(null), eq(null), eq(POST_ID_PARAM), eq(false));
 
 		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
 		assertThat(capture.size(), is(1));
@@ -109,24 +119,24 @@ public class PostRequestHandlerTest {
 				new Post(3, 56, "Jason 3", "Jason Sarwar 3", "One Last Cool Post",
 						LocalDateTime.of(2019, 2, 15, 6, 12)));
 
-		when(request.queryParams("userId")).thenReturn("34,40,56");
+		when(request.queryParams(USER_ID_PARAM)).thenReturn("34,40,56");
 		when(dataService.getPosts(anyCollection(), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
-				eq("postId"), eq(false))).thenReturn(posts);
+				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).queryParams("userId");
-		verify(request, times(1)).queryParams("username");
-		verify(request, times(1)).queryParams("tag");
-		verify(request, times(1)).queryParams("on");
-		verify(request, times(1)).queryParams("before");
-		verify(request, times(1)).queryParams("after");
-		verify(request, times(1)).queryParams("sincePostId");
-		verify(request, times(1)).queryParams("sortBy");
-		verify(request, times(1)).queryParams("order");
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq(null), eq(null), eq(null), eq(null),
-				eq(null), eq(null), eq("postId"), eq(false));
+				eq(null), eq(null), eq(POST_ID_PARAM), eq(false));
 
 		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
 		assertThat(capture.size(), is(1));
@@ -143,24 +153,24 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool Post", LocalDateTime.of(2019, 4, 17, 7, 34)),
 				new Post(3, 34, "Jason", "Jason Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 2, 15, 6, 12)));
 
-		when(request.queryParams("username")).thenReturn("Jason");
-		when(dataService.getPosts(eq(null), eq("Jason"), eq(null), eq(null), eq(null), eq(null), eq(null), eq("postId"),
-				eq(false))).thenReturn(posts);
+		when(request.queryParams(USERNAME_PARAM)).thenReturn("Jason");
+		when(dataService.getPosts(eq(null), eq("Jason"), eq(null), eq(null), eq(null), eq(null), eq(null),
+				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).queryParams("userId");
-		verify(request, times(1)).queryParams("username");
-		verify(request, times(1)).queryParams("tag");
-		verify(request, times(1)).queryParams("on");
-		verify(request, times(1)).queryParams("before");
-		verify(request, times(1)).queryParams("after");
-		verify(request, times(1)).queryParams("sincePostId");
-		verify(request, times(1)).queryParams("sortBy");
-		verify(request, times(1)).queryParams("order");
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPosts(eq(null), eq("Jason"), eq(null), eq(null), eq(null), eq(null), eq(null),
-				eq("postId"), eq(false));
+				eq(POST_ID_PARAM), eq(false));
 	}
 
 	@Test
@@ -170,24 +180,24 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool #Post", LocalDateTime.of(2019, 4, 17, 7, 34)),
 				new Post(3, 34, "Jason", "Jason Sarwar", "One Last Cool #Post", LocalDateTime.of(2019, 2, 15, 6, 12)));
 
-		when(request.queryParams("tag")).thenReturn("Post");
-		when(dataService.getPosts(eq(null), eq(null), eq("Post"), eq(null), eq(null), eq(null), eq(null), eq("postId"),
-				eq(false))).thenReturn(posts);
+		when(request.queryParams(TAG_PARAM)).thenReturn("Post");
+		when(dataService.getPosts(eq(null), eq(null), eq("Post"), eq(null), eq(null), eq(null), eq(null),
+				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).queryParams("userId");
-		verify(request, times(1)).queryParams("username");
-		verify(request, times(1)).queryParams("tag");
-		verify(request, times(1)).queryParams("on");
-		verify(request, times(1)).queryParams("before");
-		verify(request, times(1)).queryParams("after");
-		verify(request, times(1)).queryParams("sincePostId");
-		verify(request, times(1)).queryParams("sortBy");
-		verify(request, times(1)).queryParams("order");
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPosts(eq(null), eq(null), eq("Post"), eq(null), eq(null), eq(null), eq(null),
-				eq("postId"), eq(false));
+				eq(POST_ID_PARAM), eq(false));
 	}
 
 	@Test
@@ -197,24 +207,24 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(3, 34, "Jason", "Jason Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)));
 
-		when(request.queryParams("on")).thenReturn("06-15-2019");
+		when(request.queryParams(ON_PARAM)).thenReturn("06-15-2019");
 		when(dataService.getPosts(eq(null), eq(null), eq(null), eq("06-15-2019"), eq(null), eq(null), eq(null),
-				eq("postId"), eq(false))).thenReturn(posts);
+				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).queryParams("userId");
-		verify(request, times(1)).queryParams("username");
-		verify(request, times(1)).queryParams("tag");
-		verify(request, times(1)).queryParams("on");
-		verify(request, times(1)).queryParams("before");
-		verify(request, times(1)).queryParams("after");
-		verify(request, times(1)).queryParams("sincePostId");
-		verify(request, times(1)).queryParams("sortBy");
-		verify(request, times(1)).queryParams("order");
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPosts(eq(null), eq(null), eq(null), eq("06-15-2019"), eq(null), eq(null),
-				eq(null), eq("postId"), eq(false));
+				eq(null), eq(POST_ID_PARAM), eq(false));
 	}
 
 	@Test
@@ -224,24 +234,24 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(3, 34, "Jason", "Jason Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)));
 
-		when(request.queryParams("sortBy")).thenReturn("userId");
-		when(dataService.getPosts(eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq("userId"),
-				eq(false))).thenReturn(posts);
+		when(request.queryParams(SORT_BY_PARAM)).thenReturn(USER_ID_PARAM);
+		when(dataService.getPosts(eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
+				eq(USER_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).queryParams("userId");
-		verify(request, times(1)).queryParams("username");
-		verify(request, times(1)).queryParams("tag");
-		verify(request, times(1)).queryParams("on");
-		verify(request, times(1)).queryParams("before");
-		verify(request, times(1)).queryParams("after");
-		verify(request, times(1)).queryParams("sincePostId");
-		verify(request, times(1)).queryParams("sortBy");
-		verify(request, times(1)).queryParams("order");
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPosts(eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
-				eq("userId"), eq(false));
+				eq(USER_ID_PARAM), eq(false));
 	}
 
 	@Test
@@ -251,24 +261,24 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(5, 34, "Jason", "Jason Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)));
 
-		when(request.queryParams("order")).thenReturn("asc");
-		when(dataService.getPosts(eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq("postId"),
-				eq(true))).thenReturn(posts);
+		when(request.queryParams(ORDER_PARAM)).thenReturn("asc");
+		when(dataService.getPosts(eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
+				eq(POST_ID_PARAM), eq(true))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).queryParams("userId");
-		verify(request, times(1)).queryParams("username");
-		verify(request, times(1)).queryParams("tag");
-		verify(request, times(1)).queryParams("on");
-		verify(request, times(1)).queryParams("before");
-		verify(request, times(1)).queryParams("after");
-		verify(request, times(1)).queryParams("sincePostId");
-		verify(request, times(1)).queryParams("sortBy");
-		verify(request, times(1)).queryParams("order");
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPosts(eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
-				eq("postId"), eq(true));
+				eq(POST_ID_PARAM), eq(true));
 	}
 
 	@Test
@@ -278,24 +288,24 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(3, 34, "Jason", "Jason Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)));
 
-		when(request.queryParams("order")).thenReturn("desc");
-		when(dataService.getPosts(eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq("postId"),
-				eq(false))).thenReturn(posts);
+		when(request.queryParams(ORDER_PARAM)).thenReturn("desc");
+		when(dataService.getPosts(eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
+				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).queryParams("userId");
-		verify(request, times(1)).queryParams("username");
-		verify(request, times(1)).queryParams("tag");
-		verify(request, times(1)).queryParams("on");
-		verify(request, times(1)).queryParams("before");
-		verify(request, times(1)).queryParams("after");
-		verify(request, times(1)).queryParams("sincePostId");
-		verify(request, times(1)).queryParams("sortBy");
-		verify(request, times(1)).queryParams("order");
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPosts(eq(null), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
-				eq("postId"), eq(false));
+				eq(POST_ID_PARAM), eq(false));
 	}
 
 	@Test
@@ -305,33 +315,33 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason1", "Jason Sarwar", "Another Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(5, 35, "Jason1", "Jason Sarwar", "One Last Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)));
 
-		when(request.queryParams("userId")).thenReturn("33,34,35");
-		when(request.queryParams("username")).thenReturn("Jason1");
-		when(request.queryParams("tag")).thenReturn("Post");
-		when(request.queryParams("on")).thenReturn("06-15-2019");
-		when(request.queryParams("before")).thenReturn("06-16-2019");
-		when(request.queryParams("after")).thenReturn("06-14-2019");
-		when(request.queryParams("sincePostId")).thenReturn("2");
-		when(request.queryParams("sortBy")).thenReturn("userId");
-		when(request.queryParams("order")).thenReturn("asc");
+		when(request.queryParams(USER_ID_PARAM)).thenReturn("33,34,35");
+		when(request.queryParams(USERNAME_PARAM)).thenReturn("Jason1");
+		when(request.queryParams(TAG_PARAM)).thenReturn("Post");
+		when(request.queryParams(ON_PARAM)).thenReturn("06-15-2019");
+		when(request.queryParams(BEFORE_PARAM)).thenReturn("06-16-2019");
+		when(request.queryParams(AFTER_PARAM)).thenReturn("06-14-2019");
+		when(request.queryParams(SINCE_POST_ID_PARAM)).thenReturn("2");
+		when(request.queryParams(SORT_BY_PARAM)).thenReturn(USER_ID_PARAM);
+		when(request.queryParams(ORDER_PARAM)).thenReturn("asc");
 
 		when(dataService.getPosts(anyCollection(), eq("Jason1"), eq("Post"), eq("06-15-2019"), eq("06-16-2019"),
-				eq("06-14-2019"), eq(2), eq("userId"), eq(true))).thenReturn(posts);
+				eq("06-14-2019"), eq(2), eq(USER_ID_PARAM), eq(true))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).queryParams("userId");
-		verify(request, times(1)).queryParams("username");
-		verify(request, times(1)).queryParams("tag");
-		verify(request, times(1)).queryParams("on");
-		verify(request, times(1)).queryParams("before");
-		verify(request, times(1)).queryParams("after");
-		verify(request, times(1)).queryParams("sincePostId");
-		verify(request, times(1)).queryParams("sortBy");
-		verify(request, times(1)).queryParams("order");
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq("Jason1"), eq("Post"), eq("06-15-2019"),
-				eq("06-16-2019"), eq("06-14-2019"), eq(2), eq("userId"), eq(true));
+				eq("06-16-2019"), eq("06-14-2019"), eq(2), eq(USER_ID_PARAM), eq(true));
 
 		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
 		assertThat(capture.size(), is(1));
@@ -345,21 +355,22 @@ public class PostRequestHandlerTest {
 		Collection<Post> posts = Set.of(
 				new Post(8, 45, "Jason1", "Jason Sarwar", "A Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(7, 12, "Jason2", "Jason Sarwar 2", "Another Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
-				new Post(6, 78, "Jason3", "Jason Sarwar 3", "One Last Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)));
+				new Post(6, 78, "Jason3", "Jason Sarwar 3", "One Last Cool #Post",
+						LocalDateTime.of(2019, 6, 15, 6, 23)));
 
-		when(request.params("userId")).thenReturn("45");
+		when(request.params(USER_ID_PARAM)).thenReturn("45");
 		when(dataService.getFollowingUserIds(45)).thenReturn(Set.of(12, 78, 23));
 		when(dataService.getPosts(anyCollection(), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
-				eq("postId"), eq(false))).thenReturn(posts);
+				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetFeedPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).params("userId");
-		verify(request, times(1)).queryParams("sincePostId");
+		verify(request, times(1)).params(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getFollowingUserIds(45);
 		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq(null), eq(null), eq(null), eq(null),
-				eq(null), eq(null), eq("postId"), eq(false));
+				eq(null), eq(null), eq(POST_ID_PARAM), eq(false));
 		verifyNoMoreInteractions(dataService);
 
 		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
@@ -374,22 +385,23 @@ public class PostRequestHandlerTest {
 		Collection<Post> posts = Set.of(
 				new Post(8, 45, "Jason1", "Jason Sarwar", "A Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(7, 12, "Jason2", "Jason Sarwar 2", "Another Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
-				new Post(6, 78, "Jason3", "Jason Sarwar 3", "One Last Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)));
+				new Post(6, 78, "Jason3", "Jason Sarwar 3", "One Last Cool #Post",
+						LocalDateTime.of(2019, 6, 15, 6, 23)));
 
-		when(request.params("userId")).thenReturn("45");
-		when(request.queryParams("sincePostId")).thenReturn("5");
+		when(request.params(USER_ID_PARAM)).thenReturn("45");
+		when(request.queryParams(SINCE_POST_ID_PARAM)).thenReturn("5");
 		when(dataService.getFollowingUserIds(45)).thenReturn(Set.of(12, 78, 23));
 		when(dataService.getPosts(anyCollection(), eq(null), eq(null), eq(null), eq(null), eq(null), eq(5),
-				eq("postId"), eq(false))).thenReturn(posts);
+				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetFeedPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).params("userId");
-		verify(request, times(1)).queryParams("sincePostId");
+		verify(request, times(1)).params(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getFollowingUserIds(45);
 		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq(null), eq(null), eq(null), eq(null),
-				eq(null), eq(5), eq("postId"), eq(false));
+				eq(null), eq(5), eq(POST_ID_PARAM), eq(false));
 		verifyNoMoreInteractions(dataService);
 
 		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
@@ -406,12 +418,12 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool Post", LocalDateTime.of(2019, 4, 17, 7, 34)),
 				new Post(3, 34, "Jason", "Jason Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 2, 15, 6, 12)));
 
-		when(request.params("userId")).thenReturn("5");
+		when(request.params(USER_ID_PARAM)).thenReturn("5");
 		when(dataService.getPosts(5)).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPostsByUserId(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).params("userId");
+		verify(request, times(1)).params(USER_ID_PARAM);
 		verify(dataService, times(1)).getPosts(5);
 	}
 
@@ -419,12 +431,12 @@ public class PostRequestHandlerTest {
 	public void testHandleGetPost() {
 		Post post = new Post(5, 34, "Jason", "Jason Sarwar", "A Cool Post", LocalDateTime.of(2019, 2, 15, 6, 23));
 
-		when(request.params("postId")).thenReturn("5");
+		when(request.params(POST_ID_PARAM)).thenReturn("5");
 		when(dataService.getPost(5)).thenReturn(post);
 
 		Post retrievedPost = postRequestHandler.handleGetPost(request, response);
 		assertThat(retrievedPost, is(post));
-		verify(request, times(1)).params("postId");
+		verify(request, times(1)).params(POST_ID_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getPost(5);
 		verifyNoMoreInteractions(dataService);
@@ -440,7 +452,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NumberFormatException.class));
 			assertThat(e.getMessage(), is("null"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verifyZeroInteractions(dataService);
 			verifyZeroInteractions(tokenService);
 		}
@@ -448,7 +460,7 @@ public class PostRequestHandlerTest {
 
 	@Test
 	public void testHandleGetPostWithInvalidPostId() {
-		when(request.params("postId")).thenReturn("5a");
+		when(request.params(POST_ID_PARAM)).thenReturn("5a");
 
 		try {
 			postRequestHandler.handleGetPost(request, response);
@@ -456,7 +468,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NumberFormatException.class));
 			assertThat(e.getMessage(), containsString("For input string"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verifyZeroInteractions(dataService);
 			verifyZeroInteractions(tokenService);
 		}
@@ -464,7 +476,7 @@ public class PostRequestHandlerTest {
 
 	@Test
 	public void testHandleGetPostThatIsNotFound() {
-		when(request.params("postId")).thenReturn("5");
+		when(request.params(POST_ID_PARAM)).thenReturn("5");
 		when(dataService.getPost(5)).thenReturn(null);
 		try {
 			postRequestHandler.handleGetPost(request, response);
@@ -472,7 +484,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NotFoundException.class));
 			assertThat(e.getMessage(), is("Post Not Found"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(dataService, times(1)).getPost(5);
 			verifyNoMoreInteractions(dataService);
 			verifyZeroInteractions(tokenService);
@@ -584,6 +596,22 @@ public class PostRequestHandlerTest {
 	}
 
 	@Test
+	public void testHandleAddPostWithNoUserIdOrText() throws IOException {
+
+		when(request.body()).thenReturn("{}");
+		try {
+			postRequestHandler.handleAddPost(request, response);
+			fail("Did not throw Exception");
+		} catch (Exception e) {
+			assertThat(e, instanceOf(BadRequestException.class));
+			assertThat(e.getMessage(), is("Add Post Request requires a 'userId'\nAdd Post Request requires 'text'"));
+			verify(request, times(1)).body();
+			verifyZeroInteractions(tokenService);
+			verifyZeroInteractions(dataService);
+		}
+	}
+
+	@Test
 	public void testHandleAddPostByUnauthorizedPermission() throws IOException {
 
 		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.ADD_COMMENT).build();
@@ -632,7 +660,7 @@ public class PostRequestHandlerTest {
 
 		Token token = Token.newBuilder().setUserId(2).addPermissions(Permission.EDIT_POST).build();
 
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.body()).thenReturn(EDIT_POST_REQUEST);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
@@ -642,7 +670,7 @@ public class PostRequestHandlerTest {
 		boolean postEdited = postRequestHandler.handleEditPost(request, response);
 		assertThat(postEdited, is(true));
 
-		verify(request, times(1)).params("postId");
+		verify(request, times(1)).params(POST_ID_PARAM);
 		verify(request, times(1)).body();
 		verify(request, times(1)).headers(AUTHORIZATION);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -657,7 +685,7 @@ public class PostRequestHandlerTest {
 
 		Token token = Token.newBuilder().setUserId(2).addPermissions(Permission.ADMIN).build();
 
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.body()).thenReturn(EDIT_POST_REQUEST);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
@@ -667,7 +695,7 @@ public class PostRequestHandlerTest {
 		boolean postEdited = postRequestHandler.handleEditPost(request, response);
 		assertThat(postEdited, is(true));
 
-		verify(request, times(1)).params("postId");
+		verify(request, times(1)).params(POST_ID_PARAM);
 		verify(request, times(1)).body();
 		verify(request, times(1)).headers(AUTHORIZATION);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -682,7 +710,7 @@ public class PostRequestHandlerTest {
 
 		Token token = Token.newBuilder().setUserId(2).addPermissions(Permission.EDIT_POST).build();
 
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.body()).thenReturn(EDIT_POST_REQUEST);
 		when(request.contentType()).thenReturn("application/json");
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
@@ -693,7 +721,7 @@ public class PostRequestHandlerTest {
 		boolean postEdited = postRequestHandler.handleEditPost(request, response);
 		assertThat(postEdited, is(true));
 
-		verify(request, times(1)).params("postId");
+		verify(request, times(1)).params(POST_ID_PARAM);
 		verify(request, times(1)).body();
 		verify(request, times(1)).headers(AUTHORIZATION);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -713,7 +741,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NumberFormatException.class));
 			assertThat(e.getMessage(), is("null"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verifyZeroInteractions(tokenService);
 			verifyZeroInteractions(dataService);
 		}
@@ -722,7 +750,7 @@ public class PostRequestHandlerTest {
 	@Test
 	public void testHandleEditPostWithInvalidPostId() throws IOException {
 
-		when(request.params("postId")).thenReturn("a");
+		when(request.params(POST_ID_PARAM)).thenReturn("a");
 		when(request.body()).thenReturn(EDIT_POST_REQUEST);
 		try {
 			postRequestHandler.handleEditPost(request, response);
@@ -730,7 +758,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NumberFormatException.class));
 			assertThat(e.getMessage(), containsString("For input string"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verifyZeroInteractions(tokenService);
 			verifyZeroInteractions(dataService);
 		}
@@ -739,7 +767,7 @@ public class PostRequestHandlerTest {
 	@Test
 	public void testHandleEditPostWithNoText() throws IOException {
 
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.body()).thenReturn("{}");
 		try {
 			postRequestHandler.handleEditPost(request, response);
@@ -747,7 +775,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(BadRequestException.class));
 			assertThat(e.getMessage(), is("Edit Post Request requires 'text'"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verifyZeroInteractions(tokenService);
 			verifyZeroInteractions(dataService);
 		}
@@ -757,7 +785,7 @@ public class PostRequestHandlerTest {
 	public void testHandleEditPostThatDoesNotExist() throws IOException {
 
 		Token token = Token.newBuilder().setUserId(2).addPermissions(Permission.EDIT_POST).build();
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.body()).thenReturn(EDIT_POST_REQUEST);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
@@ -770,7 +798,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NotFoundException.class));
 			assertThat(e.getMessage(), is("Post Not Found"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).body();
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -784,7 +812,7 @@ public class PostRequestHandlerTest {
 	public void testHandleEditPostByUnauthorizedPermission() throws IOException {
 
 		Token token = Token.newBuilder().setUserId(2).addPermissions(Permission.ADD_COMMENT).build();
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.body()).thenReturn(EDIT_POST_REQUEST);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
@@ -796,7 +824,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(UnauthorizedException.class));
 			assertThat(e.getMessage(), is("User not authorized to Edit Post"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).body();
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -809,7 +837,7 @@ public class PostRequestHandlerTest {
 	public void testHandleEditPostByUnauthorizedUserId() throws IOException {
 
 		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.EDIT_POST).build();
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.body()).thenReturn(EDIT_POST_REQUEST);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
@@ -821,7 +849,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(UnauthorizedException.class));
 			assertThat(e.getMessage(), is("User not authorized to Edit Post"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).body();
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -834,7 +862,7 @@ public class PostRequestHandlerTest {
 	public void testHandleDeletePost() throws IOException {
 		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.DELETE_POST).build();
 
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
 		when(dataService.getUserIdFromPostId(3)).thenReturn(1);
@@ -843,7 +871,7 @@ public class PostRequestHandlerTest {
 		boolean postDeleted = postRequestHandler.handleDeletePost(request, response);
 		assertThat(postDeleted, is(true));
 
-		verify(request, times(1)).params("postId");
+		verify(request, times(1)).params(POST_ID_PARAM);
 		verify(request, times(1)).headers(AUTHORIZATION);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
 		verifyNoMoreInteractions(tokenService);
@@ -856,7 +884,7 @@ public class PostRequestHandlerTest {
 	public void testHandleDeletePostByAdmin() throws IOException {
 		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.ADMIN).build();
 
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
 		when(dataService.getUserIdFromPostId(3)).thenReturn(1);
@@ -865,7 +893,7 @@ public class PostRequestHandlerTest {
 		boolean postDeleted = postRequestHandler.handleDeletePost(request, response);
 		assertThat(postDeleted, is(true));
 
-		verify(request, times(1)).params("postId");
+		verify(request, times(1)).params(POST_ID_PARAM);
 		verify(request, times(1)).headers(AUTHORIZATION);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
 		verifyNoMoreInteractions(tokenService);
@@ -883,7 +911,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NumberFormatException.class));
 			assertThat(e.getMessage(), is("null"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verifyZeroInteractions(tokenService);
 			verifyZeroInteractions(dataService);
 		}
@@ -892,14 +920,14 @@ public class PostRequestHandlerTest {
 	@Test
 	public void testHandleDeletePostWithInvalidPostId() throws IOException {
 
-		when(request.params("postId")).thenReturn("a");
+		when(request.params(POST_ID_PARAM)).thenReturn("a");
 		try {
 			postRequestHandler.handleDeletePost(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NumberFormatException.class));
 			assertThat(e.getMessage(), containsString("For input string"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verifyZeroInteractions(tokenService);
 			verifyZeroInteractions(dataService);
 		}
@@ -909,7 +937,7 @@ public class PostRequestHandlerTest {
 	public void testHandleDeletePostThatDoesNotExist() throws IOException {
 
 		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.DELETE_POST).build();
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
 		when(dataService.getUserIdFromPostId(3)).thenReturn(1);
@@ -921,7 +949,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NotFoundException.class));
 			assertThat(e.getMessage(), is("Post Not Found"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
 			verify(dataService, times(1)).getUserIdFromPostId(3);
@@ -934,7 +962,7 @@ public class PostRequestHandlerTest {
 	public void testHandleDeletePostByUnauthorizedPermission() throws IOException {
 
 		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.ADD_COMMENT).build();
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
 		when(dataService.getUserIdFromPostId(3)).thenReturn(1);
@@ -945,7 +973,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(UnauthorizedException.class));
 			assertThat(e.getMessage(), is("User not authorized to Delete Post"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
 			verify(dataService, times(1)).getUserIdFromPostId(3);
@@ -957,7 +985,7 @@ public class PostRequestHandlerTest {
 	public void testHandleDeletePostByUnauthorizedUserId() throws IOException {
 
 		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.DELETE_POST).build();
-		when(request.params("postId")).thenReturn("3");
+		when(request.params(POST_ID_PARAM)).thenReturn("3");
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
 		when(dataService.getUserIdFromPostId(3)).thenReturn(2);
@@ -968,7 +996,7 @@ public class PostRequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(UnauthorizedException.class));
 			assertThat(e.getMessage(), is("User not authorized to Delete Post"));
-			verify(request, times(1)).params("postId");
+			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
 			verify(dataService, times(1)).getUserIdFromPostId(3);
@@ -983,12 +1011,12 @@ public class PostRequestHandlerTest {
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool Post", LocalDateTime.of(2019, 4, 17, 7, 34)),
 				new Post(3, 34, "Jason", "Jason Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 2, 15, 6, 12)));
 
-		when(request.params("userId")).thenReturn("8");
+		when(request.params(USER_ID_PARAM)).thenReturn("8");
 		when(dataService.getCommentedPostsByUserId(8)).thenReturn(posts);
-		
+
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetCommentedPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).params("userId");
+		verify(request, times(1)).params(USER_ID_PARAM);
 		verifyNoMoreInteractions(request);
 		verify(dataService, times(1)).getCommentedPostsByUserId(8);
 		verifyNoMoreInteractions(dataService);

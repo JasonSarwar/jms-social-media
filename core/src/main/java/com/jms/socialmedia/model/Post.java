@@ -1,9 +1,9 @@
 package com.jms.socialmedia.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 
 public class Post extends Entry {
 
@@ -14,15 +14,16 @@ public class Post extends Entry {
 		super(postId, null, null, null, text, timestamp);
 	}
 
-	public Post(Integer postId, Integer userId, String username, String fullName, String text, LocalDateTime timestamp) {
+	public Post(Integer postId, Integer userId, String username, String fullName, String text,
+			LocalDateTime timestamp) {
 		super(postId, userId, username, fullName, text, timestamp);
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(postId, userId, username, fullName, text, timestamp, profilePictureLink, likes);
+		return Objects.hash(postId, userId, username, fullName, text, timestamp, profilePictureLink, likes);
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
@@ -31,14 +32,11 @@ public class Post extends Entry {
 			return false;
 		}
 		Post that = (Post) object;
-		return Objects.equal(this.postId, that.postId)
-				&& Objects.equal(this.userId, that.userId)
-				&& Objects.equal(this.username, that.username)
-				&& Objects.equal(this.fullName, that.fullName)
-				&& Objects.equal(this.text, that.text)
-				&& Objects.equal(this.timestamp, that.timestamp)
-				&& Objects.equal(this.profilePictureLink, that.profilePictureLink)
-				&& Objects.equal(this.likes, that.likes);
+		return Objects.equals(this.postId, that.postId) && Objects.equals(this.userId, that.userId)
+				&& Objects.equals(this.username, that.username) && Objects.equals(this.fullName, that.fullName)
+				&& Objects.equals(this.text, that.text) && Objects.equals(this.timestamp, that.timestamp)
+				&& Objects.equals(this.profilePictureLink, that.profilePictureLink)
+				&& Objects.equals(this.likes, that.likes);
 	}
 
 	@Override
@@ -54,5 +52,5 @@ public class Post extends Entry {
 				.add("timestamp", timestamp)
 				.toString();
 	}
-	
+
 }
