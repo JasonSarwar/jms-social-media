@@ -298,7 +298,7 @@
 		};
 
 		var addUser = function (newUser) {
-			return $http.post("/api/user/add", newUser)
+			return $http.post("/api/user/add?createSession", newUser)
 				.then(function (response) {
 					if (response.data) {
 						$http.defaults.headers.common.Authorization = "Bearer " + response.data.token;

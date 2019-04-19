@@ -3,7 +3,6 @@ package com.jms.socialmedia.handlers;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,10 +33,10 @@ public class UserRequestHandler extends RequestHandler {
 	private static final String SESSION_COOKIE = "jms-social-media-session";
 
 	private final PasswordService passwordService;
-	private final Set<Integer> adminUserIds;
+	private final Collection<Integer> adminUserIds;
 
 	public UserRequestHandler(DataService dataService, PasswordService passwordService, TokenService tokenService,
-			Set<Integer> adminUserIds, Gson gson) {
+			Collection<Integer> adminUserIds, Gson gson) {
 
 		super(dataService, tokenService, gson);
 		this.passwordService = passwordService;
@@ -57,7 +56,7 @@ public class UserRequestHandler extends RequestHandler {
 		}
 	}
 
-	public Collection<User> handleGetUsernamesAndIds(Request request, Response response) throws IOException {
+	public Collection<User> handleGetUsernamesAndIds(Request request, Response response) {
 		String queryParam = request.queryParams("ids");
 		if (StringUtils.isBlank(queryParam)) {
 			throw new BadRequestException("No User IDs included");
@@ -67,7 +66,7 @@ public class UserRequestHandler extends RequestHandler {
 		return dataService.getUsernamesByIds(userIds);
 	}
 
-	public Boolean handleIsUsernameTaken(Request request, Response response) throws IOException {
+	public Boolean handleIsUsernameTaken(Request request, Response response) {
 		String username = request.params("username");
 		if (!username.matches("^[\\w\\d_]+$")) {
 			throw new BadRequestException("Invalid Username");
@@ -75,9 +74,9 @@ public class UserRequestHandler extends RequestHandler {
 		return dataService.isUsernameTaken(username);
 	}
 
-	public Boolean handleIsEmailTaken(Request request, Response response) throws IOException {
+	public Boolean handleIsEmailTaken(Request request, Response response) {
 		String email = request.params("email");
-		if (!email.matches("^[\\w\\d_.]+@[\\w\\d_.]+\\.[\\w\\d_.]+$")) {
+		if (!email.matches("^[\\w\\d_.+\\-]+@[\\w\\d_.+\\-]+\\.[\\w\\d_.+\\-]+$")) {
 			throw new BadRequestException("Invalid Email Address");
 		}
 		return dataService.isEmailTaken(email);
@@ -98,7 +97,7 @@ public class UserRequestHandler extends RequestHandler {
 		if (len < 5) {
 			throw new BadRequestException("New Password Too Short");
 		}
-		if (len > 50) {
+		if (len > 64) {
 			throw new BadRequestException("New Password Too Long");
 		}
 		if (!newUser.passwordsMatch()) {
@@ -110,7 +109,10 @@ public class UserRequestHandler extends RequestHandler {
 			throw new DatabaseInsertException("Cannot create new user");
 		}
 
-		createSession(response, newUser);
+		String createSessionFlag = request.queryParams("createSession");
+		if (createSessionFlag != null && !createSessionFlag.equalsIgnoreCase("false")) {
+			createSession(response, newUser);
+		}
 		return createLoginSuccess(newUser);
 	}
 
@@ -128,7 +130,7 @@ public class UserRequestHandler extends RequestHandler {
 		if (len < 5) {
 			throw new BadRequestException("New Password Too Short");
 		}
-		if (len > 50) {
+		if (len > 64) {
 			throw new BadRequestException("New Password Too Long");
 		}
 		if (!changePassword.passwordsMatch()) {
@@ -171,7 +173,10 @@ public class UserRequestHandler extends RequestHandler {
 			throw new FailedLoginAttemptException("Incorrect Username or Password");
 		}
 
-		createSession(response, user);
+		String createSessionFlag = request.queryParams("createSession");
+		if (createSessionFlag != null && !createSessionFlag.equalsIgnoreCase("false")) {
+			createSession(response, user);
+		}
 		return createLoginSuccess(user);
 
 	}
