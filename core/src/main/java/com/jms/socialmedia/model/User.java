@@ -15,7 +15,11 @@ public class User {
 	public User(Integer userId, String username) {
 		this(userId, username, null, null);
 	}
-	
+
+	public User(Integer userId, String username, String fullName) {
+		this(userId, username, fullName, null);
+	}
+
 	public User(Integer userId, String username, String fullName, String hashedPassword) {
 		this.userId = userId;
 		this.username = username;

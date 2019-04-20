@@ -47,7 +47,7 @@ public abstract class RequestHandler {
 			throws IOException {
 
 		String auth = request.headers(AUTHORIZATION);
-		if (StringUtils.isBlank(auth) || auth.length() < BEARER.length()) {
+		if (StringUtils.isBlank(auth) || !auth.startsWith(BEARER)) {
 			throw new UnauthorizedException("Not authorized to " + permission.getAction());
 		} else {
 			String tokenString = auth.substring(BEARER.length());
@@ -64,7 +64,8 @@ public abstract class RequestHandler {
 		if (StringUtils.isBlank(request.contentType())
 				|| request.contentType().toLowerCase().startsWith("application/json")) {
 			return gson.fromJson(request.body(), aClass);
-		} else if (request.contentType().toLowerCase().startsWith("application/xml")) {
+		} else if (request.contentType().toLowerCase().startsWith("application/xml") 
+				|| request.contentType().toLowerCase().startsWith("text/xml")) {
 			return null;
 		} else if (request.contentType().toLowerCase().startsWith("application/x-protobuf")) {
 			return null;

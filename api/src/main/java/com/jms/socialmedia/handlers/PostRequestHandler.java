@@ -65,7 +65,7 @@ public class PostRequestHandler extends RequestHandler {
 		Integer sincePostId = strSincePostId == null ? null : Integer.parseInt(strSincePostId);
 		String sortBy = Optional.ofNullable(request.queryParams("sortBy")).orElse(POST_ID_PARAM);
 		String order = request.queryParams("order");
-		boolean sortOrderAsc = order == null ? false : order.equalsIgnoreCase("asc");
+		boolean sortOrderAsc = StringUtil.isNotBlank(order) && order.equalsIgnoreCase("asc");
 
 		return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 	}

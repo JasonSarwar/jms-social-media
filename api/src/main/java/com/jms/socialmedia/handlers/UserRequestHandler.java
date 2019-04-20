@@ -143,9 +143,9 @@ public class UserRequestHandler extends RequestHandler {
 
 	public LoginSuccess handleSessionRetrieval(Request request, Response response) throws IOException {
 
-		if (StringUtils.isNotBlank(request.cookie(SESSION_COOKIE))) {
+		String sessionKey = request.cookie(SESSION_COOKIE);;
+		if (StringUtils.isNotBlank(sessionKey)) {
 
-			String sessionKey = request.cookie(SESSION_COOKIE);
 			User user = dataService.getUserBySessionKey(sessionKey);
 
 			if (user != null) {
@@ -201,11 +201,12 @@ public class UserRequestHandler extends RequestHandler {
 		loginSuccess.setUserId(user.getUserId());
 		loginSuccess.setUsername(user.getUsername());
 		loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
-		Token.Builder tokenBuilder = Token.newBuilder().setUserId(user.getUserId())
-				.addPermissions(Permission.getRegularPermissions());
+		Token.Builder tokenBuilder = Token.newBuilder().setUserId(user.getUserId());
 
 		if (adminUserIds.contains(user.getUserId())) {
 			tokenBuilder.addPermissions(Permission.ADMIN);
+		} else {
+			tokenBuilder.addPermissions(Permission.getRegularPermissions());
 		}
 
 		loginSuccess.setToken(tokenService.createTokenString(tokenBuilder.build()));
