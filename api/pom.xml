@@ -14,7 +14,7 @@
 	<name>JMS Social Media API</name>
 
 	<properties>
-		<api.sonar.sources>src/main/java,src/main/resources/webapp</api.sonar.sources>
+		<sonar.sources>src/main/java,src/main/resources/webapp</sonar.sources>
 	</properties>
 
 	<dependencies>
@@ -93,8 +93,8 @@
 						</configuration>
 						<executions>
 							<execution>
-								<id>make-assembly</id> <!-- this is used for inheritance merges -->
-								<phase>package</phase> <!-- bind to the packaging phase -->
+								<id>make-assembly</id>
+								<phase>package</phase>
 								<goals>
 									<goal>single</goal>
 								</goals>
