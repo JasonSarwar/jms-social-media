@@ -1,5 +1,5 @@
 (function() {
-	var app = angular.module("mysocialmedia", ["ngRoute", "ngSanitize", "ngMessages", "ngCookies"])
+	angular.module("mysocialmedia", ["ngRoute", "ngSanitize", "ngMessages", "ngCookies"])
 		.config(function($routeProvider) {
 			$routeProvider
 				.when("/home", {

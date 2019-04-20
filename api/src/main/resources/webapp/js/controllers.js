@@ -110,7 +110,7 @@
 		
 		$scope.deletePost = function (postId) {
 			let noOfPosts = $scope.posts.length;
-			for (i = 0; i < noOfPosts; i++) {
+			for (let i = 0; i < noOfPosts; i++) {
 				console.log("Post ID: " + postId);
 				console.log($scope.posts[i]);
 				if ($scope.posts[i].postId === postId) {
@@ -151,7 +151,7 @@
 
 		$scope.deleteComment = function (commentId) {
 			let noOfComments = $scope.entry.comments.length;
-			for (i = 0; i < noOfComments; i++) {
+			for (let i = 0; i < noOfComments; i++) {
 				if ($scope.entry.comments[i].commentId === commentId) {
 					$scope.entry.comments.splice(i, 1);
 					break;
@@ -188,7 +188,7 @@
 		
 		$scope.deletePost = function (postId) {
 			let noOfPosts = $scope.posts.length;
-			for (i = 0; i < noOfPosts; i++) {
+			for (let i = 0; i < noOfPosts; i++) {
 				if ($scope.posts[i].postId === postId) {
 					$scope.posts.splice(i, 1);
 					break;
@@ -518,7 +518,7 @@
 				} else {
 					$scope.passwordFeedback = "Weak";
 				}
-			};
+			}
 		};
 
 		$scope.signup = function() {
@@ -550,7 +550,7 @@
 				$scope.getFeedPosts();
 			});
 			let len = $scope.usersToFollow.length;
-			for (i = 0; i < len; i++) {
+			for (let i = 0; i < len; i++) {
 				if ($scope.usersToFollow[i].userId == userId) {
 					$scope.usersToFollow.splice(i, 1);
 					break;

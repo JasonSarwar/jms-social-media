@@ -37,7 +37,7 @@ public class Token {
 	public boolean equals(Object object) {
 		if (this == object)
 			return true;
-		if (this == null || this.getClass() != object.getClass())
+		if (object == null || this.getClass() != object.getClass())
 			return false;
 
 		Token that = (Token) object;

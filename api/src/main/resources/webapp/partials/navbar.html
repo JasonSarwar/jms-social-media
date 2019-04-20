@@ -6,16 +6,16 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="#"><span class="fas fa-home"></span> Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="#!/posts"><i class="fas fa-file-alt"></i> All Posts</a>
+        <a class="nav-link" href="#!/posts"><span class="fas fa-file-alt"></span> All Posts</a>
       </li>
       <li class="nav-item active" ng-hide="firstname">
-        <a class="nav-link" href="#!/login"><i class="fas fa-sign-in-alt"></i> Log in</a>
+        <a class="nav-link" href="#!/login"><span class="fas fa-sign-in-alt"></span> Log in</a>
       </li>
       <li class="nav-item active" ng-hide="firstname">
-        <a class="nav-link" href="#!/signup"><i class="fas fa-user-plus"></i> Sign up</a>
+        <a class="nav-link" href="#!/signup"><span class="fas fa-user-plus"></span> Sign up</a>
       </li>
       <li class="nav-item active dropdown" ng-show="firstname">
         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -28,12 +28,12 @@
         </div>
       </li>
       <li class="nav-item active" ng-show="firstname">
-        <a class="nav-link" href="#" ng-click="logout()"><i class="fas fa-sign-out-alt"></i> Log out</a>
+        <a class="nav-link" href="#" ng-click="logout()"><span class="fas fa-sign-out-alt"></span> Log out</a>
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i> Search</button>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><span class="fas fa-search"></span> Search</button>
     </form>
   </div>
 </nav>

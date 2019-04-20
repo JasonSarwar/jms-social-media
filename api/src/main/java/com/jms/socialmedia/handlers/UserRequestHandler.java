@@ -143,7 +143,7 @@ public class UserRequestHandler extends RequestHandler {
 
 	public LoginSuccess handleSessionRetrieval(Request request, Response response) throws IOException {
 
-		String sessionKey = request.cookie(SESSION_COOKIE);;
+		String sessionKey = request.cookie(SESSION_COOKIE);
 		if (StringUtils.isNotBlank(sessionKey)) {
 
 			User user = dataService.getUserBySessionKey(sessionKey);

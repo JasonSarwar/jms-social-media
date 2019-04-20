@@ -4,10 +4,6 @@ public class LoginRequest {
 
 	private String user;
 	private String password;
-	
-	public LoginRequest() {
-
-	}
 
 	public final String getUser() {
 		return user;

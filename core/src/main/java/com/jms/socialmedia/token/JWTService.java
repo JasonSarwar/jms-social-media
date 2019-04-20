@@ -72,14 +72,15 @@ public class JWTService implements TokenService {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	public Token createTokenFromString(String jwt) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException, IOException {
+	public Token createTokenFromString(String jwt) throws IOException {
 		 
 	    //This line will throw an exception if it is not a signed JWS (as expected)
 	    Claims claims = Jwts.parser()         
 	       .setSigningKey(DatatypeConverter.parseBase64Binary(JWT_KEY))
 	       .parseClaimsJws(jwt).getBody();
-			Set<Permission> permissions = (Set<Permission>) claims.get(CLAIM_PERMISSIONS, ArrayList.class).stream().map(e -> Permission.valueOf((String) e)).collect(Collectors.toSet());
-	    	return Token.newBuilder().setUserId(claims.get(CLAIM_USERID, Integer.class)).addPermissions(permissions).build();
+		Set<Permission> permissions = (Set<Permission>) claims.get(CLAIM_PERMISSIONS, ArrayList.class).stream()
+				.map(e -> Permission.valueOf((String) e)).collect(Collectors.toSet());
+		return Token.newBuilder().setUserId(claims.get(CLAIM_USERID, Integer.class)).addPermissions(permissions).build();
 	}
 
 }

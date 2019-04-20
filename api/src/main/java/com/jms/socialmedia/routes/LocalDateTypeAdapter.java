@@ -28,9 +28,11 @@ public class LocalDateTypeAdapter implements JsonDeserializer<LocalDate>{
 	
 	private Map<String, DateTimeFormatter> formatters = mappings.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> DateTimeFormatter.ofPattern(e.getValue())));
 	
+	/**
+	 * @throws JsonParseException if json is unparseable
+	 */
 	@Override
-	public LocalDate deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) 
-			throws JsonParseException {
+	public LocalDate deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) {
         
 		try {
 			if (json.isJsonObject()) {

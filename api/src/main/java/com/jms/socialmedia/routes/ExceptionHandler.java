@@ -1,7 +1,5 @@
 package com.jms.socialmedia.routes;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +17,6 @@ import spark.Response;
 public class ExceptionHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandler.class);
-	
-	public ExceptionHandler() {
-	}
 
 	public void handleException(Exception exception, Request request, Response response) {
 
@@ -29,7 +24,7 @@ public class ExceptionHandler {
 		
 		response.type("text/plain");
 		
-		if (exception instanceof BadRequestException) {
+		if (exception instanceof BadRequestException || exception instanceof InvalidUserLoginStateException) {
 			response.body(exception.getMessage());
 			response.status(400);
 			
@@ -37,21 +32,13 @@ public class ExceptionHandler {
 			response.body(exception.getMessage());
 			response.status(404);
 
-		} else if (exception instanceof FailedLoginAttemptException) {
-			response.body(exception.getMessage());
-			response.status(401);
-		
-		} else if (exception instanceof UnauthorizedException) {
+		} else if (exception instanceof FailedLoginAttemptException || exception instanceof UnauthorizedException) {
 			response.body(exception.getMessage());
 			response.status(401);
 			
 		} else if (exception instanceof UnsupportedContentTypeException) {
 			response.body(exception.getMessage());
 			response.status(415);
-			
-		} else if (exception instanceof InvalidUserLoginStateException) {
-			response.body(exception.getMessage());
-			response.status(400);
 
 		} else if (exception instanceof NumberFormatException) {
 			response.body(exception.getMessage().replace("For input string:", "Invalid ID"));
@@ -59,10 +46,6 @@ public class ExceptionHandler {
 
 		} else if (exception instanceof DatabaseInsertException) {
 			response.body("Database Error: " + exception.getMessage());
-			response.status(500);
-
-		} else if (exception instanceof SQLIntegrityConstraintViolationException) {
-			response.body(exception.getMessage());
 			response.status(500);
 
 		} else {

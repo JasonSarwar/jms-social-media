@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +34,7 @@ public class MockDataService implements DataService {
 	private final Map<Integer, Comment> commentsById;
 	private final Multimap<Integer, Comment> commentsByPostId;
 	private final Map<String, Comparator<Post>> postSorters;
-	
+
 	public MockDataService() {
 
 		usersById = new HashMap<>();
@@ -43,15 +42,14 @@ public class MockDataService implements DataService {
 		userSessionKeys = new HashMap<>();
 		postsById = new TreeMap<>((a, b) -> b.compareTo(a));
 		commentsById = new HashMap<>();
-		commentsByPostId = TreeMultimap.create(Ordering.natural(), (a, b) -> a.getCommentId().compareTo(b.getCommentId()));
-		postSorters = Map.of(
-				"postId", (a, b) -> a.getPostId().compareTo(b.getPostId()),
-				"userId", (a, b) -> a.getUserId().compareTo(b.getUserId()),
-				"username", (a, b) -> a.getUsername().compareTo(b.getUsername()),
-				"fullName", (a, b) -> a.getFullName().compareTo(b.getFullName()),
-				"text", (a, b) -> a.getText().compareTo(b.getText()),
-				"timestamp", (a, b) -> a.getTimestamp().compareTo(b.getTimestamp())
-				);
+		commentsByPostId = TreeMultimap.create(Ordering.natural(),
+				(a, b) -> a.getCommentId().compareTo(b.getCommentId()));
+		postSorters = Map.of("postId", (a, b) -> a.getPostId().compareTo(b.getPostId()), "userId",
+				(a, b) -> a.getUserId().compareTo(b.getUserId()), "username",
+				(a, b) -> a.getUsername().compareTo(b.getUsername()), "fullName",
+				(a, b) -> a.getFullName().compareTo(b.getFullName()), "text",
+				(a, b) -> a.getText().compareTo(b.getText()), "timestamp",
+				(a, b) -> a.getTimestamp().compareTo(b.getTimestamp()));
 		setupUsers();
 		setupPosts();
 		setupComments();
@@ -59,17 +57,20 @@ public class MockDataService implements DataService {
 
 	@Override
 	public Integer getUserIdByUsername(String username) {
-		return usersById.values().stream().filter(user -> user.getUsername().equalsIgnoreCase(username)).map(User::getUserId).findAny().orElse(null);
+		return usersById.values().stream().filter(user -> user.getUsername().equalsIgnoreCase(username))
+				.map(User::getUserId).findAny().orElse(null);
 	}
-	
+
 	@Override
 	public UserPage getUserPageInfoByName(String username) {
-		return userPagesById.values().stream().filter(page -> page.getUsername().equalsIgnoreCase(username)).findAny().orElse(null);
+		return userPagesById.values().stream().filter(page -> page.getUsername().equalsIgnoreCase(username)).findAny()
+				.orElse(null);
 	}
 
 	@Override
 	public User getUserLoginInfoByString(String username) {
-		return usersById.values().stream().filter(user -> username.equalsIgnoreCase(user.getUsername())).findFirst().orElse(null);
+		return usersById.values().stream().filter(user -> username.equalsIgnoreCase(user.getUsername())).findFirst()
+				.orElse(null);
 	}
 
 	@Override
@@ -141,10 +142,10 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, 
+	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate,
 			String beforeDate, String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
-		DateTimeFormatter formatter =  DateTimeFormatter.ofPattern("MM-dd-yyyy");
-		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+
 		Comparator<Post> comparator = postSorters.get(Optional.ofNullable(sortBy).orElse("postId"));
 		if (!sortOrderAsc) {
 			comparator = comparator.reversed();
@@ -153,11 +154,13 @@ public class MockDataService implements DataService {
 				.filter(post -> username == null || post.getUsername().equals(username))
 				.filter(post -> sincePostId == null || sincePostId < post.getPostId())
 				.filter(post -> tag == null || post.getText().contains(tag))
-				.filter(post -> onDate == null || post.getTimestamp().toLocalDate().equals(LocalDate.parse(onDate,formatter)))
-				.filter(post -> beforeDate == null || post.getTimestamp().toLocalDate().isAfter(LocalDate.parse(beforeDate, formatter)))
-				.filter(post -> afterDate == null || post.getTimestamp().toLocalDate().isAfter(LocalDate.parse(afterDate, formatter)))
-				.sorted(comparator)
-				.collect(toList());
+				.filter(post -> onDate == null
+						|| post.getTimestamp().toLocalDate().equals(LocalDate.parse(onDate, formatter)))
+				.filter(post -> beforeDate == null
+						|| post.getTimestamp().toLocalDate().isAfter(LocalDate.parse(beforeDate, formatter)))
+				.filter(post -> afterDate == null
+						|| post.getTimestamp().toLocalDate().isAfter(LocalDate.parse(afterDate, formatter)))
+				.sorted(comparator).collect(toList());
 	}
 
 	@Override
@@ -205,10 +208,8 @@ public class MockDataService implements DataService {
 
 	@Override
 	public Collection<Post> getLikedPostsByUserId(int userId) {
-		return postsById.values().stream()
-				.filter(post -> post.getLikes().contains(userId))
-				.sorted((a, b) -> b.getPostId().compareTo(a.getPostId()))
-				.collect(toList());
+		return postsById.values().stream().filter(post -> post.getLikes().contains(userId))
+				.sorted((a, b) -> b.getPostId().compareTo(a.getPostId())).collect(toList());
 	}
 
 	@Override
@@ -271,9 +272,9 @@ public class MockDataService implements DataService {
 	@Override
 	public boolean deleteComment(int commentId) {
 		Comment comment = getComment(commentId);
-		return comment == null ? false : commentsById.remove(commentId, comment) & commentsByPostId.remove(comment.getPostId(), comment);
+		return comment != null
+				&& (commentsById.remove(commentId, comment) & commentsByPostId.remove(comment.getPostId(), comment));
 	}
-
 
 	@Override
 	public Collection<Integer> getCommentLikes(int commentId) {
@@ -302,14 +303,14 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean followUser(int followerUserId, int followingUserId) {
-		return userPagesById.get(followerUserId).addFollowingUserIds(Collections.singleton(followingUserId))
-				& userPagesById.get(followingUserId).addFollowersUserIds(Collections.singleton(followerUserId));
+		boolean addFollowerUserId = getFollowerUserIds(followingUserId).add(followerUserId);
+		return getFollowingUserIds(followerUserId).add(followingUserId) && addFollowerUserId;
 	}
 
 	@Override
 	public boolean unfollowUser(int followerUserId, int followingUserId) {
-		return getFollowingUserIds(followerUserId).remove(followingUserId) 
-				& getFollowerUserIds(followingUserId).remove(followerUserId);
+		boolean removeFollowerUserId = getFollowerUserIds(followingUserId).remove(followerUserId);
+		return getFollowingUserIds(followerUserId).remove(followingUserId) && removeFollowerUserId;
 	}
 
 	private void setupUsers() {
@@ -317,7 +318,7 @@ public class MockDataService implements DataService {
 		User jason = new User(2, "Jason", "Jason Sarwar", "#$%@%$%");
 		usersById.put(1, user);
 		usersById.put(2, jason);
-		
+
 		UserPage userPage = new UserPage();
 		userPage.setUserId(1);
 		userPage.setUsername("user");
@@ -325,7 +326,7 @@ public class MockDataService implements DataService {
 		userPage.setBio("Awesome person visiting Jason's website!");
 		userPage.setDateTimeJoined(LocalDateTime.now());
 		userPagesById.put(1, userPage);
-		
+
 		UserPage jasonPage = new UserPage();
 		jasonPage.setUserId(2);
 		jasonPage.setUsername("Jason");
@@ -335,16 +336,17 @@ public class MockDataService implements DataService {
 		jasonPage.setDateTimeJoined(LocalDateTime.of(2019, 1, 1, 0, 0, 0));
 		userPagesById.put(2, jasonPage);
 	}
-	
+
 	private void setupPosts() {
-		
+
 		User user = usersById.get(2);
 		Post firstPost = new Post(3, "Hello!", LocalDateTime.of(2019, 1, 1, 0, 0, 10));
 		Post secondPost = new Post(2, "Welcome to my website!", LocalDateTime.of(2019, 1, 1, 0, 0, 5));
-		Post thirdPost = new Post(1, "These posts are from a Mock #Data Service and are not from a database", LocalDateTime.of(2019, 1, 1, 0, 0, 0));
-		
+		Post thirdPost = new Post(1, "These posts are from a Mock #Data Service and are not from a database",
+				LocalDateTime.of(2019, 1, 1, 0, 0, 0));
+
 		Collection<Post> posts = Arrays.asList(firstPost, secondPost, thirdPost);
-		for (Post post: posts) {
+		for (Post post : posts) {
 			post.setLikes(new ArrayList<>());
 			setCreatorOfEntry(post, user);
 			addPost(post);
@@ -352,14 +354,15 @@ public class MockDataService implements DataService {
 	}
 
 	private void setupComments() {
-		
+
+		String feelFree = "Feel free to leave comments here!";
 		User user = usersById.get(2);
-		Comment firstComment = new Comment(1, 1, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 10));
-		Comment secondComment = new Comment(2, 2, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 5));
-		Comment thirdComment = new Comment(3, 3, "Feel free to leave comments here!", LocalDateTime.of(2019, 1, 1, 0, 1, 1));
-		
+		Comment firstComment = new Comment(1, 1, feelFree, LocalDateTime.of(2019, 1, 1, 0, 1, 10));
+		Comment secondComment = new Comment(2, 2, feelFree, LocalDateTime.of(2019, 1, 1, 0, 1, 5));
+		Comment thirdComment = new Comment(3, 3, feelFree, LocalDateTime.of(2019, 1, 1, 0, 1, 1));
+
 		Collection<Comment> comments = Arrays.asList(firstComment, secondComment, thirdComment);
-		for (Comment comment: comments) {
+		for (Comment comment : comments) {
 			comment.setLikes(new ArrayList<>());
 			setCreatorOfEntry(comment, user);
 			addComment(comment);

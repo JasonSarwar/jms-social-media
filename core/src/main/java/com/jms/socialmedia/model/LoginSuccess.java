@@ -7,9 +7,6 @@ public class LoginSuccess {
 	private String firstname;
 	private String token;
 
-	public LoginSuccess() {
-	}
-
 	public final Integer getUserId() {
 		return userId;
 	}

@@ -59,7 +59,7 @@ public abstract class RequestHandler {
 		}
 	}
 
-	protected <T> T extractBodyContent(Request request, Class<T> aClass) throws IOException {
+	protected <T> T extractBodyContent(Request request, Class<T> aClass) {
 
 		if (StringUtils.isBlank(request.contentType())
 				|| request.contentType().toLowerCase().startsWith("application/json")) {

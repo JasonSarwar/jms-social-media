@@ -327,7 +327,7 @@
 		
 		return {
 			error: error,
-			clearAlerts, clearAlerts
+			clearAlerts: clearAlerts
 		};
 	};
 

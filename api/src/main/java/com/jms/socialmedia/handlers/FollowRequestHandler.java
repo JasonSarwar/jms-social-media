@@ -1,11 +1,11 @@
 package com.jms.socialmedia.handlers;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
@@ -22,7 +22,7 @@ import spark.utils.StringUtils;
 public class FollowRequestHandler extends RequestHandler {
 
 	private static final String USER_ID_PARAM = "userId";
-	private Random random = new Random();
+	private SecureRandom random = new SecureRandom();
 
 	public FollowRequestHandler(DataService dataService, TokenService tokenService, Gson gson) {
 		super(dataService, tokenService, gson);

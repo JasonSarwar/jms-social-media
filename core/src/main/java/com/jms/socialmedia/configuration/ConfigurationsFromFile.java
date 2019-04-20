@@ -40,7 +40,12 @@ public class ConfigurationsFromFile implements Configurations {
 		return properties;
 	}
 	
-	public final <T> T get(Setting<T> setting) throws ConfigurationException {
+	/**
+	 * @param	setting					Setting Key
+	 * @return							Setting Value
+	 * @throws ConfigurationException	if a required setting is not found
+	 */
+	public final <T> T get(Setting<T> setting) {
 
 		T property = setting.convertRawValue(properties.getProperty(setting.name()));
 		if (property == null) {

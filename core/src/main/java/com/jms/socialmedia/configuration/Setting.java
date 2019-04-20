@@ -1,9 +1,9 @@
 package com.jms.socialmedia.configuration;
 
-public interface Setting<TYPE> {
+public interface Setting<T> {
 	
 	String name();
 	boolean isRequired();
-	TYPE defaultValue();
-	TYPE convertRawValue(String rawValue);
+	T defaultValue();
+	T convertRawValue(String rawValue);
 }

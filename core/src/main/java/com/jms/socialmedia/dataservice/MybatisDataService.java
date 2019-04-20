@@ -147,8 +147,7 @@ public class MybatisDataService implements DataService {
 	public boolean addPost(Post post) {
 		Collection<String> tags = TagsUtils.extractTagsFromPost(post);
 		boolean addedPost = postsMapper.addPost(post) == 1;
-		boolean addedTags = tags.isEmpty() ? true : 
-			tagsMapper.addTags(post.getPostId(), tags) == tags.size();
+		boolean addedTags = tags.isEmpty() || tagsMapper.addTags(post.getPostId(), tags) == tags.size();
 		return addedPost && addedTags;
 	}
 
@@ -156,8 +155,7 @@ public class MybatisDataService implements DataService {
 	public boolean editPost(int postId, String postText) {
 		tagsMapper.removePostTags(postId);
 		Collection<String> tags = TagsUtils.extractTags(postText);
-		boolean addedTags = tags.isEmpty() ? true : 
-			tagsMapper.addTags(postId, tags) == tags.size();
+		boolean addedTags = tags.isEmpty() || tagsMapper.addTags(postId, tags) == tags.size();
 		return postsMapper.editPost(postId, postText) == 1 && addedTags;
 	}
 

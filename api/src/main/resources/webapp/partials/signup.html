@@ -6,7 +6,7 @@
 			<form name="signupForm" novalidate="novalidate">
 				<div class="form-group input-group">
 					<div class="input-group-prepend">
-					    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+					    <span class="input-group-text"> <span class="fa fa-user"></span> </span>
 					</div>
 			        <input name="username" class="form-control" ng-model="newUser.username" placeholder="Username"
 			        	ng-class="" validatable-field type="text" ng-pattern="/^[\w\d_]+$/" maxlength=15 required username>
@@ -26,7 +26,7 @@
 			    
 				<div class="form-group input-group">
 					<div class="input-group-prepend">
-					    <span class="input-group-text"> <i class="fa fa-user-alt"></i> </span>
+					    <span class="input-group-text"> <span class="fa fa-user-alt"></span> </span>
 					</div>
 			        <input name="fullName" class="form-control" ng-model="newUser.fullName" placeholder="Full name" 
 			        		ng-class="" validatable-field type="text" maxlength=64 required>
@@ -41,7 +41,7 @@
 	
 			    <div class="form-group input-group">
 			    	<div class="input-group-prepend">
-					    <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+					    <span class="input-group-text"> <span class="fa fa-envelope"></span> </span>
 					</div>
 			        <input name="email" class="form-control" ng-model="newUser.email" placeholder="Email address" maxlength=64 
 			        		ng-class="" validatable-field type="email" ng-pattern="/^[\w\d_.+-]+@[\w\d_.+-]+\.[\w\d_.+-]+$/" required email />
@@ -62,7 +62,7 @@
 	
 			    <div class="form-group input-group">
 			    	<div class="input-group-prepend">
-					    <span class="input-group-text"> <i class="fas fa-birthday-cake"></i> </span>
+					    <span class="input-group-text"> <span class="fas fa-birthday-cake"></span> </span>
 					</div>
 					<select class="custom-select" name="month" ng-model="newUserMonth" ng-options="month for month in months" ng-change="changeMonth()" required>
 						<option value="" disabled selected>Month</option>
@@ -77,7 +77,7 @@
 	
 			    <div class="form-group input-group">
 			    	<div class="input-group-prepend">
-					    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+					    <span class="input-group-text"> <span class="fa fa-lock"></span> </span>
 					</div>
 			        <input class="form-control" name="password1" ng-model="newUser.password1" placeholder="Create password" 
 			        	type="password" ng-pattern="/^[\S]+$/" ng-change="passwordStrength(signupForm.password1);signupForm.password2.$validate()" ng-class="" validatable-field minlength=5 maxlength=50 required>
@@ -101,7 +101,7 @@
 	
 			    <div class="form-group input-group">
 			    	<div class="input-group-prepend">
-					    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+					    <span class="input-group-text"> <span class="fa fa-lock"></span> </span>
 					</div>
 			        <input class="form-control" name="password2" ng-model="newUser.password2" placeholder="Repeat password" 
 			        	type="password" ng-pattern="/^[\S]+$/" ng-class="" validatable-field minlength=5 maxlength=50 required repeat-password>
