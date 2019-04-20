@@ -11,6 +11,12 @@
 	<name>JMS Social Media</name>
 	<url>https://github.com/JasonSarwar/jms-social-media</url>
 
+	<scm>
+		<connection>scm:git:https://github.com/JasonSarwar/jms-social-media.git</connection>
+    	<developerConnection>scm:git:https://github.com/JasonSarwar/jms-social-media.git</developerConnection>
+    	<url>https://github.com/JasonSarwar/jms-social-media</url>
+	</scm>
+
 	<properties>
 		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>

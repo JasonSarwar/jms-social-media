@@ -12,7 +12,10 @@
 	<artifactId>api</artifactId>
 	<packaging>jar</packaging>
 	<name>JMS Social Media API</name>
-	<url>https://github.com/JasonSarwar/jms-social-media</url>
+
+	<properties>
+		<api.sonar.sources>src/main/java,src/main/resources/webapp</api.sonar.sources>
+	</properties>
 
 	<dependencies>
 		<dependency>

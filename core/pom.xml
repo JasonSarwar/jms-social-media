@@ -12,7 +12,6 @@
 	<artifactId>core</artifactId>
 	<packaging>jar</packaging>
 	<name>JMS Social Media Core</name>
-	<url>https://github.com/JasonSarwar/jms-social-media</url>
 
 	<dependencies>
 		<dependency>
