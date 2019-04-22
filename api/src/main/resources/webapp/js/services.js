@@ -245,8 +245,8 @@
 
 		let sessionCookie = "jms-social-media-session";
 	  
-	    var attemptLogin = function (user, password) {
-	    	return $http.post("/api/login?createSession", {user: user, password: password})
+	    var attemptLogin = function (usernameOrEmail, password) {
+	    	return $http.post("/api/login?createSession", {usernameOrEmail: usernameOrEmail, password: password})
 	        	.then(function (response) {
 	        		$http.defaults.headers.common.Authorization = "Bearer " + response.data.token;
 	        		return response.data;

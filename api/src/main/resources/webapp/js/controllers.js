@@ -58,8 +58,8 @@
 	};
 
 	var LoginController = function($scope, $location, loginService) {
-		$scope.attemptLogin = function (user, password) {
-			loginService.attemptLogin(user, password)
+		$scope.attemptLogin = function (usernameOrEmail, password) {
+			loginService.attemptLogin(usernameOrEmail, password)
 				.then(function (data) {
 					$scope.createSession(data);
 

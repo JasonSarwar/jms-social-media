@@ -109,8 +109,7 @@ public class UserRequestHandler extends RequestHandler {
 			throw new DatabaseInsertException("Cannot create new user");
 		}
 
-		String createSessionFlag = request.queryParams("createSession");
-		if (createSessionFlag != null && !createSessionFlag.equalsIgnoreCase("false")) {
+		if (createSessionFlag(request)) {
 			createSession(response, newUser);
 		}
 		return createLoginSuccess(newUser);
@@ -122,7 +121,7 @@ public class UserRequestHandler extends RequestHandler {
 		authorizeRequest(request, changePassword.getUserId(), Permission.EDIT_PASSWORD);
 
 		User user = dataService.getHashedPasswordByUserId(changePassword.getUserId());
-		if (!passwordService.checkPassword(changePassword, user)) {
+		if (user == null || !passwordService.checkPassword(changePassword, user)) {
 			throw new BadRequestException("Incorrect Old Password");
 		}
 
@@ -162,8 +161,9 @@ public class UserRequestHandler extends RequestHandler {
 		}
 
 		LoginRequest loginRequest = extractBodyContent(request, LoginRequest.class);
+		validateLoginRequest(loginRequest);
 
-		User user = dataService.getUserLoginInfoByString(loginRequest.getUser());
+		User user = dataService.getUserLoginInfoByString(loginRequest.getUsernameOrEmail());
 
 		if (user == null) {
 			throw new FailedLoginAttemptException("Incorrect Username or Password");
@@ -173,8 +173,7 @@ public class UserRequestHandler extends RequestHandler {
 			throw new FailedLoginAttemptException("Incorrect Username or Password");
 		}
 
-		String createSessionFlag = request.queryParams("createSession");
-		if (createSessionFlag != null && !createSessionFlag.equalsIgnoreCase("false")) {
+		if (createSessionFlag(request)) {
 			createSession(response, user);
 		}
 		return createLoginSuccess(user);
@@ -218,5 +217,22 @@ public class UserRequestHandler extends RequestHandler {
 		newUser.setPassword1(null);
 		newUser.setPassword2(null);
 		newUser.setHashedPassword(hashedPassword);
+	}
+
+	private boolean createSessionFlag(Request request) {
+		String createSessionFlag = request.queryParams("createSession");
+		return createSessionFlag != null && !createSessionFlag.equalsIgnoreCase("false");
+	}
+
+	private void validateLoginRequest(LoginRequest loginRequest) {
+		StringBuilder sb = new StringBuilder();
+		if (StringUtils.isBlank(loginRequest.getUsernameOrEmail())) {
+			sb.append("Login Request requires a 'username' or 'email'");
+		}
+		if (StringUtils.isBlank(loginRequest.getPassword())) {
+			errorMessageNewLine(sb);
+			sb.append("Login Request requires a 'password'");
+		}
+		throwExceptionIfErrorsOccured(sb);
 	}
 }
