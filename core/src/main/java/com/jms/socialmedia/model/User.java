@@ -1,5 +1,7 @@
 package com.jms.socialmedia.model;
 
+import java.util.Objects;
+
 import com.google.common.base.MoreObjects;
 
 public class User {
@@ -8,7 +10,7 @@ public class User {
 	protected String username;
 	protected String fullName;
 	protected String hashedPassword;
-	
+
 	public User() {
 	}
 
@@ -26,7 +28,7 @@ public class User {
 		this.fullName = fullName;
 		this.hashedPassword = hashedPassword;
 	}
-	
+
 	public final Integer getUserId() {
 		return userId;
 	}
@@ -60,12 +62,32 @@ public class User {
 	}
 
 	@Override
+	public int hashCode() {
+		return Objects.hash(userId, username, fullName, hashedPassword);
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object)
+			return true;
+		if (object == null || this.getClass() != object.getClass())
+			return false;
+
+		User that = (User) object;
+
+		return Objects.equals(this.userId, that.userId) 
+				&& Objects.equals(this.username, that.username)
+				&& Objects.equals(this.fullName, that.fullName)
+				&& Objects.equals(this.hashedPassword, that.hashedPassword);
+	}
+
+	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
 				.add("userId", userId)
 				.add("username", username)
 				.add("fullName", fullName)
-				.add("hashedPassword", "*****")
+				.add("hashedPassword", "hashedPassword")
 				.toString();
 	}
 }

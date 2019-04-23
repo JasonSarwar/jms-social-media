@@ -3,6 +3,7 @@ package com.jms.socialmedia.handlers;
 import java.io.IOException;
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
+import com.jms.socialmedia.exception.BadRequestException;
 import com.jms.socialmedia.exception.UnauthorizedException;
 import com.jms.socialmedia.exception.UnsupportedContentTypeException;
 import com.jms.socialmedia.token.Permission;
@@ -64,7 +65,7 @@ public abstract class RequestHandler {
 		if (StringUtils.isBlank(request.contentType())
 				|| request.contentType().toLowerCase().startsWith("application/json")) {
 			return gson.fromJson(request.body(), aClass);
-		} else if (request.contentType().toLowerCase().startsWith("application/xml") 
+		} else if (request.contentType().toLowerCase().startsWith("application/xml")
 				|| request.contentType().toLowerCase().startsWith("text/xml")) {
 			return null;
 		} else if (request.contentType().toLowerCase().startsWith("application/x-protobuf")) {
@@ -74,4 +75,36 @@ public abstract class RequestHandler {
 		}
 	}
 
+	protected void checkParameter(boolean check, String errorMessage, StringBuilder stringBuilder) {
+		if (check) {
+			errorMessageNewLine(stringBuilder);
+			stringBuilder.append(errorMessage);
+		}
+	}
+	
+	protected void checkParameter(String parameter, String errorMessage, StringBuilder stringBuilder) {
+		checkParameter(StringUtils.isBlank(parameter), errorMessage, stringBuilder);
+	}
+
+	protected void checkParameter(Object parameter, String errorMessage, StringBuilder stringBuilder) {
+		checkParameter(parameter == null, errorMessage, stringBuilder);
+	}
+
+	private void errorMessageNewLine(StringBuilder stringBuilder) {
+		if (stringBuilder.length() > 0) {
+			stringBuilder.append('\n');
+		}
+	}
+
+	protected void throwExceptionIfNecessary(StringBuilder stringBuilder) {
+		if (stringBuilder.length() > 0) {
+			throw new BadRequestException(stringBuilder.toString());
+		}
+	}
+	
+	protected void throwBadRequestExceptionIf(boolean check, String errorMessage) {
+		if (check) {
+			throw new BadRequestException(errorMessage);
+		}
+	}
 }

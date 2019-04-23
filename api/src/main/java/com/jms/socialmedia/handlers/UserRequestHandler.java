@@ -84,25 +84,15 @@ public class UserRequestHandler extends RequestHandler {
 
 	public LoginSuccess handleAddUser(Request request, Response response) throws IOException {
 		NewUser newUser = extractBodyContent(request, NewUser.class);
+		validateNewUserRequest(newUser);
 
-		if (dataService.isUsernameTaken(newUser.getUsername())) {
-			throw new BadRequestException("Username is taken");
-		}
-
-		if (dataService.isEmailTaken(newUser.getEmail())) {
-			throw new BadRequestException("Email is taken");
-		}
+		throwBadRequestExceptionIf(dataService.isUsernameTaken(newUser.getUsername()), "Username is taken");
+		throwBadRequestExceptionIf(dataService.isEmailTaken(newUser.getEmail()), "Email is taken");
 
 		int len = newUser.getPassword1().length();
-		if (len < 5) {
-			throw new BadRequestException("New Password Too Short");
-		}
-		if (len > 64) {
-			throw new BadRequestException("New Password Too Long");
-		}
-		if (!newUser.passwordsMatch()) {
-			throw new BadRequestException("Passwords do not match");
-		}
+		throwBadRequestExceptionIf(len < 5, "Password Too Short");
+		throwBadRequestExceptionIf(len > 64, "Password Too Long");
+		throwBadRequestExceptionIf(!newUser.passwordsMatch(), "Passwords do not match");
 
 		createHashedPassword(newUser);
 		if (!dataService.addUser(newUser)) {
@@ -126,15 +116,9 @@ public class UserRequestHandler extends RequestHandler {
 		}
 
 		int len = changePassword.getNewPassword1().length();
-		if (len < 5) {
-			throw new BadRequestException("New Password Too Short");
-		}
-		if (len > 64) {
-			throw new BadRequestException("New Password Too Long");
-		}
-		if (!changePassword.passwordsMatch()) {
-			throw new BadRequestException("Passwords do not match");
-		}
+		throwBadRequestExceptionIf(len < 5, "New Password Too Short");
+		throwBadRequestExceptionIf(len > 64, "New Password Too Long");
+		throwBadRequestExceptionIf(!changePassword.passwordsMatch(), "Passwords do not match");
 
 		return dataService.editPassword(changePassword.getUserId(),
 				passwordService.encryptPassword(changePassword.getNewPassword1()));
@@ -226,13 +210,19 @@ public class UserRequestHandler extends RequestHandler {
 
 	private void validateLoginRequest(LoginRequest loginRequest) {
 		StringBuilder sb = new StringBuilder();
-		if (StringUtils.isBlank(loginRequest.getUsernameOrEmail())) {
-			sb.append("Login Request requires a 'username' or 'email'");
-		}
-		if (StringUtils.isBlank(loginRequest.getPassword())) {
-			errorMessageNewLine(sb);
-			sb.append("Login Request requires a 'password'");
-		}
-		throwExceptionIfErrorsOccured(sb);
+		checkParameter(loginRequest.getUsernameOrEmail(), "Login Request requires a 'username' or 'email'", sb);
+		checkParameter(loginRequest.getPassword(), "Login Request requires a 'password'", sb);
+		throwExceptionIfNecessary(sb);
+	}
+
+	private void validateNewUserRequest(NewUser newUser) {
+		StringBuilder sb = new StringBuilder();
+		checkParameter(newUser.getUsername(), "New User Request requires a 'username'", sb);
+		checkParameter(newUser.getFullName(), "New User Request requires a 'fullName'", sb);
+		checkParameter(newUser.getEmail(), "New User Request requires a 'email'", sb);
+		checkParameter(newUser.getPassword1(), "New User Request requires a 'password1'", sb);
+		checkParameter(newUser.getPassword2(), "New User Request requires a 'password2'", sb);
+		checkParameter(newUser.getBirthDate(), "New User Request requires a 'birthDate'", sb);
+		throwExceptionIfNecessary(sb);
 	}
 }

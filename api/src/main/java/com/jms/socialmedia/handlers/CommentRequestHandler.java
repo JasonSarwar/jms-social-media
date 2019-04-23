@@ -3,8 +3,6 @@ package com.jms.socialmedia.handlers;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.eclipse.jetty.util.StringUtil;
-
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
@@ -59,7 +57,7 @@ public class CommentRequestHandler extends RequestHandler {
 			int postId = Integer.parseInt(strPostId);
 			newComment.setPostId(postId);
 		}
-		validateAddEntryRequest(newComment);
+		validateAddCommentRequest(newComment);
 		authorizeRequest(request, newComment.getUserId(), Permission.ADD_COMMENT);
 		return dataService.addComment(newComment);
 	}
@@ -68,9 +66,7 @@ public class CommentRequestHandler extends RequestHandler {
 
 		int commentId = Integer.parseInt(request.params(COMMENT_ID_PARAM));
 		Entry body = extractBodyContent(request, Comment.class);
-		if (StringUtil.isBlank(body.getText())) {
-			throw new BadRequestException("Edit Comment Request requires 'text'");
-		}
+		validateEditCommentRequest(body);
 		authorizeRequest(request, dataService.getUserIdFromCommentId(commentId), Permission.EDIT_COMMENT);
 		if (!dataService.editComment(commentId, body.getText())) {
 			throw new NotFoundException(NOT_FOUND_MESSAGE);
@@ -93,25 +89,22 @@ public class CommentRequestHandler extends RequestHandler {
 	 * @param newComment
 	 * @throws BadRequestException if request does not have a userId, postId or text
 	 */
-	private void validateAddEntryRequest(Comment newComment) {
+	private void validateAddCommentRequest(Comment newComment) {
 		StringBuilder sb = new StringBuilder();
-		if (!newComment.hasUserId()) {
-			sb.append("Add Comment Request requires a 'userId'");
-		}
-		if (!newComment.hasPostId()) {
-			if (sb.length() > 0) {
-				sb.append('\n');
-			}
-			sb.append("Add Comment Request requires a 'postId'");
-		}
-		if (!newComment.hasText()) {
-			if (sb.length() > 0) {
-				sb.append('\n');
-			}
-			sb.append("Add Comment Request requires 'text'");
-		}
-		if (sb.length() > 0) {
-			throw new BadRequestException(sb.toString());
-		}
+		checkParameter(newComment.getUserId(), "Add Comment Request requires a 'userId'", sb);
+		checkParameter(newComment.getPostId(), "Add Comment Request requires a 'postId'", sb);
+		checkParameter(newComment.getText(), "Add Comment Request requires 'text'", sb);
+		throwExceptionIfNecessary(sb);
+	}
+	
+	/**
+	 * 
+	 * @param body
+	 * @throws BadRequestException	if request does not have a `text` field
+	 */
+	private void validateEditCommentRequest(Entry body) {
+		StringBuilder sb = new StringBuilder();
+		checkParameter(body.getText(), "Edit Comment Request requires 'text'", sb);
+		throwExceptionIfNecessary(sb);
 	}
 }

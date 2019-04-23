@@ -153,7 +153,7 @@ public class PostRequestHandler extends RequestHandler {
 	public Boolean handleAddPost(Request request, Response response) throws IOException {
 		
 		Post newPost = extractBodyContent(request, Post.class);
-		validateAddEntryRequest(newPost);
+		validateAddPostRequest(newPost);
 		authorizeRequest(request, newPost.getUserId(), Permission.ADD_POST);
 		return dataService.addPost(newPost);
 	}
@@ -174,9 +174,7 @@ public class PostRequestHandler extends RequestHandler {
 
 		int postId = Integer.parseInt(request.params(POST_ID_PARAM));
 		Entry body = extractBodyContent(request, Post.class);
-		if (StringUtil.isBlank(body.getText())) {
-			throw new BadRequestException("Edit Post Request requires 'text'");
-		}
+		validateEditPostRequest(body);
 		
 		authorizeRequest(request, dataService.getUserIdFromPostId(postId), Permission.EDIT_POST);
 		if (!dataService.editPost(postId, body.getText())) {
@@ -228,19 +226,21 @@ public class PostRequestHandler extends RequestHandler {
 	 * @param newPost
 	 * @throws BadRequestException	if request does not have a userId or text
 	 */
-	private void validateAddEntryRequest(Post newPost) {
+	private void validateAddPostRequest(Post newPost) {
 		StringBuilder sb = new StringBuilder();
-		if (!newPost.hasUserId()) {
-			sb.append("Add Post Request requires a 'userId'");
-		}
-		if (!newPost.hasText()) {
-			if (sb.length() > 0) {
-				sb.append('\n');
-			}
-			sb.append("Add Post Request requires 'text'");
-		}
-		if (sb.length() > 0) {
-			throw new BadRequestException(sb.toString());
-		}
+		checkParameter(newPost.getUserId(), "Add Post Request requires a 'userId'", sb);
+		checkParameter(newPost.getText(), "Add Post Request requires 'text'", sb);
+		throwExceptionIfNecessary(sb);
+	}
+	
+	/**
+	 * 
+	 * @param body
+	 * @throws BadRequestException	if request does not have a `text` field
+	 */
+	private void validateEditPostRequest(Entry body) {
+		StringBuilder sb = new StringBuilder();
+		checkParameter(body.getText(), "Edit Post Request requires 'text'", sb);
+		throwExceptionIfNecessary(sb);
 	}
 }

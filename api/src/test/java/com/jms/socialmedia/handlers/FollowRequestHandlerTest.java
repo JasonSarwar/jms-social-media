@@ -157,6 +157,7 @@ public class FollowRequestHandlerTest {
 		when(dataService.getUsersToFollow(100)).thenReturn(users);
 
 		Collection<User> retrievedUsers = followRequestHandler.handleGetUsersToFollow(request, response);
+		assertThat(retrievedUsers.size(), is(30));
 		assertThat(retrievedUsers, is(users));
 
 		verify(request, times(1)).params(USER_ID_PARAM);
@@ -192,6 +193,7 @@ public class FollowRequestHandlerTest {
 		when(dataService.getUsersToFollow(100)).thenReturn(users);
 
 		Collection<User> retrievedUsers = followRequestHandler.handleGetUsersToFollow(request, response);
+		assertThat(retrievedUsers.size(), is(10));
 		assertThat(retrievedUsers, is(users));
 
 		verify(request, times(1)).params(USER_ID_PARAM);
@@ -204,7 +206,7 @@ public class FollowRequestHandlerTest {
 	private static Collection<User> createUsersToFollow(int no) {
 		Collection<User> users = new HashSet<>(no);
 		for (int i = 0; i < no; i++) {
-			users.add(new User(no, "User" + no));
+			users.add(new User(i, "User" + i));
 		}
 		return users;
 	}
