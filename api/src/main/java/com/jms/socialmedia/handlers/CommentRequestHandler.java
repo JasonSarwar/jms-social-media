@@ -59,7 +59,13 @@ public class CommentRequestHandler extends RequestHandler {
 		}
 		validateAddCommentRequest(newComment);
 		authorizeRequest(request, newComment.getUserId(), Permission.ADD_COMMENT);
-		return dataService.addComment(newComment);
+
+		if (dataService.addComment(newComment)) {
+			response.status(201);
+			response.header("location", "/api/comment/" + newComment.getCommentId());
+			return true;
+		}
+		return false;
 	}
 
 	public Boolean handleEditComment(Request request, Response response) throws IOException {

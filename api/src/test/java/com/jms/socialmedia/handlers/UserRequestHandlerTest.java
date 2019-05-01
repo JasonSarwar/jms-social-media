@@ -329,7 +329,9 @@ public class UserRequestHandlerTest {
 		verify(request, times(1)).queryParams("createSession");
 		verify(tokenService, times(1)).createTokenString(token);
 		verify(dataService, never()).addUserSession(eq(1), anyString());
-		verifyZeroInteractions(response);
+		verify(response, times(1)).header("location", "/api/user/" + newUser.getUsername() + "/pageinfo");
+		verify(response, times(1)).status(201);
+		verifyNoMoreInteractions(response);
 	}
 
 	@Test
@@ -362,7 +364,9 @@ public class UserRequestHandlerTest {
 			// verify(dataService, times(1)).addUser(newUser);
 			verify(request, times(1)).queryParams("createSession");
 			verify(dataService, times(1)).addUserSession(eq(1), anyString());
-			verifyZeroInteractions(response);
+			verify(response, times(1)).header("location", "/api/user/" + newUser.getUsername() + "/pageinfo");
+			verify(response, times(1)).status(201);
+			verifyNoMoreInteractions(response);
 			verifyZeroInteractions(tokenService);
 		}
 	}

@@ -9,7 +9,7 @@ import org.mockito.Mock;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.jms.socialmedia.exception.UnauthorizedException;
+import com.jms.socialmedia.exception.NoBearerTokenException;
 import com.jms.socialmedia.exception.UnsupportedContentTypeException;
 import com.jms.socialmedia.model.NewUser;
 import com.jms.socialmedia.routes.LocalDateTypeAdapter;
@@ -57,8 +57,8 @@ public class RequestHandlerTest {
 			requestHandler.authorizeRequest(request, 1, Permission.ADD_COMMENT);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("Not authorized to Add Comment"));
+			assertThat(e, instanceOf(NoBearerTokenException.class));
+			assertThat(e.getMessage(), is("Bearer token must be included in Authorization header"));
 			verify(request, times(1)).headers(AUTHORIZATION);
 		}
 	}
@@ -70,8 +70,8 @@ public class RequestHandlerTest {
 			requestHandler.authorizeRequest(request, 1, Permission.ADD_COMMENT);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("Not authorized to Add Comment"));
+			assertThat(e, instanceOf(NoBearerTokenException.class));
+			assertThat(e.getMessage(), is("Bearer token must be included in Authorization header"));
 			verify(request, times(1)).headers(AUTHORIZATION);
 		}
 	}

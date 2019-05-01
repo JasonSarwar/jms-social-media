@@ -14,8 +14,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
+import com.jms.socialmedia.exception.ForbiddenException;
 import com.jms.socialmedia.exception.NotFoundException;
-import com.jms.socialmedia.exception.UnauthorizedException;
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.routes.LocalDateTypeAdapter;
 import com.jms.socialmedia.token.Permission;
@@ -435,8 +435,8 @@ public class CommentRequestHandlerTest {
 			commentRequestHandler.handleEditComment(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Edit Comment"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Edit Comment"));
 			verify(request, times(1)).params(COMMENT_ID_PARAM);
 			verify(request, times(1)).body();
 			verify(request, times(1)).headers(AUTHORIZATION);
@@ -460,8 +460,8 @@ public class CommentRequestHandlerTest {
 			commentRequestHandler.handleEditComment(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Edit Comment"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Edit Comment"));
 			verify(request, times(1)).params(COMMENT_ID_PARAM);
 			verify(request, times(1)).body();
 			verify(request, times(1)).headers(AUTHORIZATION);
@@ -584,8 +584,8 @@ public class CommentRequestHandlerTest {
 			commentRequestHandler.handleDeleteComment(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Delete Comment"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Delete Comment"));
 			verify(request, times(1)).params(COMMENT_ID_PARAM);
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -607,8 +607,8 @@ public class CommentRequestHandlerTest {
 			commentRequestHandler.handleDeleteComment(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Delete Comment"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Delete Comment"));
 			verify(request, times(1)).params(COMMENT_ID_PARAM);
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");

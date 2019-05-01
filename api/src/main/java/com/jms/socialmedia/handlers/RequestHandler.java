@@ -4,7 +4,8 @@ import java.io.IOException;
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
-import com.jms.socialmedia.exception.UnauthorizedException;
+import com.jms.socialmedia.exception.ForbiddenException;
+import com.jms.socialmedia.exception.NoBearerTokenException;
 import com.jms.socialmedia.exception.UnsupportedContentTypeException;
 import com.jms.socialmedia.token.Permission;
 import com.jms.socialmedia.token.Token;
@@ -37,6 +38,8 @@ public abstract class RequestHandler {
 	 * @param request
 	 * @param userIdFromRequest
 	 * @param permission
+	 * @throws NoBearerTokenException
+	 * @throws ForbiddenException
 	 * @throws ExpiredJwtException
 	 * @throws UnsupportedJwtException
 	 * @throws MalformedJwtException
@@ -49,13 +52,13 @@ public abstract class RequestHandler {
 
 		String auth = request.headers(AUTHORIZATION);
 		if (StringUtils.isBlank(auth) || !auth.startsWith(BEARER)) {
-			throw new UnauthorizedException("Not authorized to " + permission.getAction());
+			throw new NoBearerTokenException("Bearer token must be included in " + AUTHORIZATION + " header");
 		} else {
 			String tokenString = auth.substring(BEARER.length());
 			Token token = tokenService.createTokenFromString(tokenString);
 			if (!token.hasPermission(Permission.ADMIN)
 					&& (!userIdFromRequest.equals(token.getUserId()) || !token.hasPermission(permission))) {
-				throw new UnauthorizedException("User not authorized to " + permission.getAction());
+				throw new ForbiddenException("User not allowed to " + permission.getAction());
 			}
 		}
 	}

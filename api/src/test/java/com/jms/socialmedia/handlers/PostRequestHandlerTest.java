@@ -10,8 +10,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
+import com.jms.socialmedia.exception.ForbiddenException;
 import com.jms.socialmedia.exception.NotFoundException;
-import com.jms.socialmedia.exception.UnauthorizedException;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.routes.LocalDateTypeAdapter;
 import com.jms.socialmedia.token.Permission;
@@ -624,8 +624,8 @@ public class PostRequestHandlerTest {
 			postRequestHandler.handleAddPost(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Add Post"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Add Post"));
 			verify(request, times(1)).body();
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -646,8 +646,8 @@ public class PostRequestHandlerTest {
 			postRequestHandler.handleAddPost(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Add Post"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Add Post"));
 			verify(request, times(1)).body();
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -822,8 +822,8 @@ public class PostRequestHandlerTest {
 			postRequestHandler.handleEditPost(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Edit Post"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Edit Post"));
 			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).body();
 			verify(request, times(1)).headers(AUTHORIZATION);
@@ -847,8 +847,8 @@ public class PostRequestHandlerTest {
 			postRequestHandler.handleEditPost(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Edit Post"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Edit Post"));
 			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).body();
 			verify(request, times(1)).headers(AUTHORIZATION);
@@ -971,8 +971,8 @@ public class PostRequestHandlerTest {
 			postRequestHandler.handleDeletePost(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Delete Post"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Delete Post"));
 			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");
@@ -994,8 +994,8 @@ public class PostRequestHandlerTest {
 			postRequestHandler.handleDeletePost(request, response);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
-			assertThat(e, instanceOf(UnauthorizedException.class));
-			assertThat(e.getMessage(), is("User not authorized to Delete Post"));
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User not allowed to Delete Post"));
 			verify(request, times(1)).params(POST_ID_PARAM);
 			verify(request, times(1)).headers(AUTHORIZATION);
 			verify(tokenService, times(1)).createTokenFromString("SecretToken");

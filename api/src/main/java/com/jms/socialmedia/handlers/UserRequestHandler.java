@@ -99,6 +99,9 @@ public class UserRequestHandler extends RequestHandler {
 			throw new DatabaseInsertException("Cannot create new user");
 		}
 
+		response.status(201);
+		response.header("location", "/api/user/" + newUser.getUsername() + "/pageinfo");
+
 		if (createSessionFlag(request)) {
 			createSession(response, newUser);
 		}

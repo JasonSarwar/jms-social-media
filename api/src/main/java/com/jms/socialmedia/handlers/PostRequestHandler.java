@@ -155,7 +155,13 @@ public class PostRequestHandler extends RequestHandler {
 		Post newPost = extractBodyContent(request, Post.class);
 		validateAddPostRequest(newPost);
 		authorizeRequest(request, newPost.getUserId(), Permission.ADD_POST);
-		return dataService.addPost(newPost);
+		
+		if (dataService.addPost(newPost)) {
+			response.status(201);
+			response.header("location", "/api/post/" + newPost.getPostId());
+			return true;
+		}
+		return false;
 	}
 
 	/**
