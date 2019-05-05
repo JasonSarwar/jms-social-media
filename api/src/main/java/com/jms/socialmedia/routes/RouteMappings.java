@@ -41,6 +41,9 @@ public class RouteMappings {
 
 	private static final String POST_ID_MAPPING = "/post/:postId";
 	private static final String COMMENT_ID_MAPPING = "/comment/:commentId";
+	private static final String APPLICATION_JSON = "application/json";
+	private static final String APPLICATION_XML = "application/xml";
+	private static final String TEXT_XML = "text/xml";
 
 	private final DataService dataService;
 	private final PasswordService passwordService;
@@ -71,13 +74,13 @@ public class RouteMappings {
 		ExceptionHandler exceptionHandler = new ExceptionHandler();
 
 		ObjectWriter xmlWriter = new XmlMapper().registerModule(new AfterburnerModule()).writer();
-		Map<String, ResponseTransformer> contentWriters = Map.of("application/json", gson::toJson, "application/xml",
-				xmlWriter::writeValueAsString);
+		Map<String, ResponseTransformer> contentWriters = Map.of(APPLICATION_JSON, gson::toJson, APPLICATION_XML,
+				xmlWriter::writeValueAsString, TEXT_XML, xmlWriter::writeValueAsString);
 
 		before("/*", this::informAllListenersOnRequest);
 		after("/*", this::informAllListenersOnResponse);
 
-		path("/api", () -> {
+		path("/api", () -> 
 
 			contentWriters.forEach((contentType, contentWriter) -> {
 
@@ -177,8 +180,8 @@ public class RouteMappings {
 
 				post("/logout", contentType, userRequestHandler::handleLogout);
 
-			});
-		});
+			})
+		);
 
 		if (metricRegistry != null) {
 			startMetricsEndpoints();
@@ -201,8 +204,8 @@ public class RouteMappings {
 				.registerModule(metricsModule)
 				.writer();
 
-		Map<String, ResponseTransformer> contentWritersForMetrics = Map.of("application/json", metricsJsonMapper::writeValueAsString,
-				"application/xml", metricsXmlWriter::writeValueAsString);
+		Map<String, ResponseTransformer> contentWritersForMetrics = Map.of(APPLICATION_JSON, metricsJsonMapper::writeValueAsString,
+				APPLICATION_XML, metricsXmlWriter::writeValueAsString, TEXT_XML, metricsXmlWriter::writeValueAsString);
 
 		path("/metrics", () -> {
 			
@@ -235,12 +238,12 @@ public class RouteMappings {
 	}
 
 	private void setContentType(Request request, Response response) {
-		if (request.headers("Accept").equalsIgnoreCase("application/xml")) {
-			response.type("application/xml");
-		} else if (request.headers("Accept").equalsIgnoreCase("text/xml")) {
-			response.type("text/xml");
+		if (request.headers("Accept").equalsIgnoreCase(APPLICATION_XML)) {
+			response.type(APPLICATION_XML);
+		} else if (request.headers("Accept").equalsIgnoreCase(TEXT_XML)) {
+			response.type(TEXT_XML);
 		} else {
-			response.type("application/json");
+			response.type(APPLICATION_JSON);
 		}
 	}
 

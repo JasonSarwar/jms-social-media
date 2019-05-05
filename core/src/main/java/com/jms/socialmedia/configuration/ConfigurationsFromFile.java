@@ -16,7 +16,7 @@ public class ConfigurationsFromFile implements Configurations {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationsFromFile.class);
 	private final Properties properties;
-	
+
 	public ConfigurationsFromFile(String filePath) throws IOException {
 		properties = new Properties();
 		try (InputStream inputStream = createInputStreamForFile(filePath)) {
@@ -36,15 +36,17 @@ public class ConfigurationsFromFile implements Configurations {
 		}
 	}
 
+	@Override
 	public final Properties getProperties() {
 		return properties;
 	}
-	
+
 	/**
-	 * @param	setting					Setting Key
-	 * @return							Setting Value
-	 * @throws ConfigurationException	if a required setting is not found
+	 * @param setting Setting Key
+	 * @return Setting Value
+	 * @throws ConfigurationException if a required setting is not found
 	 */
+	@Override
 	public final <T> T get(Setting<T> setting) {
 
 		T property = setting.convertRawValue(properties.getProperty(setting.name()));

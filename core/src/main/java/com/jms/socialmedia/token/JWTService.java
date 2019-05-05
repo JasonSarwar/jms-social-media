@@ -35,6 +35,7 @@ public class JWTService implements TokenService {
 	 * @return JWT
 	 * @throws IOException
 	 */
+	@Override
 	public String createTokenString(Token token) throws IOException {
 		 
 	    //The JWT signature algorithm we will be using to sign the token
@@ -71,6 +72,7 @@ public class JWTService implements TokenService {
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public Token createTokenFromString(String jwt) throws IOException {
 		 

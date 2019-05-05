@@ -174,6 +174,7 @@ public class Settings {
 	}
 
 	private static class StringSettingBuilder extends AbstractSettingBuilder<String> {
+		@Override
 		StringSetting build() {
 			return new StringSetting(this);
 		}
@@ -192,6 +193,7 @@ public class Settings {
 	}
 
 	private static class BooleanSettingBuilder extends AbstractSettingBuilder<Boolean> {
+		@Override
 		BooleanSetting build() {
 			return new BooleanSetting(this);
 		}
@@ -210,6 +212,7 @@ public class Settings {
 	}
 
 	private static class IntegerSettingBuilder extends AbstractSettingBuilder<Integer> {
+		@Override
 		IntegerSetting build() {
 			return new IntegerSetting(this);
 		}
@@ -232,6 +235,7 @@ public class Settings {
 	}
 
 	private static class DoubleSettingBuilder extends AbstractSettingBuilder<Double> {
+		@Override
 		DoubleSetting build() {
 			return new DoubleSetting(this);
 		}
@@ -266,6 +270,7 @@ public class Settings {
 	}
 
 	private static class StringListSettingBuilder extends AbstractSettingBuilder<List<String>> {
+		@Override
 		StringListSetting build() {
 			return new StringListSetting(this);
 		}
@@ -285,6 +290,7 @@ public class Settings {
 	}
 
 	private static class IntegerListSettingBuilder extends AbstractSettingBuilder<List<Integer>> {
+		@Override
 		IntegerListSetting build() {
 			return new IntegerListSetting(this);
 		}
@@ -319,6 +325,7 @@ public class Settings {
 	}
 
 	private static class StringSetSettingBuilder extends AbstractSettingBuilder<Set<String>> {
+		@Override
 		StringSetSetting build() {
 			return new StringSetSetting(this);
 		}
@@ -338,6 +345,7 @@ public class Settings {
 	}
 
 	private static class IntegerSetSettingBuilder extends AbstractSettingBuilder<Set<Integer>> {
+		@Override
 		IntegerSetSetting build() {
 			return new IntegerSetSetting(this);
 		}

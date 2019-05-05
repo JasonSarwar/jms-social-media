@@ -776,7 +776,7 @@ public class UserRequestHandlerTest {
 		LoginRequest loginRequest = new LoginRequest("Jason", "Password");
 		User user = new User(3, "Jason", "Jason Sarwar", "HashedPassword");
 		Token token = Token.newBuilder().setUserId(3).addPermissions(Permission.getRegularPermissions()).build();
-		
+
 		when(request.body()).thenReturn(LOGIN_REQUEST_JSON);
 		when(dataService.getUserLoginInfoByString("Jason")).thenReturn(user);
 		when(passwordService.checkPassword(loginRequest, user)).thenReturn(true);

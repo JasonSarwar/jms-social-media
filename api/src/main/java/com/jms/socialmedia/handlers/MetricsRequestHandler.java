@@ -1,6 +1,5 @@
 package com.jms.socialmedia.handlers;
 
-import java.io.IOException;
 import java.util.SortedMap;
 
 import com.codahale.metrics.MetricFilter;
@@ -28,10 +27,9 @@ public class MetricsRequestHandler extends RequestHandler {
 	 * 
 	 * @param request
 	 * @param response
-	 * @return
-	 * @throws IOException
+	 * @return	All Metrics
 	 */
-	public MetricRegistry handleGetMetrics(Request request, Response response) throws IOException {
+	public MetricRegistry handleGetMetrics(Request request, Response response) {
 		return metricRegistry;
 	}
 
@@ -46,14 +44,18 @@ public class MetricsRequestHandler extends RequestHandler {
 	 * 
 	 * @param request
 	 * @param response
-	 * @return
-	 * @throws IOException
+	 * @return	Timers according to the query parameters
 	 */
-	public SortedMap<String, Timer> handleGetTimers(Request request, Response response) throws IOException {
+	public SortedMap<String, Timer> handleGetTimers(Request request, Response response) {
 		String query;
-		MetricFilter metricFilter = request.queryParams("all") != null ? MetricFilter.ALL
-				: (query = request.queryParams("query")) != null ? MetricFilter.contains(query)
-						: (name, metric) -> ((Timer) metric).getCount() > 0;
+		MetricFilter metricFilter;
+		if (request.queryParams("all") != null) {
+			metricFilter = MetricFilter.ALL;
+		} else if ((query = request.queryParams("query")) != null) {
+			metricFilter = MetricFilter.contains(query);
+		} else {
+			metricFilter = (name, metric) -> ((Timer) metric).getCount() > 0;
+		}
 
 		return metricRegistry.getTimers(metricFilter);
 	}
@@ -63,10 +65,9 @@ public class MetricsRequestHandler extends RequestHandler {
 	 * 
 	 * @param request
 	 * @param response
-	 * @return
-	 * @throws IOException
+	 * @return a Timer if it exists
 	 */
-	public Timer handleGetTimer(Request request, Response response) throws IOException {
+	public Timer handleGetTimer(Request request, Response response) {
 		Timer timer = metricRegistry.getTimers().get(request.params("timer"));
 		if (timer == null) {
 			throw new NotFoundException("Timer not found");
@@ -79,10 +80,9 @@ public class MetricsRequestHandler extends RequestHandler {
 	 * 
 	 * @param request
 	 * @param response
-	 * @return
-	 * @throws IOException
+	 * @return the number of times a Timer recorded a call
 	 */
-	public long handleGetTimerCount(Request request, Response response) throws IOException {
+	public long handleGetTimerCount(Request request, Response response) {
 		Timer timer = metricRegistry.getTimers().get(request.params("timer"));
 		if (timer == null) {
 			throw new NotFoundException("Timer not found");

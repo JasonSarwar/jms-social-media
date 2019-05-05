@@ -15,9 +15,9 @@ public class DataServiceWithMetricsTest {
 
 	@Mock
 	private DataService dataService;
-	
+
 	private MetricRegistry metricRegistry;
-	
+
 	private DataServiceWithMetrics dataServiceWithMetrics;
 
 	@Before

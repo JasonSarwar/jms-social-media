@@ -37,11 +37,11 @@ public class MetricsRequestHandlerTest {
 	private Request request;
 	@Mock
 	private Response response;
-	
+
 	private MetricRegistry metricRegistry;
 
 	private MetricsRequestHandler metricsRequestHandler;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		initMocks(this);
@@ -56,11 +56,11 @@ public class MetricsRequestHandlerTest {
 
 	@Test
 	public void testHandleGetTimers() throws IOException {
-		
+
 		Timer timer = metricRegistry.timer("testTimer");
 		timer.time().stop();
 		metricRegistry.timer("doNotShowThisTimer");
-		
+
 		SortedMap<String, Timer> timersMap = metricsRequestHandler.handleGetTimers(request, response);
 		assertThat(timersMap.size(), is(1));
 		assertThat(timersMap.get("testTimer"), is(timer));
