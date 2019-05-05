@@ -1,5 +1,5 @@
-# JRE (Java) 11.0.2
-FROM openjdk:11.0.2-jre-slim
+# JRE (Java) 11.0.3
+FROM openjdk:11.0.3-jre-slim
 
 LABEL name = "JMS Social Media"
 LABEL description = "Simple Social Media Web Site Written AngularJS and Java"
@@ -11,9 +11,9 @@ ARG PATH_TO_LIB
 RUN apt-get update && apt-get install bash
 
 # App Directory
-ENV APP_DIR /opt/app
+ENV APP_HOME /opt/app/jms
 
-WORKDIR $APP_DIR
+WORKDIR $APP_HOME
 
 # All relevant jars required for App
 COPY ${PATH_TO_LIB} lib
