@@ -27,6 +27,9 @@ dockerrunwithgradle: dockerbuildwithgradle
 dockercompose: dockerbuild
 	docker-compose up
 
+dockercomposewithgradle: dockerbuildwithgradle
+	docker-compose up
+
 mavenclean:
 	mvn clean
 
