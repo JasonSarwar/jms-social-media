@@ -16,6 +16,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import spark.Request;
+import spark.Response;
 import spark.utils.StringUtils;
 
 public abstract class RequestHandler {
@@ -31,6 +32,17 @@ public abstract class RequestHandler {
 		this.dataService = dataService;
 		this.tokenService = tokenService;
 		this.gson = gson;
+	}
+
+	/**
+	 * Check Bearer Token for Admin Rights
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	public void handleAuthorizeRequest(Request request, Response response) throws IOException {
+		authorizeRequest(request);
 	}
 
 	/**
@@ -59,6 +71,32 @@ public abstract class RequestHandler {
 			if (!token.hasPermission(Permission.ADMIN)
 					&& (!userIdFromRequest.equals(token.getUserId()) || !token.hasPermission(permission))) {
 				throw new ForbiddenException("User not allowed to " + permission.getAction());
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param request
+	 * @throws NoBearerTokenException
+	 * @throws ForbiddenException
+	 * @throws ExpiredJwtException
+	 * @throws UnsupportedJwtException
+	 * @throws MalformedJwtException
+	 * @throws SignatureException
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	protected void authorizeRequest(Request request) throws IOException {
+
+		String auth = request.headers(AUTHORIZATION);
+		if (StringUtils.isBlank(auth) || !auth.startsWith(BEARER)) {
+			throw new NoBearerTokenException("Bearer token must be included in " + AUTHORIZATION + " header");
+		} else {
+			String tokenString = auth.substring(BEARER.length());
+			Token token = tokenService.createTokenFromString(tokenString);
+			if (!token.hasPermission(Permission.ADMIN)) {
+				throw new ForbiddenException("User does not have Admin rights");
 			}
 		}
 	}

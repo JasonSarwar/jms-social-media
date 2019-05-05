@@ -9,14 +9,17 @@ import org.mockito.Mock;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jms.socialmedia.exception.ForbiddenException;
 import com.jms.socialmedia.exception.NoBearerTokenException;
 import com.jms.socialmedia.exception.UnsupportedContentTypeException;
 import com.jms.socialmedia.model.NewUser;
 import com.jms.socialmedia.routes.LocalDateTypeAdapter;
 import com.jms.socialmedia.token.Permission;
+import com.jms.socialmedia.token.Token;
 import com.jms.socialmedia.token.TokenService;
 
 import spark.Request;
+import spark.Response;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -41,6 +44,8 @@ public class RequestHandlerTest {
 	private TokenService tokenService;
 	@Mock
 	private Request request;
+	@Mock
+	private Response response;
 	private Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter()).create();
 
 	private RequestHandler requestHandler;
@@ -52,6 +57,15 @@ public class RequestHandlerTest {
 	}
 
 	@Test
+	public void testHandleAuthorizeRequest() throws IOException {
+		Token token = Token.newBuilder().addPermissions(Permission.ADMIN).build();
+		when(request.headers(AUTHORIZATION)).thenReturn("Bearer tokenString");
+		when(tokenService.createTokenFromString("tokenString")).thenReturn(token);
+
+		requestHandler.handleAuthorizeRequest(request, response);
+	}
+
+	@Test
 	public void testAuthorizeRequestMissingHeader() {
 		try {
 			requestHandler.authorizeRequest(request, 1, Permission.ADD_COMMENT);
@@ -59,6 +73,47 @@ public class RequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NoBearerTokenException.class));
 			assertThat(e.getMessage(), is("Bearer token must be included in Authorization header"));
+			verify(request, times(1)).headers(AUTHORIZATION);
+		}
+	}
+
+	@Test
+	public void testAuthorizeRequestMissingHeader2() {
+		try {
+			requestHandler.authorizeRequest(request);
+			fail("Did not throw Exception");
+		} catch (Exception e) {
+			assertThat(e, instanceOf(NoBearerTokenException.class));
+			assertThat(e.getMessage(), is("Bearer token must be included in Authorization header"));
+			verify(request, times(1)).headers(AUTHORIZATION);
+		}
+	}
+
+	@Test
+	public void testAuthorizeRequestMissingHeader3() {
+		when(request.headers(AUTHORIZATION)).thenReturn("Invalid");
+		try {
+			requestHandler.authorizeRequest(request);
+			fail("Did not throw Exception");
+		} catch (Exception e) {
+			assertThat(e, instanceOf(NoBearerTokenException.class));
+			assertThat(e.getMessage(), is("Bearer token must be included in Authorization header"));
+			verify(request, times(1)).headers(AUTHORIZATION);
+		}
+	}
+
+	@Test
+	public void testAuthorizeRequestMissingAdminRightsInToken() throws IOException {
+		Token token = Token.newBuilder().build();
+		when(request.headers(AUTHORIZATION)).thenReturn("Bearer tokenString");
+		when(tokenService.createTokenFromString("tokenString")).thenReturn(token);
+
+		try {
+			requestHandler.authorizeRequest(request);
+			fail("Did not throw Exception");
+		} catch (Exception e) {
+			assertThat(e, instanceOf(ForbiddenException.class));
+			assertThat(e.getMessage(), is("User does not have Admin rights"));
 			verify(request, times(1)).headers(AUTHORIZATION);
 		}
 	}
