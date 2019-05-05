@@ -2,7 +2,6 @@ package com.jms.socialmedia.token;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -13,7 +12,7 @@ public class Token {
 
 	public Token(Builder b) {
 		this.userId = b.userId;
-		this.permissions = EnumSet.copyOf(b.permissions);
+		this.permissions = b.permissions;
 	}
 
 	public final Integer getUserId() {
@@ -50,7 +49,7 @@ public class Token {
 
 	public static class Builder {
 		private Integer userId;
-		private Set<Permission> permissions = new HashSet<>();
+		private Set<Permission> permissions = EnumSet.noneOf(Permission.class);
 
 		public Builder setUserId(Integer userId) {
 			this.userId = userId;

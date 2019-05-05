@@ -169,7 +169,7 @@ public class Settings {
 
 		@Override
 		public String convertRawValue(String rawValue) {
-			return rawValue.trim();
+			return rawValue != null ? rawValue.trim() : null;
 		}
 	}
 
@@ -187,11 +187,7 @@ public class Settings {
 
 		@Override
 		public Boolean convertRawValue(String rawValue) {
-			if (rawValue == null) {
-				return null;
-			} else {
-				return Boolean.parseBoolean(rawValue.trim());
-			}
+			return rawValue != null ? Boolean.parseBoolean(rawValue.trim()) : null;
 		}
 	}
 
@@ -209,11 +205,7 @@ public class Settings {
 
 		@Override
 		public Integer convertRawValue(String rawValue) {
-			if (rawValue == null) {
-				return null;
-			} else {
-				return Integer.parseInt(rawValue.trim());
-			}
+			return rawValue != null ? Integer.parseInt(rawValue.trim()) : null;
 		}
 	}
 

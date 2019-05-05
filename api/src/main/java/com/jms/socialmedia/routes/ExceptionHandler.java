@@ -21,7 +21,7 @@ public class ExceptionHandler {
 
 	public void handleException(Exception exception, Request request, Response response) {
 
-		LOGGER.error("", exception);
+		LOGGER.error(exception.getMessage());
 
 		response.type("text/plain");
 
@@ -59,7 +59,8 @@ public class ExceptionHandler {
 			response.status(500);
 
 		} else {
-			response.body(exception.getMessage());
+			LOGGER.error(exception.getClass().getCanonicalName(), exception);
+			response.body(exception.getClass().getCanonicalName());
 			response.status(500);
 		}
 	}

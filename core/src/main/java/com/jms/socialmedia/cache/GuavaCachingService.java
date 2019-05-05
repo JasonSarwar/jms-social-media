@@ -12,17 +12,22 @@ import static java.util.stream.Collectors.toSet;
 
 public class GuavaCachingService implements CachingService {
 
+	private static final int DEFAULT_MAX_NO_OF_POSTS = 50;
 	private final Cache<Integer, Post> postsById;
 	private final Cache<Integer, Comment> commentsById;
 	private final Cache<Integer, Collection<Comment>> commentsByPostId;
 
 	public GuavaCachingService() {
+		this(DEFAULT_MAX_NO_OF_POSTS);
+	}
+
+	public GuavaCachingService(int maxNumberOfPosts) {
 		this.commentsById = CacheBuilder.newBuilder().build();
-		this.commentsByPostId = CacheBuilder.newBuilder().maximumSize(100)
+		this.commentsByPostId = CacheBuilder.newBuilder().maximumSize(maxNumberOfPosts)
 				.<Integer, Collection<Comment>>removalListener(removal -> 
 					commentsById.invalidateAll(removal.getValue().stream().map(Comment::getCommentId).collect(toSet()))
 				).build();
-		this.postsById = CacheBuilder.newBuilder().maximumSize(100)
+		this.postsById = CacheBuilder.newBuilder().maximumSize(maxNumberOfPosts)
 				.removalListener(removal -> 
 					commentsByPostId.invalidate(removal.getKey())
 				).build();

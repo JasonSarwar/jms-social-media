@@ -4,7 +4,11 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.json.MetricsModule;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
@@ -14,6 +18,7 @@ import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.handlers.CommentRequestHandler;
 import com.jms.socialmedia.handlers.FollowRequestHandler;
 import com.jms.socialmedia.handlers.LikeRequestHandler;
+import com.jms.socialmedia.handlers.MetricsRequestHandler;
 import com.jms.socialmedia.handlers.PostRequestHandler;
 import com.jms.socialmedia.handlers.UserRequestHandler;
 import com.jms.socialmedia.password.PasswordService;
@@ -22,7 +27,15 @@ import com.jms.socialmedia.token.TokenService;
 import spark.Request;
 import spark.Response;
 import spark.ResponseTransformer;
-import spark.Spark;
+
+import static spark.Spark.path;
+import static spark.Spark.before;
+import static spark.Spark.after;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.put;
+import static spark.Spark.delete;
+import static spark.Spark.exception;
 
 public class RouteMappings {
 
@@ -32,14 +45,16 @@ public class RouteMappings {
 	private final DataService dataService;
 	private final PasswordService passwordService;
 	private final TokenService tokenService;
+	private final MetricRegistry metricRegistry;
 	private final Set<Integer> adminUserIds;
 	private Set<RouteListener> routeListeners;
 
 	public RouteMappings(DataService dataService, PasswordService passwordService, TokenService tokenService,
-			Set<Integer> adminUserIds) {
+			MetricRegistry metricRegistry, Set<Integer> adminUserIds) {
 		this.dataService = dataService;
 		this.passwordService = passwordService;
 		this.tokenService = tokenService;
+		this.metricRegistry = metricRegistry;
 		this.adminUserIds = adminUserIds;
 		routeListeners = new HashSet<>();
 	}
@@ -59,112 +74,152 @@ public class RouteMappings {
 		Map<String, ResponseTransformer> contentWriters = Map.of("application/json", gson::toJson, "application/xml",
 				xmlWriter::writeValueAsString);
 
-		Spark.path("/api", () -> {
-			Spark.before("/*", this::informAllListenersOnRequest);
-			Spark.after("/*", this::informAllListenersOnResponse);
+		before("/*", this::informAllListenersOnRequest);
+		after("/*", this::informAllListenersOnResponse);
+
+		path("/api", () -> {
 
 			contentWriters.forEach((contentType, contentWriter) -> {
 
 				/** Post Request Mappings **/
 
-				Spark.get("/posts", contentType, postRequestHandler::handleGetPosts, contentWriter);
+				get("/posts", contentType, postRequestHandler::handleGetPosts, contentWriter);
 
-				Spark.get(POST_ID_MAPPING, contentType, postRequestHandler::handleGetPost, contentWriter);
+				get(POST_ID_MAPPING, contentType, postRequestHandler::handleGetPost, contentWriter);
 
-				Spark.post("/post/add", contentType, postRequestHandler::handleAddPost, contentWriter);
+				post("/post/add", contentType, postRequestHandler::handleAddPost, contentWriter);
 
-				Spark.put(POST_ID_MAPPING, contentType, postRequestHandler::handleEditPost, contentWriter);
+				put(POST_ID_MAPPING, contentType, postRequestHandler::handleEditPost, contentWriter);
 
-				Spark.delete(POST_ID_MAPPING, contentType, postRequestHandler::handleDeletePost, contentWriter);
+				delete(POST_ID_MAPPING, contentType, postRequestHandler::handleDeletePost, contentWriter);
 
-				Spark.get("/user/:userId/posts", contentType, postRequestHandler::handleGetPostsByUserId,
+				get("/user/:userId/posts", contentType, postRequestHandler::handleGetPostsByUserId,
 						contentWriter);
 
-				Spark.get("/user/:userId/commentedposts", contentType, postRequestHandler::handleGetCommentedPosts,
+				get("/user/:userId/commentedposts", contentType, postRequestHandler::handleGetCommentedPosts,
 						contentWriter);
 
-				Spark.get("/user/:userId/feed", contentType, postRequestHandler::handleGetFeedPosts, contentWriter);
+				get("/user/:userId/feed", contentType, postRequestHandler::handleGetFeedPosts, contentWriter);
 
 				/** Comments Request Mappings **/
 
-				Spark.get("/post/:postId/comments", contentType, commentRequestHandler::handleGetComments,
+				get("/post/:postId/comments", contentType, commentRequestHandler::handleGetComments,
 						contentWriter);
 
-				Spark.get(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleGetComment, contentWriter);
+				get(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleGetComment, contentWriter);
 
-				Spark.post("/comment/add", contentType, commentRequestHandler::handleAddComment, contentWriter);
-				Spark.post("/post/:postId/comment/add", contentType, commentRequestHandler::handleAddComment,
+				post("/comment/add", contentType, commentRequestHandler::handleAddComment, contentWriter);
+				post("/post/:postId/comment/add", contentType, commentRequestHandler::handleAddComment,
 						contentWriter);
 
-				Spark.put(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleEditComment, contentWriter);
+				put(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleEditComment, contentWriter);
 
-				Spark.delete(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleDeleteComment,
+				delete(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleDeleteComment,
 						contentWriter);
 
 				/** Like Request Mappings **/
 
-				Spark.get("/post/:postId/likes", contentType, likeRequestHandler::handleGetPostLikes, contentWriter);
+				get("/post/:postId/likes", contentType, likeRequestHandler::handleGetPostLikes, contentWriter);
 
-				Spark.post("/post/:postId/like/:userId", contentType, likeRequestHandler::handleLikePost,
+				post("/post/:postId/like/:userId", contentType, likeRequestHandler::handleLikePost,
 						contentWriter);
 
-				Spark.delete("/post/:postId/unlike/:userId", contentType, likeRequestHandler::handleUnlikePost,
+				delete("/post/:postId/unlike/:userId", contentType, likeRequestHandler::handleUnlikePost,
 						contentWriter);
 
-				Spark.get("/user/:userId/likedposts", contentType, likeRequestHandler::handleGetLikedPosts,
+				get("/user/:userId/likedposts", contentType, likeRequestHandler::handleGetLikedPosts,
 						contentWriter);
 
-				Spark.get("/comment/:commentId/likes", contentType, likeRequestHandler::handleGetCommentLikes,
+				get("/comment/:commentId/likes", contentType, likeRequestHandler::handleGetCommentLikes,
 						contentWriter);
 
-				Spark.post("/comment/:commentId/like/:userId", contentType, likeRequestHandler::handleLikeComment,
+				post("/comment/:commentId/like/:userId", contentType, likeRequestHandler::handleLikeComment,
 						contentWriter);
 
-				Spark.delete("/comment/:commentId/unlike/:userId", contentType, likeRequestHandler::handleUnlikeComment,
+				delete("/comment/:commentId/unlike/:userId", contentType, likeRequestHandler::handleUnlikeComment,
 						contentWriter);
 
-				Spark.get("/user/:userId/comments", contentType, commentRequestHandler::handleGetCommentsByUserId,
+				get("/user/:userId/comments", contentType, commentRequestHandler::handleGetCommentsByUserId,
 						contentWriter);
 
 				/** Follow Request Mappings **/
 
-				Spark.get("/user/:userId/following", contentType, followRequestHandler::handleGetFollowingUserIds,
+				get("/user/:userId/following", contentType, followRequestHandler::handleGetFollowingUserIds,
 						contentWriter);
 
-				Spark.get("/user/:userId/userstofollow", contentType, followRequestHandler::handleGetUsersToFollow,
+				get("/user/:userId/userstofollow", contentType, followRequestHandler::handleGetUsersToFollow,
 						contentWriter);
 
-				Spark.post("/user/follow", contentType, followRequestHandler::handleFollowUser, contentWriter);
+				post("/user/follow", contentType, followRequestHandler::handleFollowUser, contentWriter);
 
-				Spark.post("/user/unfollow", contentType, followRequestHandler::handleUnfollowUser, contentWriter);
+				post("/user/unfollow", contentType, followRequestHandler::handleUnfollowUser, contentWriter);
 
 				/** User Request Mappings **/
 
-				Spark.get("/users", contentType, userRequestHandler::handleGetUsernamesAndIds, contentWriter);
+				get("/users", contentType, userRequestHandler::handleGetUsernamesAndIds, contentWriter);
 
-				Spark.get("/user/:username/pageinfo", contentType, userRequestHandler::handleGetUserPage,
+				get("/user/:username/pageinfo", contentType, userRequestHandler::handleGetUserPage,
 						contentWriter);
 
-				Spark.get("/users/isUsernameTaken/:username", contentType, userRequestHandler::handleIsUsernameTaken,
+				get("/users/isUsernameTaken/:username", contentType, userRequestHandler::handleIsUsernameTaken,
 						contentWriter);
 
-				Spark.get("/users/isEmailTaken/:email", contentType, userRequestHandler::handleIsEmailTaken,
+				get("/users/isEmailTaken/:email", contentType, userRequestHandler::handleIsEmailTaken,
 						contentWriter);
 
-				Spark.post("/user/add", contentType, userRequestHandler::handleAddUser, contentWriter);
+				post("/user/add", contentType, userRequestHandler::handleAddUser, contentWriter);
 
-				Spark.put("/user/password", contentType, userRequestHandler::handleEditUserPassword, contentWriter);
+				put("/user/password", contentType, userRequestHandler::handleEditUserPassword, contentWriter);
 
-				Spark.post("/retrieveSession", contentType, userRequestHandler::handleSessionRetrieval, contentWriter);
+				post("/retrieveSession", contentType, userRequestHandler::handleSessionRetrieval, contentWriter);
 
-				Spark.post("/login", contentType, userRequestHandler::handleLogin, contentWriter);
+				post("/login", contentType, userRequestHandler::handleLogin, contentWriter);
 
-				Spark.post("/logout", contentType, userRequestHandler::handleLogout);
+				post("/logout", contentType, userRequestHandler::handleLogout);
 
 			});
 		});
 
-		Spark.exception(Exception.class, exceptionHandler::handleException);
+		if (metricRegistry != null) {
+			startMetricsEndpoints();
+		}
+
+		after("/*", this::setContentType);
+		exception(Exception.class, exceptionHandler::handleException);
+	}
+
+	private void startMetricsEndpoints() {
+		MetricsRequestHandler metricsRequestHandler = new MetricsRequestHandler(dataService, tokenService, 
+				metricRegistry);
+		
+		MetricsModule metricsModule = new MetricsModule(TimeUnit.SECONDS, TimeUnit.MILLISECONDS, true);
+		ObjectWriter metricsJsonMapper = new ObjectMapper()
+				.registerModule(metricsModule)
+				.writer();
+
+		ObjectWriter metricsXmlWriter = new XmlMapper()
+				.registerModule(metricsModule)
+				.writer();
+
+		Map<String, ResponseTransformer> contentWritersForMetrics = Map.of("application/json", metricsJsonMapper::writeValueAsString,
+				"application/xml", metricsXmlWriter::writeValueAsString);
+
+		path("/metrics", () -> {
+			
+			before("/*", metricsRequestHandler::handleAuthorizeRequest);
+			
+			contentWritersForMetrics.forEach((contentType, contentWriter) -> {
+
+				get("", contentType, metricsRequestHandler::handleGetMetrics, contentWriter);
+
+				get("/timers", contentType, metricsRequestHandler::handleGetTimers, contentWriter);
+
+				get("/timer/:timer", contentType, metricsRequestHandler::handleGetTimer, contentWriter);
+				
+				get("/timer/:timer/count", contentType, metricsRequestHandler::handleGetTimer, contentWriter);
+			
+			});
+		});
 	}
 
 	public boolean addRouteListener(RouteListener routeListener) {
@@ -177,6 +232,16 @@ public class RouteMappings {
 
 	private void informAllListenersOnResponse(Request request, Response response) {
 		routeListeners.forEach(e -> e.onResponse(response));
+	}
+
+	private void setContentType(Request request, Response response) {
+		if (request.headers("Accept").equalsIgnoreCase("application/xml")) {
+			response.type("application/xml");
+		} else if (request.headers("Accept").equalsIgnoreCase("text/xml")) {
+			response.type("text/xml");
+		} else {
+			response.type("application/json");
+		}
 	}
 
 	private Gson createGson() {
