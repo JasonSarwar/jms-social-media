@@ -74,114 +74,99 @@ public class RouteMappings {
 		ExceptionHandler exceptionHandler = new ExceptionHandler();
 
 		ObjectWriter xmlWriter = new XmlMapper().registerModule(new AfterburnerModule()).writer();
-		Map<String, ResponseTransformer> contentWriters = Map.of(APPLICATION_JSON, gson::toJson, APPLICATION_XML,
-				xmlWriter::writeValueAsString, TEXT_XML, xmlWriter::writeValueAsString);
+		Map<String, ResponseTransformer> contentWriters = Map.of("*/*", gson::toJson, 
+				"*/xml", xmlWriter::writeValueAsString);
 
 		before("/*", this::informAllListenersOnRequest);
 		after("/*", this::informAllListenersOnResponse);
 
-		path("/api", () -> 
+		path("/api", () ->
 
-			contentWriters.forEach((contentType, contentWriter) -> {
+		contentWriters.forEach((contentType, contentWriter) -> {
 
-				/** Post Request Mappings **/
+			/** Post Request Mappings **/
 
-				get("/posts", contentType, postRequestHandler::handleGetPosts, contentWriter);
+			get("/posts", contentType, postRequestHandler::handleGetPosts, contentWriter);
 
-				get(POST_ID_MAPPING, contentType, postRequestHandler::handleGetPost, contentWriter);
+			get(POST_ID_MAPPING, contentType, postRequestHandler::handleGetPost, contentWriter);
 
-				post("/post/add", contentType, postRequestHandler::handleAddPost, contentWriter);
+			post("/post/add", contentType, postRequestHandler::handleAddPost, contentWriter);
 
-				put(POST_ID_MAPPING, contentType, postRequestHandler::handleEditPost, contentWriter);
+			put(POST_ID_MAPPING, contentType, postRequestHandler::handleEditPost, contentWriter);
 
-				delete(POST_ID_MAPPING, contentType, postRequestHandler::handleDeletePost, contentWriter);
+			delete(POST_ID_MAPPING, contentType, postRequestHandler::handleDeletePost, contentWriter);
 
-				get("/user/:userId/posts", contentType, postRequestHandler::handleGetPostsByUserId,
-						contentWriter);
+			get("/user/:userId/posts", contentType, postRequestHandler::handleGetPostsByUserId, contentWriter);
 
-				get("/user/:userId/commentedposts", contentType, postRequestHandler::handleGetCommentedPosts,
-						contentWriter);
+			get("/user/:userId/commentedposts", contentType, postRequestHandler::handleGetCommentedPosts,
+					contentWriter);
 
-				get("/user/:userId/feed", contentType, postRequestHandler::handleGetFeedPosts, contentWriter);
+			get("/user/:userId/feed", contentType, postRequestHandler::handleGetFeedPosts, contentWriter);
 
-				/** Comments Request Mappings **/
+			/** Comments Request Mappings **/
 
-				get("/post/:postId/comments", contentType, commentRequestHandler::handleGetComments,
-						contentWriter);
+			get("/post/:postId/comments", contentType, commentRequestHandler::handleGetComments, contentWriter);
 
-				get(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleGetComment, contentWriter);
+			get(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleGetComment, contentWriter);
 
-				post("/comment/add", contentType, commentRequestHandler::handleAddComment, contentWriter);
-				post("/post/:postId/comment/add", contentType, commentRequestHandler::handleAddComment,
-						contentWriter);
+			post("/comment/add", contentType, commentRequestHandler::handleAddComment, contentWriter);
+			post("/post/:postId/comment/add", contentType, commentRequestHandler::handleAddComment, contentWriter);
 
-				put(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleEditComment, contentWriter);
+			put(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleEditComment, contentWriter);
 
-				delete(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleDeleteComment,
-						contentWriter);
+			delete(COMMENT_ID_MAPPING, contentType, commentRequestHandler::handleDeleteComment, contentWriter);
 
-				/** Like Request Mappings **/
+			/** Like Request Mappings **/
 
-				get("/post/:postId/likes", contentType, likeRequestHandler::handleGetPostLikes, contentWriter);
+			get("/post/:postId/likes", contentType, likeRequestHandler::handleGetPostLikes, contentWriter);
 
-				post("/post/:postId/like/:userId", contentType, likeRequestHandler::handleLikePost,
-						contentWriter);
+			post("/post/:postId/like/:userId", contentType, likeRequestHandler::handleLikePost, contentWriter);
 
-				delete("/post/:postId/unlike/:userId", contentType, likeRequestHandler::handleUnlikePost,
-						contentWriter);
+			delete("/post/:postId/unlike/:userId", contentType, likeRequestHandler::handleUnlikePost, contentWriter);
 
-				get("/user/:userId/likedposts", contentType, likeRequestHandler::handleGetLikedPosts,
-						contentWriter);
+			get("/user/:userId/likedposts", contentType, likeRequestHandler::handleGetLikedPosts, contentWriter);
 
-				get("/comment/:commentId/likes", contentType, likeRequestHandler::handleGetCommentLikes,
-						contentWriter);
+			get("/comment/:commentId/likes", contentType, likeRequestHandler::handleGetCommentLikes, contentWriter);
 
-				post("/comment/:commentId/like/:userId", contentType, likeRequestHandler::handleLikeComment,
-						contentWriter);
+			post("/comment/:commentId/like/:userId", contentType, likeRequestHandler::handleLikeComment, contentWriter);
 
-				delete("/comment/:commentId/unlike/:userId", contentType, likeRequestHandler::handleUnlikeComment,
-						contentWriter);
+			delete("/comment/:commentId/unlike/:userId", contentType, likeRequestHandler::handleUnlikeComment,
+					contentWriter);
 
-				get("/user/:userId/comments", contentType, commentRequestHandler::handleGetCommentsByUserId,
-						contentWriter);
+			get("/user/:userId/comments", contentType, commentRequestHandler::handleGetCommentsByUserId, contentWriter);
 
-				/** Follow Request Mappings **/
+			/** Follow Request Mappings **/
 
-				get("/user/:userId/following", contentType, followRequestHandler::handleGetFollowingUserIds,
-						contentWriter);
+			get("/user/:userId/following", contentType, followRequestHandler::handleGetFollowingUserIds, contentWriter);
 
-				get("/user/:userId/userstofollow", contentType, followRequestHandler::handleGetUsersToFollow,
-						contentWriter);
+			get("/user/:userId/userstofollow", contentType, followRequestHandler::handleGetUsersToFollow,
+					contentWriter);
 
-				post("/user/follow", contentType, followRequestHandler::handleFollowUser, contentWriter);
+			post("/user/follow", contentType, followRequestHandler::handleFollowUser, contentWriter);
 
-				post("/user/unfollow", contentType, followRequestHandler::handleUnfollowUser, contentWriter);
+			post("/user/unfollow", contentType, followRequestHandler::handleUnfollowUser, contentWriter);
 
-				/** User Request Mappings **/
+			/** User Request Mappings **/
 
-				get("/users", contentType, userRequestHandler::handleGetUsernamesAndIds, contentWriter);
+			get("/users", contentType, userRequestHandler::handleGetUsernamesAndIds, contentWriter);
 
-				get("/user/:username/pageinfo", contentType, userRequestHandler::handleGetUserPage,
-						contentWriter);
+			get("/user/:username/pageinfo", contentType, userRequestHandler::handleGetUserPage, contentWriter);
 
-				get("/users/isUsernameTaken/:username", contentType, userRequestHandler::handleIsUsernameTaken,
-						contentWriter);
+			get("/users/isUsernameTaken/:username", contentType, userRequestHandler::handleIsUsernameTaken,
+					contentWriter);
 
-				get("/users/isEmailTaken/:email", contentType, userRequestHandler::handleIsEmailTaken,
-						contentWriter);
+			get("/users/isEmailTaken/:email", contentType, userRequestHandler::handleIsEmailTaken, contentWriter);
 
-				post("/user/add", contentType, userRequestHandler::handleAddUser, contentWriter);
+			post("/user/add", contentType, userRequestHandler::handleAddUser, contentWriter);
 
-				put("/user/password", contentType, userRequestHandler::handleEditUserPassword, contentWriter);
+			put("/user/password", contentType, userRequestHandler::handleEditUserPassword, contentWriter);
 
-				post("/retrieveSession", contentType, userRequestHandler::handleSessionRetrieval, contentWriter);
+			post("/retrieveSession", contentType, userRequestHandler::handleSessionRetrieval, contentWriter);
 
-				post("/login", contentType, userRequestHandler::handleLogin, contentWriter);
+			post("/login", contentType, userRequestHandler::handleLogin, contentWriter);
 
-				post("/logout", contentType, userRequestHandler::handleLogout);
-
-			})
-		);
+			post("/logout", contentType, userRequestHandler::handleLogout);
+		}));
 
 		if (metricRegistry != null) {
 			startMetricsEndpoints();
@@ -192,25 +177,21 @@ public class RouteMappings {
 	}
 
 	private void startMetricsEndpoints() {
-		MetricsRequestHandler metricsRequestHandler = new MetricsRequestHandler(dataService, tokenService, 
+		MetricsRequestHandler metricsRequestHandler = new MetricsRequestHandler(dataService, tokenService,
 				metricRegistry);
-		
+
 		MetricsModule metricsModule = new MetricsModule(TimeUnit.SECONDS, TimeUnit.MILLISECONDS, true);
-		ObjectWriter metricsJsonMapper = new ObjectMapper()
-				.registerModule(metricsModule)
-				.writer();
+		ObjectWriter metricsJsonMapper = new ObjectMapper().registerModule(metricsModule).writer();
 
-		ObjectWriter metricsXmlWriter = new XmlMapper()
-				.registerModule(metricsModule)
-				.writer();
+		ObjectWriter metricsXmlWriter = new XmlMapper().registerModule(metricsModule).writer();
 
-		Map<String, ResponseTransformer> contentWritersForMetrics = Map.of(APPLICATION_JSON, metricsJsonMapper::writeValueAsString,
-				APPLICATION_XML, metricsXmlWriter::writeValueAsString, TEXT_XML, metricsXmlWriter::writeValueAsString);
+		Map<String, ResponseTransformer> contentWritersForMetrics = Map.of("*/*", metricsJsonMapper::writeValueAsString,
+				"*/xml", metricsXmlWriter::writeValueAsString);
 
 		path("/metrics", () -> {
-			
-			before("/*", metricsRequestHandler::handleAuthorizeRequest);
-			
+
+			before("*", metricsRequestHandler::handleAuthorizeRequest);
+
 			contentWritersForMetrics.forEach((contentType, contentWriter) -> {
 
 				get("", contentType, metricsRequestHandler::handleGetMetrics, contentWriter);
@@ -218,9 +199,8 @@ public class RouteMappings {
 				get("/timers", contentType, metricsRequestHandler::handleGetTimers, contentWriter);
 
 				get("/timer/:timer", contentType, metricsRequestHandler::handleGetTimer, contentWriter);
-				
+
 				get("/timer/:timer/count", contentType, metricsRequestHandler::handleGetTimer, contentWriter);
-			
 			});
 		});
 	}
@@ -238,10 +218,9 @@ public class RouteMappings {
 	}
 
 	private void setContentType(Request request, Response response) {
-		if (request.headers("Accept").equalsIgnoreCase(APPLICATION_XML)) {
-			response.type(APPLICATION_XML);
-		} else if (request.headers("Accept").equalsIgnoreCase(TEXT_XML)) {
-			response.type(TEXT_XML);
+		String acceptsHeader = request.headers("Accept");
+		if (acceptsHeader.equalsIgnoreCase(APPLICATION_XML) || acceptsHeader.equalsIgnoreCase(TEXT_XML)) {
+			response.type(acceptsHeader);
 		} else {
 			response.type(APPLICATION_JSON);
 		}
