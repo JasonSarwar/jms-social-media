@@ -27,7 +27,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
-	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.26.0'
+	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.27.0'
 }
 
 task allJars(type: Copy) {
