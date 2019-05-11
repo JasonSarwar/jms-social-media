@@ -76,15 +76,15 @@
 	var LogoutController = function($scope) {
 		$scope.logout();
 	};
-	
+
 	var HomeController = function ($scope, postsService, alertService) {
-		
+
 		let noPostsMessage = function (data, text) {
 			if (!data || !data.length) {
 				$scope.noPostsMessage = text;
 			}
 		};
-		
+
 		$scope.getFeedPosts = function() {
 			$scope.noPostsMessage = undefined;
 			postsService.getFeedPosts($scope.userId)
@@ -95,7 +95,7 @@
 			  		alertService.error(error.data);
 			  	});
 		};
-		
+
 		if ($scope.userId) {
 			$scope.getFeedPosts();
 		} else {
@@ -107,7 +107,7 @@
 			  		alertService.error(error.data);
 			  	});
 		}
-		
+
 		$scope.deletePost = function (postId) {
 			let noOfPosts = $scope.posts.length;
 			for (let i = 0; i < noOfPosts; i++) {
@@ -120,7 +120,7 @@
 			}
 		};
 	};
-	
+
 	var PostController = function($scope, $location, $routeParams, postsService, alertService) {
 
 		let comments;
@@ -144,7 +144,7 @@
 		  	}, function (error) {
 		  		alertService.error(error.data);
 		  	});
-		
+
 		$scope.deletePost = function (postId) {
 			$location.path("/home")
 		};
@@ -181,11 +181,11 @@
 		  	});
 
 		$scope.tagName = $location.search().tag;
-		
+
 		$scope.goToPost = function (postId) {
 			$location.path("/post/" + postId);
 		};
-		
+
 		$scope.deletePost = function (postId) {
 			let noOfPosts = $scope.posts.length;
 			for (let i = 0; i < noOfPosts; i++) {
@@ -198,7 +198,7 @@
 	};
 
 	var AddPostController = function($scope, $route, postsService, alertService) {
-		
+
 		$scope.addPost = function (userId, postText) {
 			postsService.addPost(userId, postText)
 				.then(function (data) {
@@ -208,13 +208,13 @@
 				});
 		};
 	};
-	
+
 	var EntryController = function($scope, $location, postsService, alertService) {
 
 		$scope.liked = function (entry) {
 			return entry.likes.indexOf($scope.userId) > -1;
 		}
-		
+
 		$scope.startEditing = function (entry) {
 			if ($scope.userId === entry.userId) {
 				entry.editing = true;
@@ -227,7 +227,7 @@
 		};
 
 		$scope.editEntry = function (postId, commentId, text) {
-			
+
 			if (commentId) {
 				postsService.editComment(commentId, text)
 					.then(function (data) {
@@ -236,7 +236,7 @@
 					}, function (error) {
 						alertService.error(error.data);
 					});
-				
+
 			} else {
 				postsService.editPost(postId, text)
 					.then(function (data) {
@@ -247,9 +247,9 @@
 					});
 			}
 		};
-		
+
 		$scope.deleteEntry = function (postId, commentId) {
-			
+
 			if (commentId) {
 				if (confirm("Are you sure you want to delete your comment?")) {
 					postsService.deleteComment(commentId)
@@ -271,16 +271,16 @@
 				}
 			}
 		};
-		
+
 		let removeLikeFromEntry = function (entry) {
 			let index = entry.likes.indexOf($scope.userId);
 			if (index > -1) {
 				entry.likes.splice(index, 1);
 			}
 		};
-		
+
 		$scope.likeEntry = function (entry) {
-			
+
 			if (entry.commentId) {
 				postsService.likeComment(entry.commentId, $scope.userId)
 					.then(function (data) {
@@ -297,7 +297,7 @@
 					});
 			}
 		};
-		
+
 		$scope.unlikeEntry = function (entry) {
 
 			if (entry.commentId) {
@@ -319,7 +319,7 @@
 	};
 
 	var AddCommentController = function($scope, $route, postsService, alertService) {
-		
+
 		$scope.addComment = function (userId, postId, commentText) {
 			postsService.addComment(userId, postId, commentText)
 				.then(function (data) {
@@ -331,7 +331,7 @@
 	};
 
 	var EditPasswordController = function($scope, $location, usersService) {
-		
+
 		$scope.editPassword = function (oldPassword, newPassword1, newPassword2) {
 
 			if (newPassword1 != newPassword2) {
@@ -362,7 +362,7 @@
 			}, function (error) {
 				alertService.error(error.data);
 			});
-		
+
 		$scope.getLikedPosts = function () {
 			if (!$scope.likedPosts) {
 				postsService.getLikedPostsByUserId($scope.user.userId)
@@ -371,7 +371,7 @@
 				});
 			}
 		};
-		
+
 		$scope.getCommentedPosts = function () {
 			if (!$scope.commentedPosts) {
 				postsService.getCommentedPostsByUserId($scope.user.userId)
@@ -380,7 +380,7 @@
 				});
 			}
 		};
-		
+
 		$scope.getComments = function () {
 			if (!$scope.comments) {
 				postsService.getCommentsByUserId($scope.user.userId)
@@ -389,16 +389,16 @@
 				});
 			}
 		};
-		
+
 		$scope.isFollowing = function () {
 			return $scope.user && $scope.user.followersUserIds.indexOf($scope.userId) > -1;
 		};
-		
+
 		$scope.followUser = function () {
 			usersService.followUser($scope.userId, $scope.user.userId);
 			$scope.user.followersUserIds.push($scope.userId);
 		};
-		
+
 		$scope.unfollowUser = function () {
 			usersService.unfollowUser($scope.userId, $scope.user.userId);
 			let index = $scope.user.followersUserIds.indexOf($scope.userId);
@@ -413,12 +413,12 @@
 		$scope.isFollowing = function (userId) {
 			return $scope.modalFollowingUserIds && $scope.modalFollowingUserIds.indexOf(userId) > -1;
 		};
-		
+
 		$scope.followUser = function (userId) {
 			usersService.followUser($scope.userId, userId);
 			$scope.modalFollowingUserIds.push(userId);
 		};
-		
+
 		$scope.unfollowUser = function (userId) {
 			usersService.unfollowUser($scope.userId, userId);
 			let index = $scope.modalFollowingUserIds.indexOf(userId);
@@ -426,7 +426,7 @@
 				$scope.modalFollowingUserIds.splice(index, 1);
 			}
 		};
-		
+
 		$scope.goToUser = function (username) {
 			$location.path("/user/" + username);
 			$('#usersModal').modal('hide');
@@ -434,15 +434,15 @@
 	};
 
 	var SignupController = function($scope, $location, signupService) {
-		
+
 		if ($scope.userId) {
 			$location.path("/home");
 		}
-		
+
 		$scope.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 		let monthsWith31Days = ["January", "March", "May", "July", "August", "October", "December"];
 		let monthsWith30Days = ["April", "June", "September", "November"];
-		
+
 		$scope.days = [];
 		for (let i = 1; i <= 31; i++) {
 			$scope.days.push(i);
@@ -462,7 +462,7 @@
 				$scope.days.splice($scope.days.length -1, 1);
 			}
 		};
-		
+
 		let adjustIfFebruary = function() {
 			if ($scope.newUserMonth == "February") {
 				let noOfDays = 29;
@@ -476,7 +476,7 @@
 				adjustDays(noOfDays);
 			}
 		};
-		
+
 		$scope.changeMonth = function() {
 			adjustIfFebruary();
 			if (monthsWith31Days.indexOf($scope.newUserMonth) > -1) {
@@ -485,7 +485,7 @@
 				adjustDays(30);
 			}
 		};
-		
+
 		$scope.changeYear = function() {
 			adjustIfFebruary();
 		};
@@ -543,7 +543,7 @@
 		.then(function (data) {
 			$scope.usersToFollow = data;
 		});
-		
+
 		$scope.followUser = function (userId) {
 			usersService.followUser($scope.userId, userId)
 			.then(function (data) {

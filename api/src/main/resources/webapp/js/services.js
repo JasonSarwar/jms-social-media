@@ -1,175 +1,175 @@
 (function(){
-  
-  var postsService = function($http, $location) {
 
-    var getPost = function (postId) {
-    	return $http.get("/api/post/" + postId)
-              .then(function (response) {
-            	  return response.data;
-              });
-    };
+	var postsService = function($http, $location) {
 
-    var getComments = function (postId) {
-    	return $http.get("/api/post/" + postId + "/comments")
-              .then(function (response) {
-            	  return response.data;
-              });
-    };
+	    var getPost = function (postId) {
+	    	return $http.get("/api/post/" + postId)
+	              .then(function (response) {
+	            	  return response.data;
+	              });
+	    };
 
-    var getPosts = function (queryParams) {
-    	let queryParamString = "?sortBy=postId&order=desc";
-    	if (queryParams) {
-    		if (queryParams.username) {
-    			queryParamString = queryParamString + "&username=" + queryParams.username;
-    		}
-    		if (queryParams.tag) {
-    			queryParamString = queryParamString + "&tag=" + queryParams.tag;
-    		}
-    		if (queryParams.on) {
-    			queryParamString = queryParamString + "&on=" + queryParams.on;
-    		}
-    	}
-    	return $http.get("/api/posts" + queryParamString)
-              .then(function (response) {
-            	  return response.data;
-              });
-    };
+	    var getComments = function (postId) {
+	    	return $http.get("/api/post/" + postId + "/comments")
+	              .then(function (response) {
+	            	  return response.data;
+	              });
+	    };
 
-    var getFeedPosts = function (userId) {
-    	return $http.get("/api/user/" + userId + "/feed")
-              .then(function (response) {
-            	  return response.data;
-              });
-    };
+	    var getPosts = function (queryParams) {
+	    	let queryParamString = "?sortBy=postId&order=desc";
+	    	if (queryParams) {
+	    		if (queryParams.username) {
+	    			queryParamString = queryParamString + "&username=" + queryParams.username;
+	    		}
+	    		if (queryParams.tag) {
+	    			queryParamString = queryParamString + "&tag=" + queryParams.tag;
+	    		}
+	    		if (queryParams.on) {
+	    			queryParamString = queryParamString + "&on=" + queryParams.on;
+	    		}
+	    	}
+	    	return $http.get("/api/posts" + queryParamString)
+	              .then(function (response) {
+	            	  return response.data;
+	              });
+	    };
 
-    var addPost = function (userId, text) {
-    	return $http.post("/api/post/add", {userId: userId, text: text})
-        	.then(function (response) {
-        		return response.data;
-        });
-    };
+	    var getFeedPosts = function (userId) {
+	    	return $http.get("/api/user/" + userId + "/feed")
+	              .then(function (response) {
+	            	  return response.data;
+	              });
+	    };
 
-    var editPost = function (postId, text) {
-    	return $http.put("/api/post/" + postId, {text: text})
-        	.then(function (response) {
-        		return response.data;
-        });
-    };
+	    var addPost = function (userId, text) {
+	    	return $http.post("/api/post/add", {userId: userId, text: text})
+	        	.then(function (response) {
+	        		return response.data;
+	        });
+	    };
 
-    var deletePost = function (postId) {
-    	return $http.delete("/api/post/" + postId)
-        	.then(function (response) {
-        		return response.data;
-        });
-    };
+	    var editPost = function (postId, text) {
+	    	return $http.put("/api/post/" + postId, {text: text})
+	        	.then(function (response) {
+	        		return response.data;
+	        });
+	    };
 
-    var likePost = function (postId, userId) {
-    	return $http.post("/api/post/" + postId + "/like/" + userId, null)
-        	.then(function (response) {
-        		return response.data;
-        });
-    };
+	    var deletePost = function (postId) {
+	    	return $http.delete("/api/post/" + postId)
+	        	.then(function (response) {
+	        		return response.data;
+	        });
+	    };
 
-    var unlikePost = function (postId, userId) {
-    	return $http.delete("/api/post/" + postId + "/unlike/" + userId)
-        	.then(function (response) {
-        		return response.data;
-        });
-    };
+	    var likePost = function (postId, userId) {
+	    	return $http.post("/api/post/" + postId + "/like/" + userId, null)
+	        	.then(function (response) {
+	        		return response.data;
+	        });
+	    };
 
-    var getPostsByUserId = function (userId) {
-    	return $http.get("/api/user/" + userId + "/posts")
-              .then(function (response) {
-            	  return response.data;
-              });
-    };
-    
-    var getLikedPostsByUserId = function (userId) {
-    	return $http.get("/api/user/" + userId + "/likedposts")
-              .then(function (response) {
-            	  return response.data;
-              });
-    };
+	    var unlikePost = function (postId, userId) {
+	    	return $http.delete("/api/post/" + postId + "/unlike/" + userId)
+	        	.then(function (response) {
+	        		return response.data;
+	        });
+	    };
 
-    var getCommentedPostsByUserId = function (userId) {
-    	return $http.get("/api/user/" + userId + "/commentedposts")
-              .then(function (response) {
-            	  return response.data;
-              });
-    };
+	    var getPostsByUserId = function (userId) {
+	    	return $http.get("/api/user/" + userId + "/posts")
+	              .then(function (response) {
+	            	  return response.data;
+	              });
+	    };
 
-    var getCommentsByUserId = function (userId) {
-    	return $http.get("/api/user/" + userId + "/comments")
-              .then(function (response) {
-            	  return response.data;
-              });
-    };
+	    var getLikedPostsByUserId = function (userId) {
+	    	return $http.get("/api/user/" + userId + "/likedposts")
+	              .then(function (response) {
+	            	  return response.data;
+	              });
+	    };
 
-    var addComment = function (userId, postId, text) {
-    	var data = {
-			userId: userId,
-			postId: postId,
-			text: text
-    	};
+	    var getCommentedPostsByUserId = function (userId) {
+	    	return $http.get("/api/user/" + userId + "/commentedposts")
+	              .then(function (response) {
+	            	  return response.data;
+	              });
+	    };
 
-    	return $http.post("/api/comment/add", data)
-        	.then(function(response) {
-        		return response.data;
-        });
-    };
+	    var getCommentsByUserId = function (userId) {
+	    	return $http.get("/api/user/" + userId + "/comments")
+	              .then(function (response) {
+	            	  return response.data;
+	              });
+	    };
 
-    var editComment = function (commentId, text) {
-    	return $http.put("/api/comment/" + commentId, {text: text})
-        	.then(function(response) {
-        		return response.data;
-        });
-    };
+	    var addComment = function (userId, postId, text) {
+	    	var data = {
+				userId: userId,
+				postId: postId,
+				text: text
+	    	};
 
-    var deleteComment = function (commentId) {
-    	return $http.delete("/api/comment/" + commentId)
-        	.then(function(response) {
-        		return response.data;
-        });
-    };
+	    	return $http.post("/api/comment/add", data)
+	        	.then(function(response) {
+	        		return response.data;
+	        });
+	    };
 
-    var likeComment = function (commentId, userId) {
-    	return $http.post("/api/comment/" + commentId + "/like/" + userId, null)
-        	.then(function(response) {
-        		return response.data;
-        });
-    };
+	    var editComment = function (commentId, text) {
+	    	return $http.put("/api/comment/" + commentId, {text: text})
+	        	.then(function(response) {
+	        		return response.data;
+	        });
+	    };
 
-    var unlikeComment = function (commentId, userId) {
-    	return $http.delete("/api/comment/" + commentId + "/unlike/" + userId)
-        	.then(function(response) {
-        		return response.data;
-        });
-    };
+	    var deleteComment = function (commentId) {
+	    	return $http.delete("/api/comment/" + commentId)
+	        	.then(function(response) {
+	        		return response.data;
+	        });
+	    };
 
-    return {
-    	getPost: getPost,
-    	getComments: getComments,
-    	getPosts: getPosts,
-    	getFeedPosts: getFeedPosts,
-    	addPost: addPost,
-    	editPost: editPost,
-    	deletePost: deletePost,
-    	likePost: likePost,
-    	unlikePost: unlikePost,
-    	getPostsByUserId: getPostsByUserId,
-    	getLikedPostsByUserId: getLikedPostsByUserId,
-    	getCommentedPostsByUserId: getCommentedPostsByUserId,
-    	getCommentsByUserId: getCommentsByUserId,
-    	addComment: addComment,
-    	editComment: editComment,
-    	deleteComment: deleteComment,
-    	likeComment: likeComment,
-    	unlikeComment: unlikeComment
-    };
-  };
+	    var likeComment = function (commentId, userId) {
+	    	return $http.post("/api/comment/" + commentId + "/like/" + userId, null)
+	        	.then(function(response) {
+	        		return response.data;
+	        });
+	    };
 
-  	var usersService = function($http) {
-	  
+	    var unlikeComment = function (commentId, userId) {
+	    	return $http.delete("/api/comment/" + commentId + "/unlike/" + userId)
+	        	.then(function(response) {
+	        		return response.data;
+	        });
+	    };
+
+	    return {
+	    	getPost: getPost,
+	    	getComments: getComments,
+	    	getPosts: getPosts,
+	    	getFeedPosts: getFeedPosts,
+	    	addPost: addPost,
+	    	editPost: editPost,
+	    	deletePost: deletePost,
+	    	likePost: likePost,
+	    	unlikePost: unlikePost,
+	    	getPostsByUserId: getPostsByUserId,
+	    	getLikedPostsByUserId: getLikedPostsByUserId,
+	    	getCommentedPostsByUserId: getCommentedPostsByUserId,
+	    	getCommentsByUserId: getCommentsByUserId,
+	    	addComment: addComment,
+	    	editComment: editComment,
+	    	deleteComment: deleteComment,
+	    	likeComment: likeComment,
+	    	unlikeComment: unlikeComment
+	    };
+	};
+
+	var usersService = function($http) {
+		  
 		var getUserPageInfo = function (username) {
 			return $http.get("/api/user/" + username + "/pageinfo")
 				.then(function (response) {
@@ -240,7 +240,7 @@
 	    	getFollowingUserIds: getFollowingUserIds
 		};
     };
-
+	
     var loginService = function ($http, $cookies) {
 
 		let sessionCookie = "jms-social-media-session";
@@ -272,15 +272,15 @@
 	        		$cookies.remove(sessionCookie);
 	        		return null;
 	        	});
-    };
-    
-	return {
-    	attemptLogin: attemptLogin,
-    	logout: logout,
-    	retrieveSession: retrieveSession
-	};
-  };
+	    };
 
+		return {
+	    	attemptLogin: attemptLogin,
+	    	logout: logout,
+	    	retrieveSession: retrieveSession
+		};
+	};
+	
   	var signupService = function ($http) {
 		
 		var isUsernameTaken = function (username) {
@@ -313,7 +313,7 @@
 			addUser: addUser
 		};
 	};
-  
+	  
 	var alertService = function($rootScope) {
 	
 		var error = function (errorText) {
