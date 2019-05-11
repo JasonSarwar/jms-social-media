@@ -44,7 +44,7 @@
 						var defer = $q.defer();
 						signupService.isUsernameTaken(modelValue)
 							.then(function (data) {
-								if (data === "false") {
+								if (data == false || data == "false") {
 									defer.resolve("Available");
 								} else {
 									defer.reject("Taken");
@@ -65,7 +65,7 @@
 						var defer = $q.defer();
 						signupService.isEmailTaken(modelValue)
 							.then(function (data) {
-								if (data === "false") {
+								if (data == false || data == "false") {
 									defer.resolve("Available");
 								} else {
 									defer.reject("Taken");

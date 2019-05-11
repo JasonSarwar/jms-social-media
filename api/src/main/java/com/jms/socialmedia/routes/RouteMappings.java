@@ -78,7 +78,6 @@ public class RouteMappings {
 				"*/xml", xmlWriter::writeValueAsString);
 
 		before("/*", this::informAllListenersOnRequest);
-		after("/*", this::informAllListenersOnResponse);
 
 		path("/api", () ->
 
@@ -173,6 +172,7 @@ public class RouteMappings {
 		}
 
 		after("/*", this::setContentType);
+		after("/*", this::informAllListenersOnResponse);
 		exception(Exception.class, exceptionHandler::handleException);
 	}
 
