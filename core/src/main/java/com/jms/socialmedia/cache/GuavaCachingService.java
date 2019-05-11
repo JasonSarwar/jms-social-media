@@ -7,21 +7,29 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Post;
+import com.jms.socialmedia.model.User;
 
 import static java.util.stream.Collectors.toSet;
 
-public class GuavaCachingService implements CachingService {
+public class GuavaCachingService extends CachingService {
 
 	private static final int DEFAULT_MAX_NO_OF_POSTS = 50;
+	private static final int DEFAULT_MAX_NO_OF_USER_SESSIONS = 20;
+
 	private final Cache<Integer, Post> postsById;
 	private final Cache<Integer, Comment> commentsById;
 	private final Cache<Integer, Collection<Comment>> commentsByPostId;
+	private final Cache<String, User> userSessionsByKey;
 
 	public GuavaCachingService() {
-		this(DEFAULT_MAX_NO_OF_POSTS);
+		this(DEFAULT_MAX_NO_OF_POSTS, DEFAULT_MAX_NO_OF_USER_SESSIONS);
 	}
 
 	public GuavaCachingService(int maxNumberOfPosts) {
+		this(maxNumberOfPosts, DEFAULT_MAX_NO_OF_USER_SESSIONS);
+	}
+
+	public GuavaCachingService(int maxNumberOfPosts, int maxNumberOfUserSessions) {
 		this.commentsById = CacheBuilder.newBuilder().build();
 		this.commentsByPostId = CacheBuilder.newBuilder().maximumSize(maxNumberOfPosts)
 				.<Integer, Collection<Comment>>removalListener(removal -> 
@@ -31,6 +39,7 @@ public class GuavaCachingService implements CachingService {
 				.removalListener(removal -> 
 					commentsByPostId.invalidate(removal.getKey())
 				).build();
+		this.userSessionsByKey = CacheBuilder.newBuilder().maximumSize(maxNumberOfUserSessions).build();
 	}
 
 	@Override
@@ -85,5 +94,20 @@ public class GuavaCachingService implements CachingService {
 			}
 			commentsById.invalidate(commentId);
 		}
+	}
+
+	@Override
+	public User getUserSessionCache(String sessionKey) {
+		return userSessionsByKey.getIfPresent(sessionKey);
+	}
+
+	@Override
+	public void putUserSessionIntoCache(String sessionKey, User user) {
+		userSessionsByKey.put(sessionKey, user);
+	}
+
+	@Override
+	public void removeUserSessionFromCache(String sessionKey) {
+		userSessionsByKey.invalidate(sessionKey);
 	}
 }

@@ -76,11 +76,12 @@ public class CachingDataService implements DataService {
 
 	@Override
 	public User getUserBySessionKey(String sessionKey) {
-		return dataService.getUserBySessionKey(sessionKey);
+		return cachingService.getUserSessionCacheOrSupplier(sessionKey, () -> dataService.getUserBySessionKey(sessionKey));
 	}
 
 	@Override
 	public void removeSessionKey(String sessionKey) {
+		cachingService.removeUserSessionFromCache(sessionKey);
 		dataService.removeSessionKey(sessionKey);
 	}
 

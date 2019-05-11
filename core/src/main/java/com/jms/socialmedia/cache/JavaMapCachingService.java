@@ -7,21 +7,25 @@ import java.util.Map;
 
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Post;
+import com.jms.socialmedia.model.User;
 
-public class JavaMapCachingService implements CachingService {
+public class JavaMapCachingService extends CachingService {
 
 	private final Map<Integer, Post> postsById;
 	private final Map<Integer, Comment> commentsById;
 	private final Map<Integer, Collection<Comment>> commentsByPostId;
+	private final Map<String, User> userSessionsByKey;
 
 	public JavaMapCachingService() {
-		this(new HashMap<>(), new HashMap<>(), new HashMap<>());
+		this(new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 	}
 
-	public JavaMapCachingService(Map<Integer, Post> postsById, Map<Integer, Comment> commentsById, Map<Integer, Collection<Comment>> commentsByPostId) {
+	public JavaMapCachingService(Map<Integer, Post> postsById, Map<Integer, Comment> commentsById,
+			Map<Integer, Collection<Comment>> commentsByPostId, Map<String, User> userSessionsByKey) {
 		this.postsById = postsById;
 		this.commentsById = commentsById;
 		this.commentsByPostId = commentsByPostId;
+		this.userSessionsByKey = userSessionsByKey;
 	}
 
 	@Override
@@ -83,5 +87,20 @@ public class JavaMapCachingService implements CachingService {
 				comments.remove(comment);
 			}
 		}
+	}
+
+	@Override
+	public User getUserSessionCache(String sessionKey) {
+		return userSessionsByKey.get(sessionKey);
+	}
+
+	@Override
+	public void putUserSessionIntoCache(String sessionKey, User user) {
+		userSessionsByKey.put(sessionKey, user);
+	}
+
+	@Override
+	public void removeUserSessionFromCache(String sessionKey) {
+		userSessionsByKey.remove(sessionKey);
 	}
 }

@@ -6,8 +6,9 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Post;
+import com.jms.socialmedia.model.User;
 
-public class CachingServiceWithMetrics implements CachingService {
+public class CachingServiceWithMetrics extends CachingService {
 
 	private final CachingService cachingService;
 	private final Timer getPostFromCacheTimer;
@@ -18,6 +19,9 @@ public class CachingServiceWithMetrics implements CachingService {
 	private final Timer putCommentIntoCacheTimer;
 	private final Timer putCommentsFromPostIntoCacheTimer;
 	private final Timer removeCommentFromCacheTimer;
+	private final Timer getUserSessionCacheTimer;
+	private final Timer putUserSessionIntoCacheTimer;
+	private final Timer removeUserSessionFromCacheTimer;
 
 	public CachingServiceWithMetrics(CachingService cachingService, MetricRegistry metricRegistry) {
 		this(cachingService, metricRegistry, cachingService.getClass().getSimpleName());
@@ -33,6 +37,9 @@ public class CachingServiceWithMetrics implements CachingService {
 		this.putCommentIntoCacheTimer = metricRegistry.timer(metricsName + ".putCommentIntoCache");
 		this.putCommentsFromPostIntoCacheTimer = metricRegistry.timer(metricsName + ".putCommentsFromPostIntoCache");
 		this.removeCommentFromCacheTimer = metricRegistry.timer(metricsName + ".removeCommentFromCache");
+		this.getUserSessionCacheTimer = metricRegistry.timer(metricsName + ".getUserSessionCache");
+		this.putUserSessionIntoCacheTimer = metricRegistry.timer(metricsName + ".putUserSessionIntoCache");
+		this.removeUserSessionFromCacheTimer = metricRegistry.timer(metricsName + ".removeUserSessionFromCache");
 	}
 
 	@Override
@@ -88,6 +95,27 @@ public class CachingServiceWithMetrics implements CachingService {
 	public void removeCommentFromCache(int commentId) {
 		try (Timer.Context context = removeCommentFromCacheTimer.time()) {
 			cachingService.removeCommentFromCache(commentId);
+		}
+	}
+
+	@Override
+	public User getUserSessionCache(String sessionKey) {
+		try (Timer.Context context = getUserSessionCacheTimer.time()) {
+			return cachingService.getUserSessionCache(sessionKey);
+		}
+	}
+
+	@Override
+	public void putUserSessionIntoCache(String sessionKey, User user) {
+		try (Timer.Context context = putUserSessionIntoCacheTimer.time()) {
+			cachingService.putUserSessionIntoCache(sessionKey, user);
+		}
+	}
+
+	@Override
+	public void removeUserSessionFromCache(String sessionKey) {
+		try (Timer.Context context = removeUserSessionFromCacheTimer.time()) {
+			cachingService.removeUserSessionFromCache(sessionKey);
 		}
 	}
 }
