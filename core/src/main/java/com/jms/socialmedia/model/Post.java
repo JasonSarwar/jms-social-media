@@ -10,6 +10,10 @@ public class Post extends Entry {
 	public Post() {
 	}
 
+	public Post(Integer postId) {
+		this(postId, null, null);
+	}
+
 	public Post(Integer postId, String text, LocalDateTime timestamp) {
 		super(postId, null, null, null, text, timestamp);
 	}

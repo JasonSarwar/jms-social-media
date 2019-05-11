@@ -37,7 +37,7 @@ public interface CachingService {
 
 	default Collection<Comment> getCommentsFromCacheOrSupplier(int postId, Supplier<Collection<Comment>> supplier) {
 		Collection<Comment> comments = getCommentsFromCache(postId);
-		if (comments == null) {
+		if (comments == null || comments.isEmpty()) {
 			comments = supplier.get();
 			if (comments != null) {
 				putCommentsFromPostIntoCache(postId, comments);
