@@ -26,6 +26,7 @@ public class CoreSettings {
 	public static final Setting<Set<Integer>> ADMIN_USER_IDS = integerSetSettingWithDefault("admin.user_ids",
 			Collections.emptySet());
 	public static final Setting<Boolean> METRICS = booleanSettingWithDefault("metrics", true);
+	public static final Setting<Boolean> METRICS_JVM = booleanSettingWithDefault("metrics.jvm", true);
 	public static final Setting<Boolean> LOG_REQUESTS_AND_RESPONSES = booleanSettingWithDefault(
 			"log.requests_and_responses", true);
 

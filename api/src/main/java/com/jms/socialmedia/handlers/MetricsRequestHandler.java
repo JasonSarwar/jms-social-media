@@ -1,7 +1,10 @@
 package com.jms.socialmedia.handlers;
 
-import java.util.SortedMap;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
+import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -46,7 +49,7 @@ public class MetricsRequestHandler extends RequestHandler {
 	 * @param response
 	 * @return	Timers according to the query parameters
 	 */
-	public SortedMap<String, Timer> handleGetTimers(Request request, Response response) {
+	public Map<String, Timer> handleGetTimers(Request request, Response response) {
 		String query;
 		MetricFilter metricFilter;
 		if (request.queryParams("all") != null) {
@@ -83,10 +86,71 @@ public class MetricsRequestHandler extends RequestHandler {
 	 * @return the number of times a Timer recorded a call
 	 */
 	public long handleGetTimerCount(Request request, Response response) {
-		Timer timer = metricRegistry.getTimers().get(request.params("timer"));
-		if (timer == null) {
+		return handleGetTimer(request, response).getCount();
+	}
+
+	/**
+	 * <h1>GET /metrics/gauges</h1>
+	 * 
+	 * Query Parameters:
+	 * <ul>
+	 *   <li> query - Display gauges that contain the query text </li>
+	 *   <li> compact - un-nested response <li>
+	 * </ul>
+	 * 
+	 * @param request
+	 * @param response
+	 * @return Gauge according to the query parameters
+	 */
+	public Map<String, ?> handleGetGauges(Request request, Response response) {
+		String query;
+		MetricFilter metricFilter;
+		if ((query = request.queryParams("query")) != null) {
+			metricFilter = MetricFilter.contains(query);
+		} else {
+			metricFilter = MetricFilter.ALL;
+		}
+
+		Map<String, Gauge> gauges = metricRegistry.getGauges(metricFilter);
+		return compactResponseIfNecessary(gauges, request);
+	}
+
+	/**
+	 * <h1> GET /metrics/gauge/:gauge </h1>
+	 * 
+	 * @param request
+	 * @param response
+	 * @return a Gauge if it exists
+	 */
+	public Gauge<?> handleGetGauge(Request request, Response response) {
+		Gauge<?> gauge = metricRegistry.getGauges().get(request.params("gauge"));
+		if (gauge == null) {
 			throw new NotFoundException("Timer not found");
 		}
-		return timer.getCount();
+		return gauge;
+	}
+
+	/**
+	 * <h1> GET /metrics/jvm </h1>
+	 * 
+	 * @param request
+	 * @param response
+	 * @return Gauge according to the query parameters
+	 */
+	public Map<String, ?> handleGetJvmGauges(Request request, Response response) {
+		Map<String, Gauge> gauges = metricRegistry.getGauges(MetricFilter.startsWith("jvm."));
+		return compactResponseIfNecessary(gauges, request);
+	}
+	
+	private Map<String, ?> compactResponseIfNecessary(Map<String, Gauge> gauges, Request request) {
+		String compact = request.queryParams("compact");
+		
+		if (compact != null && !compact.equalsIgnoreCase("false")) {
+			return gauges.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getValue(),
+					(v1 ,v2) -> {throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));},
+                    TreeMap::new));
+		} else {
+			return gauges;
+		}
 	}
 }

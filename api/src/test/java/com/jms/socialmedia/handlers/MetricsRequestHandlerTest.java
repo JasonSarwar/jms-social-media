@@ -1,12 +1,13 @@
 package com.jms.socialmedia.handlers;
 
 import java.io.IOException;
-import java.util.SortedMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.jms.socialmedia.dataservice.DataService;
@@ -61,7 +62,7 @@ public class MetricsRequestHandlerTest {
 		timer.time().stop();
 		metricRegistry.timer("doNotShowThisTimer");
 
-		SortedMap<String, Timer> timersMap = metricsRequestHandler.handleGetTimers(request, response);
+		Map<String, Timer> timersMap = metricsRequestHandler.handleGetTimers(request, response);
 		assertThat(timersMap.size(), is(1));
 		assertThat(timersMap.get("testTimer"), is(timer));
 		assertThat(timersMap.get("doNotShowThisTimer"), is(nullValue()));
@@ -81,7 +82,7 @@ public class MetricsRequestHandlerTest {
 
 		when(request.queryParams("all")).thenReturn("");
 
-		SortedMap<String, Timer> timersMap = metricsRequestHandler.handleGetTimers(request, response);
+		Map<String, Timer> timersMap = metricsRequestHandler.handleGetTimers(request, response);
 		assertThat(timersMap.size(), is(3));
 		assertThat(timersMap.get("testTimer1"), is(timer1));
 		assertThat(timersMap.get("testTimer1").getCount(), is(1L));
@@ -104,7 +105,7 @@ public class MetricsRequestHandlerTest {
 
 		when(request.queryParams("query")).thenReturn("test");
 
-		SortedMap<String, Timer> timersMap = metricsRequestHandler.handleGetTimers(request, response);
+		Map<String, Timer> timersMap = metricsRequestHandler.handleGetTimers(request, response);
 		assertThat(timersMap.size(), is(2));
 		assertThat(timersMap.get("testTimer1"), is(timer1));
 		assertThat(timersMap.get("testTimer1").getCount(), is(1L));
@@ -172,5 +173,169 @@ public class MetricsRequestHandlerTest {
 			verify(request, times(1)).params("timer");
 			verifyNoMoreInteractions(request);
 		}
+	}
+
+	@Test
+	public void testHandleGetAllGauges() throws IOException {
+
+		Gauge<?> gauge1 = metricRegistry.gauge("testGauge1", () -> () -> 1);
+		Gauge<?> gauge2 = metricRegistry.gauge("testGauge2", () -> () -> 2);
+		Gauge<?> gauge3 = metricRegistry.gauge("testGauge3", () -> () -> 3);
+
+		Map<String, ?> gauges = metricsRequestHandler.handleGetGauges(request, response);
+		assertThat(gauges.size(), is(3));
+		assertThat(gauges.get("testGauge1"), is(gauge1));
+		assertThat(gauges.get("testGauge2"), is(gauge2));
+		assertThat(gauges.get("testGauge3"), is(gauge3));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetAllGaugesCompactFalse() throws IOException {
+
+		Gauge<?> gauge1 = metricRegistry.gauge("testGauge1", () -> () -> 1);
+		Gauge<?> gauge2 = metricRegistry.gauge("testGauge2", () -> () -> 2);
+		Gauge<?> gauge3 = metricRegistry.gauge("testGauge3", () -> () -> 3);
+
+		when(request.queryParams("compact")).thenReturn("false");
+
+		Map<String, ?> gauges = metricsRequestHandler.handleGetGauges(request, response);
+		assertThat(gauges.size(), is(3));
+		assertThat(gauges.get("testGauge1"), is(gauge1));
+		assertThat(gauges.get("testGauge2"), is(gauge2));
+		assertThat(gauges.get("testGauge3"), is(gauge3));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetAllGaugesCompact() throws IOException {
+
+		metricRegistry.gauge("testGauge1", () -> () -> 1);
+		metricRegistry.gauge("testGauge2", () -> () -> 2);
+		metricRegistry.gauge("testGauge3", () -> () -> 3);
+
+		when(request.queryParams("compact")).thenReturn("");
+
+		Map<String, ?> gauges = metricsRequestHandler.handleGetGauges(request, response);
+		assertThat(gauges.size(), is(3));
+		assertThat(gauges.get("testGauge1"), is(1));
+		assertThat(gauges.get("testGauge2"), is(2));
+		assertThat(gauges.get("testGauge3"), is(3));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetGaugesQuery() throws IOException {
+
+		Gauge<?> gauge1 = metricRegistry.gauge("testGauge1", () -> () -> 1);
+		Gauge<?> gauge2 = metricRegistry.gauge("testGauge2", () -> () -> 2);
+		metricRegistry.gauge("gauge3", () -> () -> 3);
+
+		when(request.queryParams("query")).thenReturn("test");
+
+		Map<String, ?> gauges = metricsRequestHandler.handleGetGauges(request, response);
+		assertThat(gauges.size(), is(2));
+		assertThat(gauges.get("testGauge1"), is(gauge1));
+		assertThat(gauges.get("testGauge2"), is(gauge2));
+		assertThat(gauges.get("gauge3"), is(nullValue()));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetGaugesQueryCompact() throws IOException {
+
+		metricRegistry.gauge("testGauge1", () -> () -> 1);
+		metricRegistry.gauge("testGauge2", () -> () -> 2);
+		metricRegistry.gauge("gauge3", () -> () -> 3);
+
+		when(request.queryParams("query")).thenReturn("test");
+		when(request.queryParams("compact")).thenReturn("true");
+
+		Map<String, ?> gauges = metricsRequestHandler.handleGetGauges(request, response);
+		assertThat(gauges.size(), is(2));
+		assertThat(gauges.get("testGauge1"), is(1));
+		assertThat(gauges.get("testGauge2"), is(2));
+		assertThat(gauges.get("gauge3"), is(nullValue()));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetGauge() throws IOException {
+
+		Gauge<?> gauge = metricRegistry.gauge("testGauge", () -> () -> 1);
+
+		when(request.params("gauge")).thenReturn("testGauge");
+
+		assertThat(metricsRequestHandler.handleGetGauge(request, response), is(gauge));
+
+		verify(request, times(1)).params("gauge");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetGaugeNotFound() throws IOException {
+
+		when(request.params("gauge")).thenReturn("testGauge");
+
+		try {
+			metricsRequestHandler.handleGetGauge(request, response);
+			fail("Did not throw Exception");
+		} catch (Exception e) {
+			assertThat(e, instanceOf(NotFoundException.class));
+			assertThat(e.getMessage(), is("Timer not found"));
+			verify(request, times(1)).params("gauge");
+			verifyNoMoreInteractions(request);
+		}
+	}
+
+	@Test
+	public void testHandleGetJvmGauges() throws IOException {
+
+		Gauge<?> gauge1 = metricRegistry.gauge("jvm.1", () -> () -> 1);
+		Gauge<?> gauge2 = metricRegistry.gauge("jvm.2", () -> () -> 2);
+		metricRegistry.gauge("3", () -> () -> 3);
+
+		Map<String, ?> gauges = metricsRequestHandler.handleGetJvmGauges(request, response);
+		assertThat(gauges.size(), is(2));
+		assertThat(gauges.get("jvm.1"), is(gauge1));
+		assertThat(gauges.get("jvm.2"), is(gauge2));
+		assertThat(gauges.get("3"), is(nullValue()));
+
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetJvmGaugesCompact() throws IOException {
+
+		metricRegistry.gauge("jvm.1", () -> () -> 1);
+		metricRegistry.gauge("jvm.2", () -> () -> 2);
+		metricRegistry.gauge("3", () -> () -> 3);
+
+		when(request.queryParams("compact")).thenReturn("");
+
+		Map<String, ?> gauges = metricsRequestHandler.handleGetJvmGauges(request, response);
+		assertThat(gauges.size(), is(2));
+		assertThat(gauges.get("jvm.1"), is(1));
+		assertThat(gauges.get("jvm.2"), is(2));
+		assertThat(gauges.get("3"), is(nullValue()));
+
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
 	}
 }

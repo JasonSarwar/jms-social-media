@@ -18,10 +18,13 @@ dependencies {
 	compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-afterburner', version: '2.9.8'
 
 	// https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
-	compile group: 'io.dropwizard.metrics', name: 'metrics-core', version: '4.0.5'
+	compile group: 'io.dropwizard.metrics', name: 'metrics-core', version: '4.1.0'
 
 	// https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-json
-	compile group: 'io.dropwizard.metrics', name: 'metrics-json', version: '4.0.5'
+	compile group: 'io.dropwizard.metrics', name: 'metrics-json', version: '4.1.0'
+
+	// https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jvm
+	compile group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: '4.1.0'
 
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'

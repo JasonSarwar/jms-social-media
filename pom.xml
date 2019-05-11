@@ -34,7 +34,7 @@
 		<jjwt.version>0.9.1</jjwt.version>
 		<spring-security.version>5.1.5.RELEASE</spring-security.version>
 		<mysql-connector.version>8.0.16</mysql-connector.version>
-		<metrics.version>4.0.5</metrics.version>
+		<metrics.version>4.1.0</metrics.version>
 		<logging.version>2.11.2</logging.version>
 		<junit.version>4.12</junit.version>
 		<mockito.version>2.27.0</mockito.version>
@@ -141,6 +141,13 @@
 				<groupId>io.dropwizard.metrics</groupId>
 				<artifactId>metrics-json</artifactId>
 				<version>${metrics.version}</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jvm -->
+			<dependency>
+			    <groupId>io.dropwizard.metrics</groupId>
+			    <artifactId>metrics-jvm</artifactId>
+			    <version>${metrics.version}</version>
 			</dependency>
 
 			<!-- For Logging -->
