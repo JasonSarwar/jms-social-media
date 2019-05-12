@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Post;
+import com.jms.socialmedia.model.User;
 
 import static org.junit.Assert.assertThat;
 
@@ -19,7 +20,7 @@ public class GuavaCachingServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		guavaCachingService = new GuavaCachingService(2);
+		guavaCachingService = new GuavaCachingService(2, 2);
 	}
 
 	@Test
@@ -234,5 +235,44 @@ public class GuavaCachingServiceTest {
 		assertThat(guavaCachingService.getCommentFromCache(33), is(nullValue()));
 		assertThat(guavaCachingService.getCommentFromCache(34), is(comment4));
 		assertThat(guavaCachingService.getCommentFromCache(37), is(nullValue()));
+	}
+
+	@Test
+	public void testAddUserSessions() {
+		User user1 = new User(1, "User1", "Full Name 1", "Hashed Password");
+		User user2 = new User(2, "User2", "Full Name 2", "Hashed Password");
+		User user3 = new User(3, "User3", "Full Name 3", "Hashed Password");
+
+		String sessionKey1 = "sessionKey1";
+		String sessionKey2 = "sessionKey2";
+		String sessionKey3 = "sessionKey3";
+
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey1), is(nullValue()));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey2), is(nullValue()));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey3), is(nullValue()));
+
+		guavaCachingService.putUserSessionIntoCache(sessionKey1, user1);
+
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey1), is(user1));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey2), is(nullValue()));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey3), is(nullValue()));
+
+		guavaCachingService.putUserSessionIntoCache(sessionKey2, user2);
+
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey1), is(user1));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey2), is(user2));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey3), is(nullValue()));
+
+		guavaCachingService.putUserSessionIntoCache(sessionKey3, user3);
+
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey1), is(nullValue()));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey2), is(user2));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey3), is(user3));
+
+		guavaCachingService.removeUserSessionFromCache(sessionKey3);
+
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey1), is(nullValue()));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey2), is(user2));
+		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey3), is(nullValue()));
 	}
 }

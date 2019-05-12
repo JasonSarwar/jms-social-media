@@ -21,6 +21,8 @@ public class CoreSettings {
 			"guava");
 	public static final Setting<Integer> CACHING_MAX_NUMBER_OF_POSTS = integerSettingWithDefault(
 			"caching.max_number_of_posts", 50);
+	public static final Setting<Integer> CACHING_MAX_NUMBER_OF_USER_SESSIONS = integerSettingWithDefault(
+			"caching.max_number_of_user_sessions", 20);
 
 	public static final Setting<Boolean> CREATE_TABLES = booleanSettingWithDefault("db.create_tables", false);
 	public static final Setting<Set<Integer>> ADMIN_USER_IDS = integerSetSettingWithDefault("admin.user_ids",

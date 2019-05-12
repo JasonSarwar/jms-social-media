@@ -25,10 +25,6 @@ public class GuavaCachingService extends CachingService {
 		this(DEFAULT_MAX_NO_OF_POSTS, DEFAULT_MAX_NO_OF_USER_SESSIONS);
 	}
 
-	public GuavaCachingService(int maxNumberOfPosts) {
-		this(maxNumberOfPosts, DEFAULT_MAX_NO_OF_USER_SESSIONS);
-	}
-
 	public GuavaCachingService(int maxNumberOfPosts, int maxNumberOfUserSessions) {
 		this.commentsById = CacheBuilder.newBuilder().build();
 		this.commentsByPostId = CacheBuilder.newBuilder().maximumSize(maxNumberOfPosts)
@@ -97,7 +93,7 @@ public class GuavaCachingService extends CachingService {
 	}
 
 	@Override
-	public User getUserSessionCache(String sessionKey) {
+	public User getUserSessionFromCache(String sessionKey) {
 		return userSessionsByKey.getIfPresent(sessionKey);
 	}
 

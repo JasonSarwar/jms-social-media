@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Post;
+import com.jms.socialmedia.model.User;
 
 import static org.junit.Assert.assertThat;
 import java.util.Set;
@@ -236,5 +237,32 @@ public class JavaMapCachingServiceTest {
 		assertThat(javaMapCachingService.getCommentFromCache(33), is(nullValue()));
 		assertThat(javaMapCachingService.getCommentFromCache(34), is(comment4));
 		assertThat(javaMapCachingService.getCommentFromCache(37), is(nullValue()));
+	}
+	
+	@Test
+	public void testAddUserSessions() {
+		User user1 = new User(1, "User1", "Full Name 1", "Hashed Password");
+		User user2 = new User(2, "User2", "Full Name 2", "Hashed Password");
+
+		String sessionKey1 = "sessionKey1";
+		String sessionKey2 = "sessionKey2";
+
+		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey1), is(nullValue()));
+		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey2), is(nullValue()));
+
+		javaMapCachingService.putUserSessionIntoCache(sessionKey1, user1);
+
+		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey1), is(user1));
+		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey2), is(nullValue()));
+
+		javaMapCachingService.putUserSessionIntoCache(sessionKey2, user2);
+
+		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey1), is(user1));
+		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey2), is(user2));
+
+		javaMapCachingService.removeUserSessionFromCache(sessionKey2);
+
+		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey1), is(user1));
+		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey2), is(nullValue()));
 	}
 }

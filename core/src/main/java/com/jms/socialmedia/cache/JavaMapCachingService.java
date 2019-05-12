@@ -90,7 +90,7 @@ public class JavaMapCachingService extends CachingService {
 	}
 
 	@Override
-	public User getUserSessionCache(String sessionKey) {
+	public User getUserSessionFromCache(String sessionKey) {
 		return userSessionsByKey.get(sessionKey);
 	}
 

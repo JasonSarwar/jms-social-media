@@ -19,7 +19,7 @@ public class CachingServiceWithMetrics extends CachingService {
 	private final Timer putCommentIntoCacheTimer;
 	private final Timer putCommentsFromPostIntoCacheTimer;
 	private final Timer removeCommentFromCacheTimer;
-	private final Timer getUserSessionCacheTimer;
+	private final Timer getUserSessionFromCacheTimer;
 	private final Timer putUserSessionIntoCacheTimer;
 	private final Timer removeUserSessionFromCacheTimer;
 
@@ -37,7 +37,7 @@ public class CachingServiceWithMetrics extends CachingService {
 		this.putCommentIntoCacheTimer = metricRegistry.timer(metricsName + ".putCommentIntoCache");
 		this.putCommentsFromPostIntoCacheTimer = metricRegistry.timer(metricsName + ".putCommentsFromPostIntoCache");
 		this.removeCommentFromCacheTimer = metricRegistry.timer(metricsName + ".removeCommentFromCache");
-		this.getUserSessionCacheTimer = metricRegistry.timer(metricsName + ".getUserSessionCache");
+		this.getUserSessionFromCacheTimer = metricRegistry.timer(metricsName + ".getUserSessionFromCache");
 		this.putUserSessionIntoCacheTimer = metricRegistry.timer(metricsName + ".putUserSessionIntoCache");
 		this.removeUserSessionFromCacheTimer = metricRegistry.timer(metricsName + ".removeUserSessionFromCache");
 	}
@@ -99,9 +99,9 @@ public class CachingServiceWithMetrics extends CachingService {
 	}
 
 	@Override
-	public User getUserSessionCache(String sessionKey) {
-		try (Timer.Context context = getUserSessionCacheTimer.time()) {
-			return cachingService.getUserSessionCache(sessionKey);
+	public User getUserSessionFromCache(String sessionKey) {
+		try (Timer.Context context = getUserSessionFromCacheTimer.time()) {
+			return cachingService.getUserSessionFromCache(sessionKey);
 		}
 	}
 

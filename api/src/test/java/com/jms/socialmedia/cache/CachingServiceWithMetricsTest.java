@@ -28,6 +28,15 @@ public class CachingServiceWithMetricsTest {
 	}
 
 	@Test
+	public void testConstructorWithoutMetricsName() {
+		cachingServiceWithMetrics = new CachingServiceWithMetrics(new JavaMapCachingService(), metricRegistry);
+		cachingServiceWithMetrics.getPostFromCache(1);
+		Timer timer = metricRegistry.timer("JavaMapCachingService.getPostFromCache");
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
+
+	@Test
 	public void testGetPostFromCache() {
 		Timer timer = metricRegistry.timer("test.getPostFromCache");
 		assertThat(timer.getCount(), is(0L));
@@ -131,4 +140,42 @@ public class CachingServiceWithMetricsTest {
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
 
+	@Test
+	public void testGetUserSessionFromCache() {
+		Timer timer = metricRegistry.timer("test.getUserSessionFromCache");
+		assertThat(timer.getCount(), is(0L));
+		assertThat(timer.getOneMinuteRate() == 0, is(true));
+		cachingServiceWithMetrics.getUserSessionFromCache(null);
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+		cachingServiceWithMetrics.getUserSessionFromCache(null);
+		assertThat(timer.getCount(), is(2L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
+
+	@Test
+	public void testPutUserSessionIntoCache() {
+		Timer timer = metricRegistry.timer("test.putUserSessionIntoCache");
+		assertThat(timer.getCount(), is(0L));
+		assertThat(timer.getOneMinuteRate() == 0, is(true));
+		cachingServiceWithMetrics.putUserSessionIntoCache(null, null);
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+		cachingServiceWithMetrics.putUserSessionIntoCache(null, null);
+		assertThat(timer.getCount(), is(2L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
+
+	@Test
+	public void testRemoveUserSessionFromCache() {
+		Timer timer = metricRegistry.timer("test.removeUserSessionFromCache");
+		assertThat(timer.getCount(), is(0L));
+		assertThat(timer.getOneMinuteRate() == 0, is(true));
+		cachingServiceWithMetrics.removeUserSessionFromCache(null);
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+		cachingServiceWithMetrics.removeUserSessionFromCache(null);
+		assertThat(timer.getCount(), is(2L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
 }

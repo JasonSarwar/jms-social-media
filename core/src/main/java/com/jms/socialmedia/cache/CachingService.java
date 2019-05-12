@@ -30,7 +30,7 @@ public abstract class CachingService {
 
 	public abstract void removeCommentFromCache(int commentId);
 
-	public abstract User getUserSessionCache(String sessionKey);
+	public abstract User getUserSessionFromCache(String sessionKey);
 
 	public abstract void putUserSessionIntoCache(String sessionKey, User user);
 
@@ -52,7 +52,7 @@ public abstract class CachingService {
 
 	public Collection<Comment> getCommentsFromCacheOrSupplier(int postId, Supplier<Collection<Comment>> supplier) {
 		Collection<Comment> comments = getCommentsFromCache(postId);
-		if (comments == null || comments.isEmpty()) {
+		if (comments == null) {
 			comments = supplier.get();
 			if (comments != null) {
 				putCommentsFromPostIntoCache(postId, comments);
@@ -65,7 +65,7 @@ public abstract class CachingService {
 	}
 
 	public User getUserSessionCacheOrSupplier(String sessionKey, Supplier<User> supplier) {
-		User user = getUserSessionCache(sessionKey);
+		User user = getUserSessionFromCache(sessionKey);
 		if (user == null) {
 			user = supplier.get();
 			if (user != null) {

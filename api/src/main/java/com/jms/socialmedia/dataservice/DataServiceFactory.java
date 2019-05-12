@@ -28,7 +28,8 @@ public class DataServiceFactory {
 			if (cachingImplementation.equalsIgnoreCase("javamap")) {
 				cachingService = new JavaMapCachingService();
 			} else {
-				cachingService = new GuavaCachingService(configurations.get(CoreSettings.CACHING_MAX_NUMBER_OF_POSTS));
+				cachingService = new GuavaCachingService(configurations.get(CoreSettings.CACHING_MAX_NUMBER_OF_POSTS),
+						configurations.get(CoreSettings.CACHING_MAX_NUMBER_OF_USER_SESSIONS));
 			}
 
 			if (metricRegistry != null) {
