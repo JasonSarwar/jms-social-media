@@ -8,13 +8,13 @@ public interface CachingCodec<T> {
 
 	T encodePost(Post post);
 	
-	Post decodePost(T post);
+	Post decodePost(T encodedPost);
 	
 	T encodeComment(Comment comment);
 	
-	Comment decodeComment(T comment);
+	Comment decodeComment(T encodedComment);
 	
 	T encodeUser(User user);
 	
-	User decodeUser(T user);
+	User decodeUser(T encodedUser);
 }

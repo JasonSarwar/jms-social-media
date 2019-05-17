@@ -40,7 +40,7 @@ public class Post extends Entry {
 				&& Objects.equals(this.username, that.username) && Objects.equals(this.fullName, that.fullName)
 				&& Objects.equals(this.text, that.text) && Objects.equals(this.timestamp, that.timestamp)
 				&& Objects.equals(this.profilePictureLink, that.profilePictureLink)
-				&& Objects.equals(this.likes, that.likes);
+				&& this.likes.size() == that.likes.size() && this.likes.containsAll(that.likes);
 	}
 
 	@Override
