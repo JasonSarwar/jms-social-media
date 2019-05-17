@@ -35,6 +35,8 @@
 		<spring-security.version>5.1.5.RELEASE</spring-security.version>
 		<mysql-connector.version>8.0.16</mysql-connector.version>
 		<metrics.version>4.1.0</metrics.version>
+		<apache.commons.pool>2.6.2</apache.commons.pool>
+		<jedis.version>3.0.1</jedis.version>
 		<logging.version>2.11.2</logging.version>
 		<junit.version>4.12</junit.version>
 		<mockito.version>2.27.0</mockito.version>
@@ -145,9 +147,23 @@
 
 			<!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jvm -->
 			<dependency>
-			    <groupId>io.dropwizard.metrics</groupId>
-			    <artifactId>metrics-jvm</artifactId>
-			    <version>${metrics.version}</version>
+				<groupId>io.dropwizard.metrics</groupId>
+				<artifactId>metrics-jvm</artifactId>
+				<version>${metrics.version}</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+			<dependency>
+				<groupId>redis.clients</groupId>
+				<artifactId>jedis</artifactId>
+				<version>${jedis.version}</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-pool2</artifactId>
+				<version>${apache.commons.pool}</version>
 			</dependency>
 
 			<!-- For Logging -->
