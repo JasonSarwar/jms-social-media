@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
-public class Post extends Entry {
+public class Post extends Entry implements Comparable<Post> {
 
 	public Post() {
 	}
@@ -57,4 +57,8 @@ public class Post extends Entry {
 				.toString();
 	}
 
+	@Override
+	public int compareTo(Post other) {
+		return -postId.compareTo(other.postId);
+	}
 }

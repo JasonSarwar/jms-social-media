@@ -2,7 +2,7 @@ package com.jms.socialmedia.cache;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Map;
 
 import com.jms.socialmedia.model.Comment;
@@ -72,7 +72,7 @@ public class JavaMapCachingService extends CachingService {
 
 	@Override
 	public void putCommentsFromPostIntoCache(int postId, Collection<Comment> comments) {
-		commentsByPostId.put(postId, new HashSet<>(comments));
+		commentsByPostId.put(postId, new TreeSet<>(comments));
 		for (Comment comment : comments) {
 			commentsById.put(comment.getCommentId(), comment);
 		}

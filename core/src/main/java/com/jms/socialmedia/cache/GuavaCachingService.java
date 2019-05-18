@@ -1,7 +1,7 @@
 package com.jms.socialmedia.cache;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
@@ -81,7 +81,7 @@ public class GuavaCachingService extends CachingService {
 
 	@Override
 	public void putCommentsFromPostIntoCache(int postId, Collection<Comment> comments) {
-		commentsByPostId.put(postId, new HashSet<>(comments));
+		commentsByPostId.put(postId, new TreeSet<>(comments));
 		for (Comment comment : comments) {
 			commentsById.put(comment.getCommentId(), comment);
 		}

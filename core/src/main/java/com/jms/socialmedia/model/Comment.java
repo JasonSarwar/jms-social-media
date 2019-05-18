@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
-public class Comment extends Entry {
+public class Comment extends Entry implements Comparable<Comment> {
 
 	private Integer commentId;
 
@@ -66,5 +66,10 @@ public class Comment extends Entry {
 				.add("text", text)
 				.add("likes", likes)
 				.add("timestamp", timestamp).toString();
+	}
+
+	@Override
+	public int compareTo(Comment other) {
+		return commentId.compareTo(other.commentId);
 	}
 }
