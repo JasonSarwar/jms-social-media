@@ -32,11 +32,11 @@ public interface DataService {
 
 	boolean editPassword(Integer userId, String hashedPassword);
 
-	User getUserBySessionKey(String sessionKey);
+	User getUserBySessionId(String sessionId);
 
-	boolean addUserSession(int userId, String sessionKey);
+	boolean addUserSession(int userId, String sessionId);
 
-	void removeSessionKey(String sessionKey);
+	void removeSessionId(String sessionId);
 
 	Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate, 
 			String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc);

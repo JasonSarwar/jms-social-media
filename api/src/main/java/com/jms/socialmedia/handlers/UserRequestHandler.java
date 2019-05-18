@@ -132,7 +132,7 @@ public class UserRequestHandler extends RequestHandler {
 		String sessionKey = request.cookie(SESSION_COOKIE);
 		if (StringUtils.isNotBlank(sessionKey)) {
 
-			User user = dataService.getUserBySessionKey(sessionKey);
+			User user = dataService.getUserBySessionId(sessionKey);
 
 			if (user != null) {
 				return createLoginSuccess(user);
@@ -169,7 +169,7 @@ public class UserRequestHandler extends RequestHandler {
 
 	public Object handleLogout(Request request, Response response) {
 
-		dataService.removeSessionKey(request.cookie(SESSION_COOKIE));
+		dataService.removeSessionId(request.cookie(SESSION_COOKIE));
 		response.removeCookie(SESSION_COOKIE);
 		return "ok";
 	}

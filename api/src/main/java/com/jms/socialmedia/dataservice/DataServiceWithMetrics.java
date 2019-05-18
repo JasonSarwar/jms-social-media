@@ -25,8 +25,8 @@ public class DataServiceWithMetrics implements DataService {
 	private final Timer addUserTimer;
 	private final Timer editPasswordTimer;
 	private final Timer addUserSessionTimer;
-	private final Timer getUserBySessionKeyTimer;
-	private final Timer removeSessionKeyTimer;
+	private final Timer getUserBySessionIdTimer;
+	private final Timer removeSessionIdTimer;
 	private final Timer getPostsTimer;
 	private final Timer getPostTimer;
 	private final Timer getUserIdFromPostIdTimer;
@@ -70,8 +70,8 @@ public class DataServiceWithMetrics implements DataService {
 		this.addUserTimer = metricRegistry.timer(metricsName + ".addUser");
 		this.editPasswordTimer = metricRegistry.timer(metricsName + ".editPassword");
 		this.addUserSessionTimer = metricRegistry.timer(metricsName + ".addUserSession");
-		this.getUserBySessionKeyTimer = metricRegistry.timer(metricsName + ".getUserBySessionKey");
-		this.removeSessionKeyTimer = metricRegistry.timer(metricsName + ".removeSessionKey");
+		this.getUserBySessionIdTimer = metricRegistry.timer(metricsName + ".getUserBySessionId");
+		this.removeSessionIdTimer = metricRegistry.timer(metricsName + ".removeSessionId");
 		this.getPostsTimer = metricRegistry.timer(metricsName + ".getPosts");
 		this.getPostTimer = metricRegistry.timer(metricsName + ".getPost");
 		this.getUserIdFromPostIdTimer = metricRegistry.timer(metricsName + ".getUserIdFromPostId");
@@ -170,23 +170,23 @@ public class DataServiceWithMetrics implements DataService {
 	}
 
 	@Override
-	public User getUserBySessionKey(String sessionKey) {
-		try (Timer.Context context = getUserBySessionKeyTimer.time()) {
-			return dataService.getUserBySessionKey(sessionKey);
+	public User getUserBySessionId(String sessionId) {
+		try (Timer.Context context = getUserBySessionIdTimer.time()) {
+			return dataService.getUserBySessionId(sessionId);
 		}
 	}
 
 	@Override
-	public boolean addUserSession(int userId, String sessionKey) {
+	public boolean addUserSession(int userId, String sessionId) {
 		try (Timer.Context context = addUserSessionTimer.time()) {
-			return dataService.addUserSession(userId, sessionKey);
+			return dataService.addUserSession(userId, sessionId);
 		}
 	}
 
 	@Override
-	public void removeSessionKey(String sessionKey) {
-		try (Timer.Context context = removeSessionKeyTimer.time()) {
-			dataService.removeSessionKey(sessionKey);
+	public void removeSessionId(String sessionId) {
+		try (Timer.Context context = removeSessionIdTimer.time()) {
+			dataService.removeSessionId(sessionId);
 		}
 	}
 

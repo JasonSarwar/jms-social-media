@@ -70,19 +70,19 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public boolean addUserSession(int userId, String sessionKey) {
-		return dataService.addUserSession(userId, sessionKey);
+	public boolean addUserSession(int userId, String sessionId) {
+		return dataService.addUserSession(userId, sessionId);
 	}
 
 	@Override
-	public User getUserBySessionKey(String sessionKey) {
-		return cachingService.getUserSessionCacheOrSupplier(sessionKey, () -> dataService.getUserBySessionKey(sessionKey));
+	public User getUserBySessionId(String sessionId) {
+		return cachingService.getUserSessionCacheOrSupplier(sessionId, () -> dataService.getUserBySessionId(sessionId));
 	}
 
 	@Override
-	public void removeSessionKey(String sessionKey) {
-		cachingService.removeUserSessionFromCache(sessionKey);
-		dataService.removeSessionKey(sessionKey);
+	public void removeSessionId(String sessionId) {
+		cachingService.removeUserSessionFromCache(sessionId);
+		dataService.removeSessionId(sessionId);
 	}
 
 	@Override

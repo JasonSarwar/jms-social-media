@@ -47,7 +47,7 @@ public class CachingServiceTest {
 		when(cachingService.getUserSessionCacheOrSupplier(anyString(), any())).thenCallRealMethod();
 		when(dataService.getPost(1)).thenReturn(post);
 		when(dataService.getComments(1)).thenReturn(comments);
-		when(dataService.getUserBySessionKey("sessionKey")).thenReturn(user);
+		when(dataService.getUserBySessionId("sessionKey")).thenReturn(user);
 	}
 
 	@Test
@@ -107,9 +107,9 @@ public class CachingServiceTest {
 	@Test
 	public void testGetUserSessionFromCacheOrSupplier() {
 		assertThat(cachingService.getUserSessionCacheOrSupplier("sessionKey",
-				() -> dataService.getUserBySessionKey("sessionKey")), is(user));
+				() -> dataService.getUserBySessionId("sessionKey")), is(user));
 		verify(cachingService, times(1)).getUserSessionFromCache("sessionKey");
-		verify(dataService, times(1)).getUserBySessionKey("sessionKey");
+		verify(dataService, times(1)).getUserBySessionId("sessionKey");
 		verify(cachingService, times(1)).putUserSessionIntoCache("sessionKey", user);
 	}
 
@@ -117,7 +117,7 @@ public class CachingServiceTest {
 	public void testGetUserSessionFromCacheOrSupplierAlreadyInCache() {
 		when(cachingService.getUserSessionFromCache("sessionKey")).thenReturn(user);
 		assertThat(cachingService.getUserSessionCacheOrSupplier("sessionKey",
-				() -> dataService.getUserBySessionKey("sessionKey")), is(user));
+				() -> dataService.getUserBySessionId("sessionKey")), is(user));
 		verify(cachingService, times(1)).getUserSessionFromCache("sessionKey");
 		verifyZeroInteractions(dataService);
 		verify(cachingService, never()).putUserSessionIntoCache(any(), any());
@@ -126,9 +126,9 @@ public class CachingServiceTest {
 	@Test
 	public void testGetUserSessionFromCacheOrSupplierNotInCacheOrSupplier() {
 		assertThat(cachingService.getUserSessionCacheOrSupplier("sessionKey2",
-				() -> dataService.getUserBySessionKey("sessionKey2")), is(nullValue()));
+				() -> dataService.getUserBySessionId("sessionKey2")), is(nullValue()));
 		verify(cachingService, times(1)).getUserSessionFromCache("sessionKey2");
-		verify(dataService, times(1)).getUserBySessionKey("sessionKey2");
+		verify(dataService, times(1)).getUserBySessionId("sessionKey2");
 		verify(cachingService, never()).putUserSessionIntoCache(any(), any());
 	}
 }
