@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.MetricRegistry;
+import com.jms.socialmedia.cache.CachingService;
+import com.jms.socialmedia.cache.CachingServiceFactory;
 import com.jms.socialmedia.configuration.Configurations;
 import com.jms.socialmedia.configuration.ConfigurationsFromFile;
 import com.jms.socialmedia.configuration.CoreSettings;
@@ -37,7 +39,8 @@ public class App {
 		setupWebapp(configurations);
 
 		MetricRegistry metricRegistry = MetricRegistryFactory.createMetricRegistry(configurations);
-		DataService dataService = DataServiceFactory.createDataService(configurations, metricRegistry);
+		CachingService cachineService = CachingServiceFactory.createCachingService(configurations, metricRegistry);
+		DataService dataService = DataServiceFactory.createDataService(configurations, cachineService, metricRegistry);
 		PasswordService passwordService = createPasswordService(configurations);
 
 		RouteMappings routes = new RouteMappings(dataService, passwordService, new JWTService(), metricRegistry,

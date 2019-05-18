@@ -2,6 +2,7 @@ package com.jms.socialmedia.cache;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -26,16 +27,22 @@ public class GuavaCachingService extends CachingService {
 	}
 
 	public GuavaCachingService(int maxNumberOfPosts, int maxNumberOfUserSessions) {
+		this(maxNumberOfPosts, maxNumberOfUserSessions, Integer.MAX_VALUE);
+	}
+
+	public GuavaCachingService(int maxNumberOfPosts, int maxNumberOfUserSessions, int expireTimeInSeconds) {
 		this.commentsById = CacheBuilder.newBuilder().build();
 		this.commentsByPostId = CacheBuilder.newBuilder().maximumSize(maxNumberOfPosts)
+				.expireAfterAccess(expireTimeInSeconds, TimeUnit.SECONDS)
 				.<Integer, Collection<Comment>>removalListener(removal -> 
 					commentsById.invalidateAll(removal.getValue().stream().map(Comment::getCommentId).collect(toSet()))
 				).build();
-		this.postsById = CacheBuilder.newBuilder().maximumSize(maxNumberOfPosts)
+		this.postsById = CacheBuilder.newBuilder().maximumSize(maxNumberOfPosts).expireAfterAccess(expireTimeInSeconds, TimeUnit.SECONDS)
 				.removalListener(removal -> 
 					commentsByPostId.invalidate(removal.getKey())
 				).build();
-		this.userSessionsByKey = CacheBuilder.newBuilder().maximumSize(maxNumberOfUserSessions).build();
+		this.userSessionsByKey = CacheBuilder.newBuilder().maximumSize(maxNumberOfUserSessions)
+				.expireAfterAccess(expireTimeInSeconds, TimeUnit.SECONDS).build();
 	}
 
 	@Override
