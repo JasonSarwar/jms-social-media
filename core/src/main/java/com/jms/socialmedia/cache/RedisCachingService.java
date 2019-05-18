@@ -72,11 +72,13 @@ public class RedisCachingService extends AbstractCachingServiceUsingCodec<String
 	@Override
 	protected Collection<String> getEncodedCommentsFromCache(int postId) {
 		try (Jedis jedis = jedisPool.getResource()) {
-			Collection<String> result = jedis.zrange(getCommentsInPostKey(postId), 0, -1);
-			if (result != null && !result.isEmpty()) {
+			if (jedis.exists(getCommentsInPostKey(postId))) {
+				Collection<String> result = jedis.zrange(getCommentsInPostKey(postId), 0, -1);
 				setKeyExpiration(jedis, getCommentsInPostKey(postId));
+				return result;
+			} else {
+				return null;
 			}
-			return result;
 		}
 	}
 

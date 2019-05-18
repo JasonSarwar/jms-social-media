@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -148,18 +147,20 @@ public class RedisCachingServiceTest {
 	@Test
 	public void testGetEncodedCommentsFromCache() {
 		Set<String> encodedComments = Set.of(ENCODED_COMMENT1, ENCODED_COMMENT2);
+		when(jedis.exists(COMMENTS_KEY)).thenReturn(true);
 		when(jedis.zrange(COMMENTS_KEY, 0, -1)).thenReturn(encodedComments);
 
 		assertThat(redisCachingService.getEncodedCommentsFromCache(3), is(encodedComments));
 
+		verify(jedis, times(1)).exists(COMMENTS_KEY);
 		verify(jedis, times(1)).zrange(COMMENTS_KEY, 0, -1);
 		verify(jedis, times(1)).expire(COMMENTS_KEY, EXPIRATION_TIME);
 	}
 
 	@Test
 	public void testGetEncodedCommentsFromCacheNotFound() {
-		assertThat(redisCachingService.getEncodedCommentsFromCache(14), is(Collections.emptySet()));
-		verify(jedis, times(1)).zrange("post/14/comments", 0, -1);
+		assertThat(redisCachingService.getEncodedCommentsFromCache(14), is(nullValue()));
+		verify(jedis, times(1)).exists("post/14/comments");
 	}
 
 	@Test
@@ -167,12 +168,14 @@ public class RedisCachingServiceTest {
 		Set<String> encodedComments = Set.of(ENCODED_COMMENT1, ENCODED_COMMENT2);
 		Collection<Comment> comments = Set.of(comment1, comment2);
 
+		when(jedis.exists(COMMENTS_KEY)).thenReturn(true);
 		when(jedis.zrange(COMMENTS_KEY, 0, -1)).thenReturn(encodedComments);
 
 		Collection<Comment> retrievedComments = redisCachingService.getCommentsFromCache(3);
 		assertThat(retrievedComments.size(), is(comments.size()));
 		assertThat(retrievedComments.containsAll(comments), is(true));
 
+		verify(jedis, times(1)).exists(COMMENTS_KEY);
 		verify(jedis, times(1)).zrange(COMMENTS_KEY, 0, -1);
 		verify(jedis, times(1)).expire(COMMENTS_KEY, EXPIRATION_TIME);
 		verify(cachingServiceCodec, times(1)).decodeComment(ENCODED_COMMENT1);

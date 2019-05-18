@@ -41,8 +41,13 @@ public abstract class AbstractCachingServiceUsingCodec<T> extends CachingService
 
 	@Override
 	public Collection<Comment> getCommentsFromCache(int postId) {
-		return getEncodedCommentsFromCache(postId).stream().map(cachingServiceCodec::decodeComment)
+		Collection<T> encodedComments = getEncodedCommentsFromCache(postId);
+		if (encodedComments != null) {
+			return encodedComments.stream().map(cachingServiceCodec::decodeComment)
 				.collect(Collectors.toList());
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -52,8 +57,10 @@ public abstract class AbstractCachingServiceUsingCodec<T> extends CachingService
 
 	@Override
 	public void putCommentsFromPostIntoCache(int postId, Collection<Comment> comments) {
-		putEncodedCommentsFromPostIntoCache(postId, comments.stream()
-				.collect(Collectors.toMap(cachingServiceCodec::encodeComment, e -> e.getCommentId().doubleValue())));
+		if (!comments.isEmpty()) {
+			putEncodedCommentsFromPostIntoCache(postId, comments.stream()
+					.collect(Collectors.toMap(cachingServiceCodec::encodeComment, e -> e.getCommentId().doubleValue())));
+		}
 	}
 
 	@Override
