@@ -9,6 +9,7 @@ import com.jms.socialmedia.model.User;
 
 import static org.junit.Assert.assertThat;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -274,5 +275,116 @@ public class GuavaCachingServiceTest {
 		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey1), is(nullValue()));
 		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey2), is(user2));
 		assertThat(guavaCachingService.getUserSessionFromCache(sessionKey3), is(nullValue()));
+	}
+
+	@Test
+	public void testEditPost() {
+		Post post = new Post(1);
+		post.setText("Old Text");
+		guavaCachingService.putPostIntoCache(post);
+		assertThat(guavaCachingService.getPostFromCache(1).getText(), is("Old Text"));
+
+		guavaCachingService.editPostInCache(1, "New Text");
+		assertThat(guavaCachingService.getPostFromCache(1).getText(), is("New Text"));
+	}
+
+	@Test
+	public void testEditPostThatIsNotThere() {
+
+		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
+		guavaCachingService.editPostInCache(1, "New Text");
+		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testLikePost() {
+		Post post = new Post(1);
+		guavaCachingService.putPostIntoCache(post);
+		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.emptySet()));
+
+		guavaCachingService.likePostInCache(1, 5);
+		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.singleton(5)));
+	}
+
+	@Test
+	public void testLikePostThatIsNotThere() {
+
+		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
+		guavaCachingService.likePostInCache(1, 5);
+		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testUnlikePost() {
+		Post post = new Post(1);
+		post.addLike(5);
+		guavaCachingService.putPostIntoCache(post);
+		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.singleton(5)));
+
+		guavaCachingService.unlikePostInCache(1, 5);
+		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.emptySet()));
+	}
+
+	@Test
+	public void testUnlikePostThatIsNotThere() {
+
+		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
+		guavaCachingService.unlikePostInCache(1, 5);
+		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testEditComment() {
+		Comment comment = new Comment(1, 3, "Old Text", null);
+		guavaCachingService.putCommentIntoCache(comment);
+		assertThat(guavaCachingService.getCommentFromCache(1).getText(), is("Old Text"));
+
+		guavaCachingService.editCommentInCache(1, "New Text");
+		assertThat(guavaCachingService.getCommentFromCache(1).getText(), is("New Text"));
+	}
+
+	@Test
+	public void testEditCommentThatIsNotThere() {
+
+		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
+		guavaCachingService.editCommentInCache(1, "New Text");
+		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testLikeComment() {
+		Comment comment = new Comment(1, 3, "Old Text", null);
+		guavaCachingService.putCommentIntoCache(comment);
+		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.emptySet()));
+
+		guavaCachingService.likeCommentInCache(1, 5);
+		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.singleton(5)));
+	}
+
+	@Test
+	public void testLikeCommentThatIsNotThere() {
+
+		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
+		guavaCachingService.likeCommentInCache(1, 5);
+		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testUnlikeComment() {
+		Comment comment = new Comment(1, 3, "Old Text", null);
+		comment.addLike(5);
+		guavaCachingService.putCommentIntoCache(comment);
+		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.singleton(5)));
+
+		guavaCachingService.unlikeCommentInCache(1, 5);
+		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.emptySet()));
+	}
+
+	@Test
+	public void testUnlikeCommentThatIsNotThere() {
+
+		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
+		guavaCachingService.unlikeCommentInCache(1, 5);
+		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
 	}
 }

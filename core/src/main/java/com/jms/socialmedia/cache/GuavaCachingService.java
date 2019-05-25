@@ -12,7 +12,7 @@ import com.jms.socialmedia.model.User;
 
 import static java.util.stream.Collectors.toSet;
 
-public class GuavaCachingService extends CachingService {
+public class GuavaCachingService extends AbstractHeapCachingService {
 
 	private static final int DEFAULT_MAX_NO_OF_POSTS = 50;
 	private static final int DEFAULT_MAX_NO_OF_USER_SESSIONS = 20;

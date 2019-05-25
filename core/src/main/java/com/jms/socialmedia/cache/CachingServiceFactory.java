@@ -15,9 +15,9 @@ public class CachingServiceFactory {
 		throw new IllegalStateException("Factory Class");
 	}
 
-	public static CachingService createCachingService(Configurations configurations, MetricRegistry metricRegistry) {
+	public static AbstractCachingService createCachingService(Configurations configurations, MetricRegistry metricRegistry) {
 
-		CachingService cachingService = null;
+		AbstractCachingService cachingService = null;
 		if (configurations.get(CoreSettings.USE_CACHE)) {
 			switch (configurations.get(CoreSettings.CACHE_IMPLEMENTATION).toLowerCase(Locale.US)) {
 				case "redis":

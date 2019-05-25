@@ -28,7 +28,7 @@ import java.util.Collections;
 public class CachingServiceTest {
 
 	@Mock
-	private CachingService cachingService;
+	private AbstractCachingService cachingService;
 	@Mock
 	private DataService dataService;
 

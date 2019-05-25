@@ -8,6 +8,8 @@ import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 
 import static org.junit.Assert.assertThat;
+
+import java.util.Collections;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -264,5 +266,129 @@ public class JavaMapCachingServiceTest {
 
 		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey1), is(user1));
 		assertThat(javaMapCachingService.getUserSessionFromCache(sessionKey2), is(nullValue()));
+	}
+
+	@Test
+	public void testRemoveComment() {
+		Comment comment = new Comment(1, 3, "Old Text", null);
+		javaMapCachingService.putCommentIntoCache(comment);
+
+		assertThat(javaMapCachingService.getCommentFromCache(1), is(comment));
+		assertThat(javaMapCachingService.getCommentsFromCache(3), is(nullValue()));
+
+		javaMapCachingService.removeCommentFromCache(1);
+		assertThat(javaMapCachingService.getCommentFromCache(1), is(nullValue()));
+		assertThat(javaMapCachingService.getCommentsFromCache(3), is(nullValue()));
+	}
+
+	@Test
+	public void testEditPost() {
+		Post post = new Post(1);
+		post.setText("Old Text");
+		javaMapCachingService.putPostIntoCache(post);
+		assertThat(javaMapCachingService.getPostFromCache(1).getText(), is("Old Text"));
+
+		javaMapCachingService.editPostInCache(1, "New Text");
+		assertThat(javaMapCachingService.getPostFromCache(1).getText(), is("New Text"));
+	}
+
+	@Test
+	public void testEditPostThatIsNotThere() {
+
+		assertThat(javaMapCachingService.getPostFromCache(1), is(nullValue()));
+		javaMapCachingService.editPostInCache(1, "New Text");
+		assertThat(javaMapCachingService.getPostFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testLikePost() {
+		Post post = new Post(1);
+		javaMapCachingService.putPostIntoCache(post);
+		assertThat(javaMapCachingService.getPostFromCache(1).getLikes(), is(Collections.emptySet()));
+
+		javaMapCachingService.likePostInCache(1, 5);
+		assertThat(javaMapCachingService.getPostFromCache(1).getLikes(), is(Collections.singleton(5)));
+	}
+
+	@Test
+	public void testLikePostThatIsNotThere() {
+
+		assertThat(javaMapCachingService.getPostFromCache(1), is(nullValue()));
+		javaMapCachingService.likePostInCache(1, 5);
+		assertThat(javaMapCachingService.getPostFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testUnlikePost() {
+		Post post = new Post(1);
+		post.addLike(5);
+		javaMapCachingService.putPostIntoCache(post);
+		assertThat(javaMapCachingService.getPostFromCache(1).getLikes(), is(Collections.singleton(5)));
+
+		javaMapCachingService.unlikePostInCache(1, 5);
+		assertThat(javaMapCachingService.getPostFromCache(1).getLikes(), is(Collections.emptySet()));
+	}
+
+	@Test
+	public void testUnlikePostThatIsNotThere() {
+
+		assertThat(javaMapCachingService.getPostFromCache(1), is(nullValue()));
+		javaMapCachingService.unlikePostInCache(1, 5);
+		assertThat(javaMapCachingService.getPostFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testEditComment() {
+		Comment comment = new Comment(1, 3, "Old Text", null);
+		javaMapCachingService.putCommentIntoCache(comment);
+		assertThat(javaMapCachingService.getCommentFromCache(1).getText(), is("Old Text"));
+
+		javaMapCachingService.editCommentInCache(1, "New Text");
+		assertThat(javaMapCachingService.getCommentFromCache(1).getText(), is("New Text"));
+	}
+
+	@Test
+	public void testEditCommentThatIsNotThere() {
+
+		assertThat(javaMapCachingService.getCommentFromCache(1), is(nullValue()));
+		javaMapCachingService.editCommentInCache(1, "New Text");
+		assertThat(javaMapCachingService.getCommentFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testLikeComment() {
+		Comment comment = new Comment(1, 3, "Old Text", null);
+		javaMapCachingService.putCommentIntoCache(comment);
+		assertThat(javaMapCachingService.getCommentFromCache(1).getLikes(), is(Collections.emptySet()));
+
+		javaMapCachingService.likeCommentInCache(1, 5);
+		assertThat(javaMapCachingService.getCommentFromCache(1).getLikes(), is(Collections.singleton(5)));
+	}
+
+	@Test
+	public void testLikeCommentThatIsNotThere() {
+
+		assertThat(javaMapCachingService.getCommentFromCache(1), is(nullValue()));
+		javaMapCachingService.likeCommentInCache(1, 5);
+		assertThat(javaMapCachingService.getCommentFromCache(1), is(nullValue()));
+	}
+
+	@Test
+	public void testUnlikeComment() {
+		Comment comment = new Comment(1, 3, "Old Text", null);
+		comment.addLike(5);
+		javaMapCachingService.putCommentIntoCache(comment);
+		assertThat(javaMapCachingService.getCommentFromCache(1).getLikes(), is(Collections.singleton(5)));
+
+		javaMapCachingService.unlikeCommentInCache(1, 5);
+		assertThat(javaMapCachingService.getCommentFromCache(1).getLikes(), is(Collections.emptySet()));
+	}
+
+	@Test
+	public void testUnlikeCommentThatIsNotThere() {
+
+		assertThat(javaMapCachingService.getCommentFromCache(1), is(nullValue()));
+		javaMapCachingService.unlikeCommentInCache(1, 5);
+		assertThat(javaMapCachingService.getCommentFromCache(1), is(nullValue()));
 	}
 }

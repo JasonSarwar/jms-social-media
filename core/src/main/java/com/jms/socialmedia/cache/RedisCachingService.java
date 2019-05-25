@@ -9,7 +9,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-public class RedisCachingService extends AbstractCachingServiceUsingCodec<String> {
+public class RedisCachingService extends AbstractCodecCachingService<String> {
 
 	private final JedisPool jedisPool;
 	private final int expireTimeInSeconds;
@@ -70,6 +70,13 @@ public class RedisCachingService extends AbstractCachingServiceUsingCodec<String
 	}
 
 	@Override
+	protected void invalidatePost(int postId) {
+		try (Jedis jedis = jedisPool.getResource()) {
+			jedis.del(getPostKey(postId));
+		}
+	}
+
+	@Override
 	protected Collection<String> getEncodedCommentsFromCache(int postId) {
 		try (Jedis jedis = jedisPool.getResource()) {
 			if (jedis.exists(getCommentsInPostKey(postId))) {
@@ -123,6 +130,16 @@ public class RedisCachingService extends AbstractCachingServiceUsingCodec<String
 			String postId = jedis.get(getPostIdOfCommentKey(commentId));
 			if (postId != null) {
 				jedis.zremrangeByScore(getCommentsInPostKey(postId), commentId, commentId);
+			}
+		}
+	}
+
+	@Override
+	protected void invalidateComment(int commentId) {
+		try (Jedis jedis = jedisPool.getResource()) {
+			String postId = jedis.get(getPostIdOfCommentKey(commentId));
+			if (postId != null) {
+				jedis.del(getCommentsInPostKey(postId));
 			}
 		}
 	}

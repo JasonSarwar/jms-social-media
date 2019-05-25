@@ -9,11 +9,11 @@ import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 
-public abstract class AbstractCachingServiceUsingCodec<T> extends CachingService {
+public abstract class AbstractCodecCachingService<T> extends AbstractCachingService {
 
 	private final CachingCodec<T> cachingServiceCodec;
 
-	public AbstractCachingServiceUsingCodec(CachingCodec<T> cachingServiceCodec) {
+	public AbstractCodecCachingService(CachingCodec<T> cachingServiceCodec) {
 		this.cachingServiceCodec = cachingServiceCodec;
 	}
 
@@ -27,8 +27,24 @@ public abstract class AbstractCachingServiceUsingCodec<T> extends CachingService
 	}
 
 	@Override
+	public void editPostInCache(int postId, String text) {
+		invalidatePost(postId);
+	}
+
+	@Override
 	public void putPostIntoCache(Post post) {
 		putEncodedPostIntoCache(post.getPostId(), cachingServiceCodec.encodePost(post));
+	}
+
+
+	@Override
+	public void likePostInCache(int postId, int userId) {
+		invalidatePost(postId);
+	}
+
+	@Override
+	public void unlikePostInCache(int postId, int userId) {
+		invalidatePost(postId);
 	}
 
 	protected abstract Collection<T> getEncodedCommentsFromCache(int postId);
@@ -38,6 +54,13 @@ public abstract class AbstractCachingServiceUsingCodec<T> extends CachingService
 	protected abstract void putEncodedCommentsFromPostIntoCache(int postId, Map<T, Double> encodedCommentsWithId);
 
 	protected abstract void putEncodedCommentIntoCache(int commentId, int postId, T encodedComment);
+
+	/**
+	 * Slightly different from {@link #removePostFromCache(int)}
+	 * This one only removes the {@link Post}, not all the {@link Comment}s of the Post
+	 * @param postId
+	 */
+	protected abstract void invalidatePost(int postId);
 
 	@Override
 	public Collection<Comment> getCommentsFromCache(int postId) {
@@ -56,6 +79,11 @@ public abstract class AbstractCachingServiceUsingCodec<T> extends CachingService
 	}
 
 	@Override
+	public void editCommentInCache(int commentId, String text) {
+		invalidateComment(commentId);
+	}
+
+	@Override
 	public void putCommentsFromPostIntoCache(int postId, Collection<Comment> comments) {
 		if (!comments.isEmpty()) {
 			putEncodedCommentsFromPostIntoCache(postId, comments.stream()
@@ -67,6 +95,18 @@ public abstract class AbstractCachingServiceUsingCodec<T> extends CachingService
 	public void putCommentIntoCache(Comment comment) {
 		putEncodedCommentIntoCache(comment.getCommentId(), comment.getPostId(), cachingServiceCodec.encodeComment(comment));
 	}
+
+	@Override
+	public void likeCommentInCache(int commentId, int userId) {
+		invalidateComment(commentId);
+	}
+
+	@Override
+	public void unlikeCommentInCache(int commentId, int userId) {
+		invalidateComment(commentId);
+	}
+
+	protected abstract void invalidateComment(int commentId);
 
 	protected abstract T getEncodedUserSessionFromCache(String sessionKey);
 

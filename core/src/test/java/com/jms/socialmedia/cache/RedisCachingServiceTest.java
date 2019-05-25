@@ -17,6 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,6 +59,8 @@ public class RedisCachingServiceTest {
 	private User userSession;
 
 	private RedisCachingService redisCachingService;
+	
+	private boolean skipTearDown = false;
 
 	@Before
 	public void setUp() {
@@ -83,10 +87,12 @@ public class RedisCachingServiceTest {
 
 	@After
 	public void tearDown() {
-		verify(jedisPool, times(1)).getResource();
-		verify(jedis, times(1)).close();
-		verifyNoMoreInteractions(jedis);
-		verifyNoMoreInteractions(cachingServiceCodec);
+		if (!skipTearDown) {
+			verify(jedisPool, times(1)).getResource();
+			verify(jedis, times(1)).close();
+			verifyNoMoreInteractions(jedis);
+			verifyNoMoreInteractions(cachingServiceCodec);
+		}
 	}
 
 	@Test
@@ -127,6 +133,12 @@ public class RedisCachingServiceTest {
 	}
 
 	@Test
+	public void testEditPostFromCache() {
+		redisCachingService.editPostInCache(5, "new text");
+		verify(jedis, times(1)).del(POST_KEY);
+	}
+
+	@Test
 	public void testPutPostIntoCache() {
 		when(cachingServiceCodec.encodePost(post)).thenReturn(ENCODED_POST);
 
@@ -142,6 +154,18 @@ public class RedisCachingServiceTest {
 		redisCachingService.removePostFromCache(5);
 		verify(jedis, times(1)).del(POST_KEY);
 		verify(jedis, times(1)).del(POST_KEY + "/comments");
+	}
+
+	@Test
+	public void testLikePostFromCache() {
+		redisCachingService.likePostInCache(5, 2);
+		verify(jedis, times(1)).del(POST_KEY);
+	}
+
+	@Test
+	public void testUnlikePostFromCache() {
+		redisCachingService.unlikePostInCache(5, 2);
+		verify(jedis, times(1)).del(POST_KEY);
 	}
 
 	@Test
@@ -180,6 +204,13 @@ public class RedisCachingServiceTest {
 		verify(jedis, times(1)).expire(COMMENTS_KEY, EXPIRATION_TIME);
 		verify(cachingServiceCodec, times(1)).decodeComment(ENCODED_COMMENT1);
 		verify(cachingServiceCodec, times(1)).decodeComment(ENCODED_COMMENT2);
+	}
+
+	@Test
+	public void testGetNullCommentsFromCache() {
+		when(jedis.zrange(anyString(), anyLong(), anyLong())).thenReturn(null);
+		assertThat(redisCachingService.getCommentsFromCache(12), is(nullValue()));
+		skipTearDown = true;
 	}
 
 	@Test
@@ -222,6 +253,13 @@ public class RedisCachingServiceTest {
 	}
 
 	@Test
+	public void testEditCommentFromCache() {
+		redisCachingService.editCommentInCache(2, "New Text");
+		verify(jedis, times(1)).get(POST_ID_OF_COMMENT_KEY2);
+		verify(jedis, times(1)).del(COMMENTS_KEY);
+	}
+
+	@Test
 	public void testPutCommentsFromPostIntoCache() {
 		Collection<Comment> comments = Set.of(comment1, comment2);
 
@@ -233,6 +271,13 @@ public class RedisCachingServiceTest {
 		verify(jedis, times(1)).set(POST_ID_OF_COMMENT_KEY2, "3");
 		verify(cachingServiceCodec, times(1)).encodeComment(comment1);
 		verify(cachingServiceCodec, times(1)).encodeComment(comment2);
+	}
+
+	@Test
+	public void testPutNoCommentsFromPostIntoCache() {
+
+		redisCachingService.putCommentsFromPostIntoCache(3, Collections.emptySet());
+		skipTearDown = true;
 	}
 
 	@Test
@@ -268,6 +313,26 @@ public class RedisCachingServiceTest {
 		redisCachingService.removeCommentFromCache(7);
 		verify(jedis, times(1)).get("comment/7/postId");
 		verify(jedis, never()).zremrangeByScore(anyString(), anyInt(), anyInt());
+	}
+
+	@Test
+	public void testLikeCommentFromCache() {
+		redisCachingService.likeCommentInCache(2, 10);
+		verify(jedis, times(1)).get(POST_ID_OF_COMMENT_KEY2);
+		verify(jedis, times(1)).del(COMMENTS_KEY);
+	}
+
+	@Test
+	public void testUnlikeCommentFromCache() {
+		redisCachingService.unlikeCommentInCache(2, 10);
+		verify(jedis, times(1)).get(POST_ID_OF_COMMENT_KEY2);
+		verify(jedis, times(1)).del(COMMENTS_KEY);
+	}
+
+	@Test
+	public void testInvalidateComment() {
+		redisCachingService.invalidateComment(1);
+		verify(jedis, times(1)).get(POST_ID_OF_COMMENT_KEY1);
 	}
 
 	@Test

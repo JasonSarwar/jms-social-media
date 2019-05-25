@@ -8,35 +8,47 @@ import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 
-public class CachingServiceWithMetrics extends CachingService {
+public class CachingServiceWithMetrics extends AbstractCachingService {
 
-	private final CachingService cachingService;
+	private final AbstractCachingService cachingService;
 	private final Timer getPostFromCacheTimer;
+	private final Timer editPostInCacheTimer;
 	private final Timer putPostIntoCacheTimer;
 	private final Timer removePostFromCacheTimer;
+	private final Timer likePostInCacheTimer;
+	private final Timer unlikePostInCacheTimer;
 	private final Timer getCommentsFromCacheTimer;
 	private final Timer getCommentFromCacheTimer;
+	private final Timer editCommentInCacheTimer;
 	private final Timer putCommentIntoCacheTimer;
 	private final Timer putCommentsFromPostIntoCacheTimer;
 	private final Timer removeCommentFromCacheTimer;
+	private final Timer likeCommentInCacheTimer;
+	private final Timer unlikeCommentInCacheTimer;
 	private final Timer getUserSessionFromCacheTimer;
 	private final Timer putUserSessionIntoCacheTimer;
 	private final Timer removeUserSessionFromCacheTimer;
 
-	public CachingServiceWithMetrics(CachingService cachingService, MetricRegistry metricRegistry) {
+	public CachingServiceWithMetrics(AbstractCachingService cachingService, MetricRegistry metricRegistry) {
 		this(cachingService, metricRegistry, cachingService.getClass().getSimpleName());
 	}
 
-	public CachingServiceWithMetrics(CachingService cachingService, MetricRegistry metricRegistry, String metricsName) {
+	public CachingServiceWithMetrics(AbstractCachingService cachingService, MetricRegistry metricRegistry, String metricsName) {
 		this.cachingService = cachingService;
 		this.getPostFromCacheTimer = metricRegistry.timer(metricsName + ".getPostFromCache");
+		this.editPostInCacheTimer = metricRegistry.timer(metricsName + ".editPostInCache");
 		this.putPostIntoCacheTimer = metricRegistry.timer(metricsName + ".putPostIntoCache");
 		this.removePostFromCacheTimer = metricRegistry.timer(metricsName + ".removePostFromCache");
+		this.likePostInCacheTimer = metricRegistry.timer(metricsName + ".likePostInCache");
+		this.unlikePostInCacheTimer = metricRegistry.timer(metricsName + ".unlikePostInCache");
 		this.getCommentsFromCacheTimer = metricRegistry.timer(metricsName + ".getCommentsFromCache");
 		this.getCommentFromCacheTimer = metricRegistry.timer(metricsName + ".getCommentFromCache");
+		this.editCommentInCacheTimer = metricRegistry.timer(metricsName + ".editCommentInCache");
 		this.putCommentIntoCacheTimer = metricRegistry.timer(metricsName + ".putCommentIntoCache");
 		this.putCommentsFromPostIntoCacheTimer = metricRegistry.timer(metricsName + ".putCommentsFromPostIntoCache");
 		this.removeCommentFromCacheTimer = metricRegistry.timer(metricsName + ".removeCommentFromCache");
+		this.likeCommentInCacheTimer = metricRegistry.timer(metricsName + ".likeCommentInCache");
+		this.unlikeCommentInCacheTimer = metricRegistry.timer(metricsName + ".unlikeCommentInCache");
 		this.getUserSessionFromCacheTimer = metricRegistry.timer(metricsName + ".getUserSessionFromCache");
 		this.putUserSessionIntoCacheTimer = metricRegistry.timer(metricsName + ".putUserSessionIntoCache");
 		this.removeUserSessionFromCacheTimer = metricRegistry.timer(metricsName + ".removeUserSessionFromCache");
@@ -46,6 +58,13 @@ public class CachingServiceWithMetrics extends CachingService {
 	public Post getPostFromCache(int postId) {
 		try (Timer.Context context = getPostFromCacheTimer.time()) {
 			return cachingService.getPostFromCache(postId);
+		}
+	}
+
+	@Override
+	public void editPostInCache(int postId, String text) {
+		try (Timer.Context context = editPostInCacheTimer.time()) {
+			cachingService.editPostInCache(postId, text);
 		}
 	}
 
@@ -64,6 +83,20 @@ public class CachingServiceWithMetrics extends CachingService {
 	}
 
 	@Override
+	public void likePostInCache(int postId, int userId) {
+		try (Timer.Context context = likePostInCacheTimer.time()) {
+			cachingService.likePostInCache(postId, userId);
+		}
+	}
+
+	@Override
+	public void unlikePostInCache(int postId, int userId) {
+		try (Timer.Context context = unlikePostInCacheTimer.time()) {
+			cachingService.unlikePostInCache(postId, userId);
+		}
+	}
+
+	@Override
 	public Collection<Comment> getCommentsFromCache(int postId) {
 		try (Timer.Context context = getCommentsFromCacheTimer.time()) {
 			return cachingService.getCommentsFromCache(postId);
@@ -74,6 +107,13 @@ public class CachingServiceWithMetrics extends CachingService {
 	public Comment getCommentFromCache(int commentId) {
 		try (Timer.Context context = getCommentFromCacheTimer.time()) {
 			return cachingService.getCommentFromCache(commentId);
+		}
+	}
+
+	@Override
+	public void editCommentInCache(int commentId, String text) {
+		try (Timer.Context context = editCommentInCacheTimer.time()) {
+			cachingService.editCommentInCache(commentId, text);
 		}
 	}
 
@@ -95,6 +135,20 @@ public class CachingServiceWithMetrics extends CachingService {
 	public void removeCommentFromCache(int commentId) {
 		try (Timer.Context context = removeCommentFromCacheTimer.time()) {
 			cachingService.removeCommentFromCache(commentId);
+		}
+	}
+
+	@Override
+	public void likeCommentInCache(int commentId, int userId) {
+		try (Timer.Context context = likeCommentInCacheTimer.time()) {
+			cachingService.likeCommentInCache(commentId, userId);
+		}
+	}
+
+	@Override
+	public void unlikeCommentInCache(int commentId, int userId) {
+		try (Timer.Context context = unlikeCommentInCacheTimer.time()) {
+			cachingService.unlikeCommentInCache(commentId, userId);
 		}
 	}
 

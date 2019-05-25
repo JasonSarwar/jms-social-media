@@ -14,7 +14,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class CachingServiceWithMetricsTest {
 
 	@Mock
-	private CachingService cachingService;
+	private AbstractCachingService cachingService;
 
 	private MetricRegistry metricRegistry;
 
@@ -50,6 +50,19 @@ public class CachingServiceWithMetricsTest {
 	}
 
 	@Test
+	public void testEditPostInCache() {
+		Timer timer = metricRegistry.timer("test.editPostInCache");
+		assertThat(timer.getCount(), is(0L));
+		assertThat(timer.getOneMinuteRate() == 0, is(true));
+		cachingServiceWithMetrics.editPostInCache(1, "Edit Text");
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+		cachingServiceWithMetrics.editPostInCache(1, "Edit Text");
+		assertThat(timer.getCount(), is(2L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
+
+	@Test
 	public void testPutPostIntoCache() {
 		Timer timer = metricRegistry.timer("test.putPostIntoCache");
 		assertThat(timer.getCount(), is(0L));
@@ -76,6 +89,32 @@ public class CachingServiceWithMetricsTest {
 	}
 
 	@Test
+	public void testLikePostInCache() {
+		Timer timer = metricRegistry.timer("test.likePostInCache");
+		assertThat(timer.getCount(), is(0L));
+		assertThat(timer.getOneMinuteRate() == 0, is(true));
+		cachingServiceWithMetrics.likePostInCache(1, 3);
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+		cachingServiceWithMetrics.likePostInCache(1, 3);
+		assertThat(timer.getCount(), is(2L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
+
+	@Test
+	public void testUnlikePostInCache() {
+		Timer timer = metricRegistry.timer("test.unlikePostInCache");
+		assertThat(timer.getCount(), is(0L));
+		assertThat(timer.getOneMinuteRate() == 0, is(true));
+		cachingServiceWithMetrics.unlikePostInCache(1, 3);
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+		cachingServiceWithMetrics.unlikePostInCache(1, 3);
+		assertThat(timer.getCount(), is(2L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
+
+	@Test
 	public void testGetCommentsFromCache() {
 		Timer timer = metricRegistry.timer("test.getCommentsFromCache");
 		assertThat(timer.getCount(), is(0L));
@@ -97,6 +136,19 @@ public class CachingServiceWithMetricsTest {
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 		cachingServiceWithMetrics.getCommentFromCache(1);
+		assertThat(timer.getCount(), is(2L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
+
+	@Test
+	public void testEditCommentInCache() {
+		Timer timer = metricRegistry.timer("test.editCommentInCache");
+		assertThat(timer.getCount(), is(0L));
+		assertThat(timer.getOneMinuteRate() == 0, is(true));
+		cachingServiceWithMetrics.editCommentInCache(1, "Edit Text");
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+		cachingServiceWithMetrics.editCommentInCache(1, "Edit Text");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -136,6 +188,32 @@ public class CachingServiceWithMetricsTest {
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 		cachingServiceWithMetrics.removeCommentFromCache(1);
+		assertThat(timer.getCount(), is(2L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
+
+	@Test
+	public void testLikeCommentInCache() {
+		Timer timer = metricRegistry.timer("test.likeCommentInCache");
+		assertThat(timer.getCount(), is(0L));
+		assertThat(timer.getOneMinuteRate() == 0, is(true));
+		cachingServiceWithMetrics.likeCommentInCache(1, 3);
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+		cachingServiceWithMetrics.likeCommentInCache(1, 3);
+		assertThat(timer.getCount(), is(2L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+	}
+
+	@Test
+	public void testUnlikeCommentInCache() {
+		Timer timer = metricRegistry.timer("test.unlikeCommentInCache");
+		assertThat(timer.getCount(), is(0L));
+		assertThat(timer.getOneMinuteRate() == 0, is(true));
+		cachingServiceWithMetrics.unlikeCommentInCache(1, 3);
+		assertThat(timer.getCount(), is(1L));
+		assertThat(timer.getMeanRate() > 0, is(true));
+		cachingServiceWithMetrics.unlikeCommentInCache(1, 3);
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}

@@ -3,7 +3,7 @@ package com.jms.socialmedia.dataservice;
 import java.io.IOException;
 
 import com.codahale.metrics.MetricRegistry;
-import com.jms.socialmedia.cache.CachingService;
+import com.jms.socialmedia.cache.AbstractCachingService;
 import com.jms.socialmedia.configuration.Configurations;
 import com.jms.socialmedia.configuration.CoreSettings;
 
@@ -13,7 +13,7 @@ public class DataServiceFactory {
 		throw new IllegalStateException("Factory Class");
 	}
 
-	public static DataService createDataService(Configurations configurations, CachingService cachingService,
+	public static DataService createDataService(Configurations configurations, AbstractCachingService cachingService,
 			MetricRegistry metricRegistry) throws IOException {
 
 		DataService dataService;

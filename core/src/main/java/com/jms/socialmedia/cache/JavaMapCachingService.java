@@ -9,7 +9,7 @@ import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.model.User;
 
-public class JavaMapCachingService extends CachingService {
+public class JavaMapCachingService extends AbstractHeapCachingService {
 
 	private final Map<Integer, Post> postsById;
 	private final Map<Integer, Comment> commentsById;
