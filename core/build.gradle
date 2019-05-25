@@ -30,6 +30,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
 	compile group: 'io.dropwizard.metrics', name: 'metrics-core', version: '4.1.0'
 
+	// https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jvm
+	compile group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: '4.1.0'
+
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-pool2
 	compile group: 'org.apache.commons', name: 'commons-pool2', version: '2.6.2'
 
