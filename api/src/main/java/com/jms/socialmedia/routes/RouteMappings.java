@@ -207,6 +207,10 @@ public class RouteMappings {
 				get("/gauge/:gauge", contentType, metricsRequestHandler::handleGetGauge, contentWriter);
 
 				get("/jvm", contentType, metricsRequestHandler::handleGetJvmGauges, contentWriter);
+
+				get("/counters", contentType, metricsRequestHandler::handleGetCounters, contentWriter);
+
+				get("/counter/:counter", contentType, metricsRequestHandler::handleGetCounter, contentWriter);
 			});
 		});
 	}

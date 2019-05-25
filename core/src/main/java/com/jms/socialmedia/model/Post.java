@@ -5,9 +5,13 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
-public class Post extends Entry {
+public class Post extends Entry implements Comparable<Post> {
 
 	public Post() {
+	}
+
+	public Post(Integer postId) {
+		this(postId, null, null);
 	}
 
 	public Post(Integer postId, String text, LocalDateTime timestamp) {
@@ -36,7 +40,7 @@ public class Post extends Entry {
 				&& Objects.equals(this.username, that.username) && Objects.equals(this.fullName, that.fullName)
 				&& Objects.equals(this.text, that.text) && Objects.equals(this.timestamp, that.timestamp)
 				&& Objects.equals(this.profilePictureLink, that.profilePictureLink)
-				&& Objects.equals(this.likes, that.likes);
+				&& this.likes.size() == that.likes.size() && this.likes.containsAll(that.likes);
 	}
 
 	@Override
@@ -53,4 +57,8 @@ public class Post extends Entry {
 				.toString();
 	}
 
+	@Override
+	public int compareTo(Post other) {
+		return -postId.compareTo(other.postId);
+	}
 }

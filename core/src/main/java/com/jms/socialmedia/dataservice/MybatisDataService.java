@@ -107,18 +107,18 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public boolean addUserSession(int userId, String sessionKey) {
-		return usersMapper.addUserSession(userId, sessionKey) == 1;
+	public boolean addUserSession(int userId, String sessionId) {
+		return usersMapper.addUserSession(userId, sessionId) == 1;
 	}
 
 	@Override
-	public User getUserBySessionKey(String sessionKey) {
-		return usersMapper.getUserBySessionKey(sessionKey);
+	public User getUserBySessionId(String sessionId) {
+		return usersMapper.getUserBySessionKey(sessionId);
 	}
 
 	@Override
-	public void removeSessionKey(String sessionKey) {
-		usersMapper.removeSessionKey(sessionKey);
+	public void removeSessionId(String sessionId) {
+		usersMapper.removeSessionKey(sessionId);
 	}
 
 	@Override

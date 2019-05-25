@@ -1,9 +1,13 @@
 package com.jms.socialmedia.handlers;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
@@ -111,8 +115,7 @@ public class MetricsRequestHandler extends RequestHandler {
 			metricFilter = MetricFilter.ALL;
 		}
 
-		Map<String, Gauge> gauges = metricRegistry.getGauges(metricFilter);
-		return compactResponseIfNecessary(gauges, request);
+		return compactResponseIfNecessary(metricRegistry.getGauges(metricFilter), request, e -> e.getValue().getValue());
 	}
 
 	/**
@@ -125,7 +128,7 @@ public class MetricsRequestHandler extends RequestHandler {
 	public Gauge<?> handleGetGauge(Request request, Response response) {
 		Gauge<?> gauge = metricRegistry.getGauges().get(request.params("gauge"));
 		if (gauge == null) {
-			throw new NotFoundException("Timer not found");
+			throw new NotFoundException("Gauge not found");
 		}
 		return gauge;
 	}
@@ -138,19 +141,63 @@ public class MetricsRequestHandler extends RequestHandler {
 	 * @return Gauge according to the query parameters
 	 */
 	public Map<String, ?> handleGetJvmGauges(Request request, Response response) {
-		Map<String, Gauge> gauges = metricRegistry.getGauges(MetricFilter.startsWith("jvm."));
-		return compactResponseIfNecessary(gauges, request);
+		return compactResponseIfNecessary(metricRegistry.getGauges(MetricFilter.startsWith("jvm.")), 
+				request, e -> e.getValue().getValue());
 	}
-	
-	private Map<String, ?> compactResponseIfNecessary(Map<String, Gauge> gauges, Request request) {
-		String compact = request.queryParams("compact");
-		
-		if (compact != null && !compact.equalsIgnoreCase("false")) {
-			return gauges.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getValue(),
-					(v1 ,v2) -> {throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));},
-                    TreeMap::new));
+
+	/**
+	 * <h1>GET /metrics/counters</h1>
+	 * 
+	 * Query Parameters:
+	 * <ul>
+	 *   <li> query - Display counters that contain the query text </li>
+	 * </ul>
+	 * 
+	 * @param request
+	 * @param response
+	 * @return Counter according to the query parameters
+	 */
+	public Map<String, ?> handleGetCounters(Request request, Response response) {
+		String query;
+		MetricFilter metricFilter;
+		if ((query = request.queryParams("query")) != null) {
+			metricFilter = MetricFilter.contains(query);
 		} else {
-			return gauges;
+			metricFilter = MetricFilter.ALL;
 		}
+
+		return compactResponseIfNecessary(metricRegistry.getCounters(metricFilter), request, e -> e.getValue().getCount());
+	}
+
+	/**
+	 * <h1> GET /metrics/counter/:counter </h1>
+	 * 
+	 * @param request
+	 * @param response
+	 * @return a Counter if it exists
+	 */
+	public Counter handleGetCounter(Request request, Response response) {
+		Counter counter = metricRegistry.getCounters().get(request.params("counter"));
+		if (counter == null) {
+			throw new NotFoundException("Counter not found");
+		}
+		return counter;
+	}
+
+	private <T> Map<String, ?> compactResponseIfNecessary(Map<String, T> metricsMap, Request request, Function<Entry<String, T>, Object> valueMapper) {
+		String compact = request.queryParams("compact");
+
+		if (compact != null && !compact.equalsIgnoreCase("false")) {
+			return metricsMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, valueMapper,
+					throwingMerger(), TreeMap::new));
+		} else {
+			return metricsMap;
+		}
+	}
+
+	private static <T> BinaryOperator<T> throwingMerger() {
+		return (v1, v2) -> {
+			throw new IllegalStateException(String.format("Duplicate key for values %s and %s", v1, v2));
+		};
 	}
 }

@@ -46,17 +46,7 @@
 
 		<dependency>
 			<groupId>io.dropwizard.metrics</groupId>
-			<artifactId>metrics-core</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.dropwizard.metrics</groupId>
 			<artifactId>metrics-json</artifactId>
-		</dependency>
-
-		<dependency>
-		    <groupId>io.dropwizard.metrics</groupId>
-		    <artifactId>metrics-jvm</artifactId>
 		</dependency>
 
 		<dependency>
@@ -97,7 +87,6 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
-						<version>3.1.1</version>
 						<configuration>
 							<assemblyId>jars-dist</assemblyId>
 							<descriptors>

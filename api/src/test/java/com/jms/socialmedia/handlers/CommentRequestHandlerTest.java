@@ -154,6 +154,31 @@ public class CommentRequestHandlerTest {
 		verify(request, times(1)).contentType();
 		verify(request, times(1)).headers(AUTHORIZATION);
 		verifyNoMoreInteractions(request);
+		verify(response, times(1)).status(201);
+		verify(response, times(1)).header("location", "/api/comment/null");
+		verifyNoMoreInteractions(response);
+		verify(tokenService, times(1)).createTokenFromString("SecretToken");
+		verifyNoMoreInteractions(tokenService);
+		verify(dataService, times(1)).addComment(comment);
+		verifyNoMoreInteractions(dataService);
+	}
+
+	@Test
+	public void testHandleAddCommentFails() throws IOException {
+		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.ADD_COMMENT).build();
+		Comment comment = new Comment(10, 1, "A Cool Comment!");
+		when(request.body()).thenReturn(ADD_COMMENT_REQUEST);
+		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
+		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
+
+		assertThat(commentRequestHandler.handleAddComment(request, response), is(false));
+
+		verify(request, times(1)).params(POST_ID_PARAM);
+		verify(request, times(1)).body();
+		verify(request, times(1)).contentType();
+		verify(request, times(1)).headers(AUTHORIZATION);
+		verifyNoMoreInteractions(request);
+		verifyZeroInteractions(response);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
 		verifyNoMoreInteractions(tokenService);
 		verify(dataService, times(1)).addComment(comment);

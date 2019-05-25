@@ -2,7 +2,7 @@ package com.jms.socialmedia.dataservice;
 
 import java.util.Collection;
 
-import com.jms.socialmedia.cache.CachingService;
+import com.jms.socialmedia.cache.AbstractCachingService;
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.NewUser;
 import com.jms.socialmedia.model.Post;
@@ -12,9 +12,9 @@ import com.jms.socialmedia.model.UserPage;
 public class CachingDataService implements DataService {
 
 	private final DataService dataService;
-	private final CachingService cachingService;
+	private final AbstractCachingService cachingService;
 
-	public CachingDataService(DataService dataService, CachingService cachingService) {
+	public CachingDataService(DataService dataService, AbstractCachingService cachingService) {
 		this.dataService = dataService;
 		this.cachingService = cachingService;
 	}
@@ -70,18 +70,19 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public boolean addUserSession(int userId, String sessionKey) {
-		return dataService.addUserSession(userId, sessionKey);
+	public boolean addUserSession(int userId, String sessionId) {
+		return dataService.addUserSession(userId, sessionId);
 	}
 
 	@Override
-	public User getUserBySessionKey(String sessionKey) {
-		return dataService.getUserBySessionKey(sessionKey);
+	public User getUserBySessionId(String sessionId) {
+		return cachingService.getUserSessionCacheOrSupplier(sessionId, () -> dataService.getUserBySessionId(sessionId));
 	}
 
 	@Override
-	public void removeSessionKey(String sessionKey) {
-		dataService.removeSessionKey(sessionKey);
+	public void removeSessionId(String sessionId) {
+		cachingService.removeUserSessionFromCache(sessionId);
+		dataService.removeSessionId(sessionId);
 	}
 
 	@Override
@@ -119,10 +120,7 @@ public class CachingDataService implements DataService {
 	
 	@Override
 	public boolean editPost(int postId, String postText) {
-		Post post = cachingService.getPostFromCache(postId);
-		if (post != null) {
-			post.setText(postText);
-		}
+		cachingService.editPostInCache(postId, postText);
 		return dataService.editPost(postId, postText);
 	}
 
@@ -153,19 +151,13 @@ public class CachingDataService implements DataService {
 
 	@Override
 	public boolean likePost(int postId, int userId) {
-		Post post = cachingService.getPostFromCache(postId);
-		if (post != null) {
-			post.addLike(userId);
-		}
+		cachingService.likePostInCache(postId, userId);
 		return dataService.likePost(postId, userId);
 	}
 
 	@Override
 	public boolean unlikePost(int postId, int userId) {
-		Post post = cachingService.getPostFromCache(postId);
-		if (post != null) {
-			post.removeLike(userId);
-		}
+		cachingService.unlikePostInCache(postId, userId);
 		return dataService.unlikePost(postId, userId);
 	}
 
@@ -210,10 +202,7 @@ public class CachingDataService implements DataService {
 	
 	@Override
 	public boolean editComment(int commentId, String commentText) {
-		Comment comment = cachingService.getCommentFromCache(commentId);
-		if (comment != null) {
-			comment.setText(commentText);
-		}
+		cachingService.editCommentInCache(commentId, commentText);
 		return dataService.editComment(commentId, commentText);
 	}
 
@@ -234,19 +223,13 @@ public class CachingDataService implements DataService {
 
 	@Override
 	public boolean likeComment(int commentId, int userId) {
-		Comment comment = cachingService.getCommentFromCache(commentId);
-		if (comment != null) {
-			comment.addLike(userId);
-		}
+		cachingService.likeCommentInCache(commentId, userId);
 		return dataService.likeComment(commentId, userId);
 	}
 
 	@Override
 	public boolean unlikeComment(int commentId, int userId) {
-		Comment comment = cachingService.getCommentFromCache(commentId);
-		if (comment != null) {
-			comment.removeLike(userId);
-		}
+		cachingService.unlikeCommentInCache(commentId, userId);
 		return dataService.unlikeComment(commentId, userId);
 	}
 	

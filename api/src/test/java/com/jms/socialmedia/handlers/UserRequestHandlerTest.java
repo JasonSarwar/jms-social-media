@@ -726,7 +726,7 @@ public class UserRequestHandlerTest {
 		when(request.cookie(SESSION_COOKIE)).thenReturn(SESSION_KEY);
 		assertThat(userRequestHandler.handleSessionRetrieval(request, response), is(nullValue()));
 		verify(request, times(1)).cookie(SESSION_COOKIE);
-		verify(dataService, times(1)).getUserBySessionKey(SESSION_KEY);
+		verify(dataService, times(1)).getUserBySessionId(SESSION_KEY);
 		verifyZeroInteractions(passwordService);
 	}
 
@@ -736,7 +736,7 @@ public class UserRequestHandlerTest {
 		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.ADMIN).build();
 
 		when(request.cookie(SESSION_COOKIE)).thenReturn(SESSION_KEY);
-		when(dataService.getUserBySessionKey(SESSION_KEY)).thenReturn(new User(1, "Username", "Full Name"));
+		when(dataService.getUserBySessionId(SESSION_KEY)).thenReturn(new User(1, "Username", "Full Name"));
 		when(tokenService.createTokenString(token)).thenReturn("TokenString");
 
 		LoginSuccess loginSuccess = userRequestHandler.handleSessionRetrieval(request, response);
@@ -746,7 +746,7 @@ public class UserRequestHandlerTest {
 		assertThat(loginSuccess.getToken(), is("TokenString"));
 
 		verify(request, times(1)).cookie(SESSION_COOKIE);
-		verify(dataService, times(1)).getUserBySessionKey(SESSION_KEY);
+		verify(dataService, times(1)).getUserBySessionId(SESSION_KEY);
 		verifyZeroInteractions(passwordService);
 	}
 
@@ -756,7 +756,7 @@ public class UserRequestHandlerTest {
 		Token token = Token.newBuilder().setUserId(23).addPermissions(Permission.getRegularPermissions()).build();
 
 		when(request.cookie(SESSION_COOKIE)).thenReturn(SESSION_KEY);
-		when(dataService.getUserBySessionKey(SESSION_KEY)).thenReturn(new User(23, "Username", "Full Name"));
+		when(dataService.getUserBySessionId(SESSION_KEY)).thenReturn(new User(23, "Username", "Full Name"));
 		when(tokenService.createTokenString(token)).thenReturn("TokenString");
 
 		LoginSuccess loginSuccess = userRequestHandler.handleSessionRetrieval(request, response);
@@ -766,7 +766,7 @@ public class UserRequestHandlerTest {
 		assertThat(loginSuccess.getToken(), is("TokenString"));
 
 		verify(request, times(1)).cookie(SESSION_COOKIE);
-		verify(dataService, times(1)).getUserBySessionKey(SESSION_KEY);
+		verify(dataService, times(1)).getUserBySessionId(SESSION_KEY);
 		verifyZeroInteractions(passwordService);
 	}
 
@@ -794,7 +794,7 @@ public class UserRequestHandlerTest {
 		when(request.cookie(SESSION_COOKIE)).thenReturn("cookie");
 		userRequestHandler.handleLogout(request, response);
 		verify(request, times(1)).cookie(SESSION_COOKIE);
-		verify(dataService, times(1)).removeSessionKey("cookie");
+		verify(dataService, times(1)).removeSessionId("cookie");
 		verify(response, times(1)).removeCookie(SESSION_COOKIE);
 	}
 

@@ -158,14 +158,14 @@ public class DataServiceWithMetricsTest {
 	}
 
 	@Test
-	public void testGetUserBySessionKey() {
-		Timer timer = metricRegistry.timer("test.getUserBySessionKey");
+	public void testGetUserBySessionId() {
+		Timer timer = metricRegistry.timer("test.getUserBySessionId");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.getUserBySessionKey(null);
+		dataServiceWithMetrics.getUserBySessionId(null);
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.getUserBySessionKey(null);
+		dataServiceWithMetrics.getUserBySessionId(null);
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -184,14 +184,14 @@ public class DataServiceWithMetricsTest {
 	}
 
 	@Test
-	public void testRemoveSessionKey() {
-		Timer timer = metricRegistry.timer("test.removeSessionKey");
+	public void testRemoveSessionId() {
+		Timer timer = metricRegistry.timer("test.removeSessionId");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.removeSessionKey(null);
+		dataServiceWithMetrics.removeSessionId(null);
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.removeSessionKey(null);
+		dataServiceWithMetrics.removeSessionId(null);
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}

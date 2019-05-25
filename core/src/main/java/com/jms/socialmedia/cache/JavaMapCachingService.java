@@ -2,26 +2,30 @@ package com.jms.socialmedia.cache;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Map;
 
 import com.jms.socialmedia.model.Comment;
 import com.jms.socialmedia.model.Post;
+import com.jms.socialmedia.model.User;
 
-public class JavaMapCachingService implements CachingService {
+public class JavaMapCachingService extends AbstractHeapCachingService {
 
 	private final Map<Integer, Post> postsById;
 	private final Map<Integer, Comment> commentsById;
 	private final Map<Integer, Collection<Comment>> commentsByPostId;
+	private final Map<String, User> userSessionsByKey;
 
 	public JavaMapCachingService() {
-		this(new HashMap<>(), new HashMap<>(), new HashMap<>());
+		this(new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 	}
 
-	public JavaMapCachingService(Map<Integer, Post> postsById, Map<Integer, Comment> commentsById, Map<Integer, Collection<Comment>> commentsByPostId) {
+	public JavaMapCachingService(Map<Integer, Post> postsById, Map<Integer, Comment> commentsById,
+			Map<Integer, Collection<Comment>> commentsByPostId, Map<String, User> userSessionsByKey) {
 		this.postsById = postsById;
 		this.commentsById = commentsById;
 		this.commentsByPostId = commentsByPostId;
+		this.userSessionsByKey = userSessionsByKey;
 	}
 
 	@Override
@@ -68,7 +72,7 @@ public class JavaMapCachingService implements CachingService {
 
 	@Override
 	public void putCommentsFromPostIntoCache(int postId, Collection<Comment> comments) {
-		commentsByPostId.put(postId, new HashSet<>(comments));
+		commentsByPostId.put(postId, new TreeSet<>(comments));
 		for (Comment comment : comments) {
 			commentsById.put(comment.getCommentId(), comment);
 		}
@@ -83,5 +87,20 @@ public class JavaMapCachingService implements CachingService {
 				comments.remove(comment);
 			}
 		}
+	}
+
+	@Override
+	public User getUserSessionFromCache(String sessionKey) {
+		return userSessionsByKey.get(sessionKey);
+	}
+
+	@Override
+	public void putUserSessionIntoCache(String sessionKey, User user) {
+		userSessionsByKey.put(sessionKey, user);
+	}
+
+	@Override
+	public void removeUserSessionFromCache(String sessionKey) {
+		userSessionsByKey.remove(sessionKey);
 	}
 }

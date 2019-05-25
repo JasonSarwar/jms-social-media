@@ -504,11 +504,36 @@ public class PostRequestHandlerTest {
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
 		when(dataService.addPost(post)).thenReturn(true);
 
-		boolean postAdded = postRequestHandler.handleAddPost(request, response);
-		assertThat(postAdded, is(true));
+		assertThat(postRequestHandler.handleAddPost(request, response), is(true));
 
 		verify(request, times(1)).body();
 		verify(request, times(1)).headers(AUTHORIZATION);
+		verify(response, times(1)).status(201);
+		verify(response, times(1)).header("location", "/api/post/null");
+		verifyNoMoreInteractions(response);
+		verify(tokenService, times(1)).createTokenFromString("SecretToken");
+		verifyNoMoreInteractions(tokenService);
+		verify(dataService, times(1)).addPost(post);
+		verifyNoMoreInteractions(dataService);
+	}
+
+	@Test
+	public void testHandleAddPostFails() throws IOException {
+		Post post = new Post();
+		post.setUserId(1);
+		post.setText("A Cool Post!");
+
+		Token token = Token.newBuilder().setUserId(1).addPermissions(Permission.ADD_POST).build();
+
+		when(request.body()).thenReturn(ADD_POST_REQUEST);
+		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
+		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
+
+		assertThat(postRequestHandler.handleAddPost(request, response), is(false));
+
+		verify(request, times(1)).body();
+		verify(request, times(1)).headers(AUTHORIZATION);
+		verifyZeroInteractions(response);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
 		verifyNoMoreInteractions(tokenService);
 		verify(dataService, times(1)).addPost(post);

@@ -126,19 +126,19 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public boolean addUserSession(int userId, String sessionKey) {
-		userSessionKeys.put(sessionKey, userId);
+	public boolean addUserSession(int userId, String sessionId) {
+		userSessionKeys.put(sessionId, userId);
 		return true;
 	}
 
 	@Override
-	public User getUserBySessionKey(String sessionKey) {
-		return usersById.get(userSessionKeys.get(sessionKey));
+	public User getUserBySessionId(String sessionId) {
+		return usersById.get(userSessionKeys.get(sessionId));
 	}
 
 	@Override
-	public void removeSessionKey(String sessionKey) {
-		userSessionKeys.remove(sessionKey);
+	public void removeSessionId(String sessionId) {
+		userSessionKeys.remove(sessionId);
 	}
 
 	@Override
