@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -297,7 +298,7 @@ public class MetricsRequestHandlerTest {
 			fail("Did not throw Exception");
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NotFoundException.class));
-			assertThat(e.getMessage(), is("Timer not found"));
+			assertThat(e.getMessage(), is("Gauge not found"));
 			verify(request, times(1)).params("gauge");
 			verifyNoMoreInteractions(request);
 		}
@@ -337,5 +338,133 @@ public class MetricsRequestHandlerTest {
 
 		verify(request, times(1)).queryParams("compact");
 		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetAllCounters() throws IOException {
+
+		Counter counter1 = metricRegistry.counter("testCounter1");
+		Counter counter2 = metricRegistry.counter("testCounter2");
+		Counter counter3 = metricRegistry.counter("testCounter3");
+
+		Map<String, ?> counters = metricsRequestHandler.handleGetCounters(request, response);
+		assertThat(counters.size(), is(3));
+		assertThat(counters.get("testCounter1"), is(counter1));
+		assertThat(counters.get("testCounter2"), is(counter2));
+		assertThat(counters.get("testCounter3"), is(counter3));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetAllCountersCompactFalse() throws IOException {
+
+		Counter counter1 = metricRegistry.counter("testCounter1");
+		Counter counter2 = metricRegistry.counter("testCounter2");
+		Counter counter3 = metricRegistry.counter("testCounter3");
+
+		when(request.queryParams("compact")).thenReturn("false");
+
+		Map<String, ?> counters = metricsRequestHandler.handleGetCounters(request, response);
+		assertThat(counters.size(), is(3));
+		assertThat(counters.get("testCounter1"), is(counter1));
+		assertThat(counters.get("testCounter2"), is(counter2));
+		assertThat(counters.get("testCounter3"), is(counter3));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetAllCountersCompact() throws IOException {
+
+		metricRegistry.counter("testCounter1");
+		metricRegistry.counter("testCounter2").inc();
+		metricRegistry.counter("testCounter3").inc(3);
+
+		when(request.queryParams("compact")).thenReturn("");
+
+		Map<String, ?> counters = metricsRequestHandler.handleGetCounters(request, response);
+		assertThat(counters.size(), is(3));
+		assertThat(counters.get("testCounter1"), is(0L));
+		assertThat(counters.get("testCounter2"), is(1L));
+		assertThat(counters.get("testCounter3"), is(3L));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetCountersQuery() throws IOException {
+
+		Counter counter1 = metricRegistry.counter("testCounter1");
+		Counter counter2 = metricRegistry.counter("testCounter2");
+		metricRegistry.counter("counter3");
+
+		when(request.queryParams("query")).thenReturn("test");
+
+		Map<String, ?> counters = metricsRequestHandler.handleGetCounters(request, response);
+		assertThat(counters.size(), is(2));
+		assertThat(counters.get("testCounter1"), is(counter1));
+		assertThat(counters.get("testCounter2"), is(counter2));
+		assertThat(counters.get("counter3"), is(nullValue()));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetCountersQueryCompact() throws IOException {
+
+		metricRegistry.counter("testCounter1");
+		metricRegistry.counter("testCounter2").inc(2);
+		metricRegistry.counter("counter3");
+
+		when(request.queryParams("query")).thenReturn("test");
+		when(request.queryParams("compact")).thenReturn("true");
+
+		Map<String, ?> counters = metricsRequestHandler.handleGetCounters(request, response);
+		assertThat(counters.size(), is(2));
+		assertThat(counters.get("testCounter1"), is(0L));
+		assertThat(counters.get("testCounter2"), is(2L));
+		assertThat(counters.get("counter3"), is(nullValue()));
+
+		verify(request, times(1)).queryParams("query");
+		verify(request, times(1)).queryParams("compact");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetCounter() throws IOException {
+
+		Counter counter = metricRegistry.counter("testCounter");
+
+		when(request.params("counter")).thenReturn("testCounter");
+
+		assertThat(metricsRequestHandler.handleGetCounter(request, response), is(counter));
+
+		verify(request, times(1)).params("counter");
+		verifyNoMoreInteractions(request);
+	}
+
+	@Test
+	public void testHandleGetCounterNotFound() throws IOException {
+
+		when(request.params("counter")).thenReturn("testCounter");
+
+		try {
+			metricsRequestHandler.handleGetCounter(request, response);
+			fail("Did not throw Exception");
+		} catch (Exception e) {
+			assertThat(e, instanceOf(NotFoundException.class));
+			assertThat(e.getMessage(), is("Counter not found"));
+			verify(request, times(1)).params("counter");
+			verifyNoMoreInteractions(request);
+		}
 	}
 }

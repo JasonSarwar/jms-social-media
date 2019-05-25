@@ -2,6 +2,7 @@ package com.jms.socialmedia.cache;
 
 import java.util.Collection;
 
+import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.jms.socialmedia.model.Comment;
@@ -28,6 +29,15 @@ public class CachingServiceWithMetrics extends AbstractCachingService {
 	private final Timer getUserSessionFromCacheTimer;
 	private final Timer putUserSessionIntoCacheTimer;
 	private final Timer removeUserSessionFromCacheTimer;
+	private final Counter postCacheHitCounter;
+	private final Counter postCacheMissCounter;
+	private final Counter postCacheTotalCounter;
+	private final Counter commentsCacheHitCounter;
+	private final Counter commentsCacheMissCounter;
+	private final Counter commentsCacheTotalCounter;
+	private final Counter userSessionCacheHitCounter;
+	private final Counter userSessionCacheMissCounter;
+	private final Counter userSessionCacheTotalCounter;
 
 	public CachingServiceWithMetrics(AbstractCachingService cachingService, MetricRegistry metricRegistry) {
 		this(cachingService, metricRegistry, cachingService.getClass().getSimpleName());
@@ -52,6 +62,18 @@ public class CachingServiceWithMetrics extends AbstractCachingService {
 		this.getUserSessionFromCacheTimer = metricRegistry.timer(metricsName + ".getUserSessionFromCache");
 		this.putUserSessionIntoCacheTimer = metricRegistry.timer(metricsName + ".putUserSessionIntoCache");
 		this.removeUserSessionFromCacheTimer = metricRegistry.timer(metricsName + ".removeUserSessionFromCache");
+		this.postCacheHitCounter = metricRegistry.counter(metricsName + ".postCacheHits");
+		this.postCacheMissCounter = metricRegistry.counter(metricsName + ".postCacheMisses");
+		this.postCacheTotalCounter = metricRegistry.counter(metricsName + ".postCacheTotal");
+		this.commentsCacheHitCounter = metricRegistry.counter(metricsName + ".commentsCacheHits");
+		this.commentsCacheMissCounter = metricRegistry.counter(metricsName + ".commentsCacheMisses");
+		this.commentsCacheTotalCounter = metricRegistry.counter(metricsName + ".commentsCacheTotal");
+		this.userSessionCacheHitCounter = metricRegistry.counter(metricsName + ".userSessionCacheHits");
+		this.userSessionCacheMissCounter = metricRegistry.counter(metricsName + ".userSessionCacheMisses");
+		this.userSessionCacheTotalCounter = metricRegistry.counter(metricsName + ".userSessionCacheTotal");
+		metricRegistry.gauge(metricsName + ".postCacheHitRatio", () -> () -> (double) postCacheHitCounter.getCount() / postCacheTotalCounter.getCount() * 100);
+		metricRegistry.gauge(metricsName + ".commentsCacheHitRatio", () -> () -> (double) commentsCacheHitCounter.getCount() / commentsCacheTotalCounter.getCount() * 100);
+		metricRegistry.gauge(metricsName + ".userSessionCacheHitRatio", () -> () -> (double) userSessionCacheHitCounter.getCount() / userSessionCacheTotalCounter.getCount() * 100);
 	}
 
 	@Override
@@ -171,5 +193,41 @@ public class CachingServiceWithMetrics extends AbstractCachingService {
 		try (Timer.Context context = removeUserSessionFromCacheTimer.time()) {
 			cachingService.removeUserSessionFromCache(sessionKey);
 		}
+	}
+
+	@Override
+	protected void postCacheHit() {
+		postCacheHitCounter.inc();
+		postCacheTotalCounter.inc();
+	}
+
+	@Override
+	protected void postCacheMiss() {
+		postCacheMissCounter.inc();
+		postCacheTotalCounter.inc();
+	}
+
+	@Override
+	protected void commentsCacheHit() {
+		commentsCacheHitCounter.inc();
+		commentsCacheTotalCounter.inc();
+	}
+
+	@Override
+	protected void commentsCacheMiss() {
+		commentsCacheMissCounter.inc();
+		commentsCacheTotalCounter.inc();
+	}
+
+	@Override
+	protected void userSessionCacheHit() {
+		userSessionCacheHitCounter.inc();
+		userSessionCacheTotalCounter.inc();
+	}
+
+	@Override
+	protected void userSessionCacheMiss() {
+		userSessionCacheMissCounter.inc();
+		userSessionCacheTotalCounter.inc();
 	}
 }

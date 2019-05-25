@@ -91,12 +91,14 @@ public abstract class AbstractCachingService {
 		Post post = getPostFromCache(postId);
 		if (post == null) {
 			post = supplier.get();
+			postCacheMiss();
 			if (post != null) {
 				putPostIntoCache(post);
 				LOGGER.info("Retrieved Post #{} from DataService", postId);
 			}
 		} else {
-			LOGGER.info("Retrieved Post #{} from AbstractCachingService", postId);
+			postCacheHit();
+			LOGGER.info("Retrieved Post #{} from CachingService", postId);
 		}
 		return post;
 	}
@@ -105,12 +107,14 @@ public abstract class AbstractCachingService {
 		Collection<Comment> comments = getCommentsFromCache(postId);
 		if (comments == null) {
 			comments = supplier.get();
+			commentsCacheMiss();
 			if (comments != null) {
 				putCommentsFromPostIntoCache(postId, comments);
 				LOGGER.info("Retrieved {} Comments for Post #{} from DataService", comments.size(), postId);
 			}
 		} else {
-			LOGGER.info("Retrieved {} Comments for Post #{} from AbstractCachingService", comments.size(), postId);
+			commentsCacheHit();
+			LOGGER.info("Retrieved {} Comments for Post #{} from CachingService", comments.size(), postId);
 		}
 		return comments;
 	}
@@ -119,13 +123,33 @@ public abstract class AbstractCachingService {
 		User user = getUserSessionFromCache(sessionKey);
 		if (user == null) {
 			user = supplier.get();
+			userSessionCacheMiss();
 			if (user != null) {
 				putUserSessionIntoCache(sessionKey, user);
 				LOGGER.info("Retrieved User Session for {} from DataService", user.getUsername());
 			}
 		} else {
-			LOGGER.info("Retrieved User Session for {} from AbstractCachingService", user.getUsername());
+			userSessionCacheHit();
+			LOGGER.info("Retrieved User Session for {} from CachingService", user.getUsername());
 		}
 		return user;
+	}
+
+	protected void postCacheHit() {
+	}
+
+	protected void postCacheMiss() {
+	}
+
+	protected void commentsCacheHit() {
+	}
+
+	protected void commentsCacheMiss() {
+	}
+
+	protected void userSessionCacheHit() {
+	}
+
+	protected void userSessionCacheMiss() {
 	}
 }
