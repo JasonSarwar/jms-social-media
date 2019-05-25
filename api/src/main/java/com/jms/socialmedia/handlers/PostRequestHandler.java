@@ -34,8 +34,8 @@ public class PostRequestHandler extends RequestHandler {
 	}
 
 	/**
-	 * <h1> GET /api/posts?userId=[id]&username=[username]&tag=[tag]&on=[date]&before=[date]&after=[date] </h1>
-	 * 
+	 * <h1> GET /api/posts </h1>
+	 * Query Parameters
 	 * <ul>
 	 * 	<li> userId - ID of User who made the Posts </li>
 	 * 	<li> username - login name of the User who made the Posts </li>
@@ -71,7 +71,7 @@ public class PostRequestHandler extends RequestHandler {
 	}
 
 	/**
-	 * <h1> GET /api/user/:userId/feed
+	 * <h1> GET /api/user/:userId/feed </h1>
 	 * 
 	 * <ul>
 	 * 	<li> userId - ID of User </li>

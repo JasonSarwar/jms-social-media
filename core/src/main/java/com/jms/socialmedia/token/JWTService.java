@@ -31,7 +31,7 @@ public class JWTService implements TokenService {
 	/**
 	 * Taken from <a href='https://stormpath.com/blog/jwt-java-create-verify'>
 	 * 				https://stormpath.com/blog/jwt-java-create-verify</a>
-	 * @param id
+	 * @param token
 	 * @return JWT
 	 * @throws IOException
 	 */
