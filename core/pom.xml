@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.jms.socialmedia</groupId>
 		<artifactId>jms-social-media</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.2.0</version>
 	</parent>
 
 	<artifactId>core</artifactId>
