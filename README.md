@@ -7,6 +7,9 @@
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/jasonsarwar/jms-social-media.svg)](https://github.com/JasonSarwar/jms-social-media/graphs/commit-activity) 
 [![Languages](https://img.shields.io/github/languages/count/jasonsarwar/jms-social-media.svg?color=orange)](https://github.com/JasonSarwar/jms-social-media) 
 [![Repo Size](https://img.shields.io/github/repo-size/jasonsarwar/jms-social-media.svg?color=yellow)](https://github.com/JasonSarwar/jms-social-media)
+
+[![CircleCI](https://circleci.com/gh/JasonSarwar/jms-social-media/tree/master.svg?style=svg)](https://circleci.com/gh/JasonSarwar/jms-social-media/tree/master) 
+
 -----
 JMS Social Media is a personal simple social media website. The website is currently up on [http://bit.ly/jms-social-media].
 

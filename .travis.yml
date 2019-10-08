@@ -13,19 +13,30 @@ git:
   depth: false
 before_deploy:
 - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+- echo $GIT_PACKAGE_TOKEN | docker login -u JasonSarwar --password-stdin
 - mvn -P assemble-jars package -B
 - DOCKERTAG="${TRAVIS_TAG:1}-${TRAVIS_COMMIT:0:7}"
 - SEMVER=( ${DOCKERTAG//./ } )
+- MAJOR="${SEMVER[0]}
+- MAJOR_MINOR="${MAJOR}.${SEMVER[1]}"
+- MAJOR_MINOR_PATCH="${MAJOR_MINOR}.${SEMVER[2]}"
 - docker build --build-arg PATH_TO_LIB=./api/target/libs/ -t ${DOCKER_USERNAME}/jms-social-media
   --label "commit=$TRAVIS_COMMIT" --label "version=${TRAVIS_TAG:1}" --label "tag=$DOCKERTAG" .
 - docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG}
-- docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${SEMVER[0]}
-- docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:"${SEMVER[0]}.${SEMVER[1]}"
+- docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${MAJOR}
+- docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:${MAJOR_MINOR}
+- docker tag ${DOCKER_USERNAME}/jms-social-media ${DOCKER_USERNAME}/jms-social-media:"${MAJOR_MINOR_PATCH}"
+- docker tag ${DOCKER_USERNAME}/jms-social-media docker.pkg.github.com/jasonsarwar/jms-social-media/app:${DOCKERTAG}
+- docker tag ${DOCKER_USERNAME}/jms-social-media docker.pkg.github.com/jasonsarwar/jms-social-media/app:${MAJOR_MINOR_PATCH}
 deploy:
   provider: script
-  script: docker push ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG} && docker push
-    ${DOCKER_USERNAME}/jms-social-media:${SEMVER[0]} && docker push ${DOCKER_USERNAME}/jms-social-media:"${SEMVER[0]}.${SEMVER[1]}"
+  script: docker push ${DOCKER_USERNAME}/jms-social-media:${DOCKERTAG}
+    && docker push ${DOCKER_USERNAME}/jms-social-media:${MAJOR}
+    && docker push ${DOCKER_USERNAME}/jms-social-media:"${MAJOR_MINOR}"
+    && docker push ${DOCKER_USERNAME}/jms-social-media:"${MAJOR_MINOR_PATCH}"
     && docker push ${DOCKER_USERNAME}/jms-social-media:latest
+    && docker push docker.pkg.github.com/jasonsarwar/jms-social-media/app:${DOCKERTAG}
+    && docker push docker.pkg.github.com/jasonsarwar/jms-social-media/app:${MAJOR_MINOR_PATCH}
   skip_cleanup: true
   on:
     tags: true
