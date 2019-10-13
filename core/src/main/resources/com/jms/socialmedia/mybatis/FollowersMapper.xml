@@ -24,7 +24,7 @@
         )
 	</insert>
 
-	<insert id="followUser" databaseId="mysql">
+	<insert id="followUser">
 		insert into followers (follower_user_id, following_user_id, timestamp) values (
             #{param1}, #{param2}, now()
         )

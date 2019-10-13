@@ -46,7 +46,7 @@
         )
     </insert>
 
-	<insert id="addComment" parameterType="comment" databaseId="mysql" keyProperty="commentId" keyColumn="comment_id">
+	<insert id="addComment" parameterType="comment" keyProperty="commentId" keyColumn="comment_id">
         insert into comments (post_id, user_id, text, timestamp) values (
             #{postId}, #{userId}, #{text}, now()
         )
@@ -74,7 +74,7 @@
         )
 	</insert>
 
-	<insert id="likeComment" databaseId="mysql">
+	<insert id="likeComment">
 		insert into comment_likes (comment_id, user_id, timestamp) values (
             #{commentId}, #{userId}, now()
         )

@@ -22,7 +22,7 @@
     	select * from dual
     </insert>
 
-    <insert id="addTags" databaseId="mysql">
+    <insert id="addTags">
     	insert into post_tags values
     	<foreach item="tag" collection="tags" separator=",">
     		(#{postId}, #{tag})

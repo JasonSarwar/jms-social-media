@@ -46,7 +46,7 @@
 	        	<if test="_databaseId == 'oracle'">
 	        		AND TO_CHAR(timestamp, 'MM-DD-YYYY') = #{onDate}
 	        	</if>
-	        	<if test="_databaseId == 'mysql'">
+	        	<if test="_databaseId != 'oracle'">
 	        		AND DATE_FORMAT(timestamp, '%m-%d-%Y') = #{onDate}
 	        	</if>
 	        </if>
@@ -113,7 +113,7 @@
         )
     </insert>
 
-	<insert id="addPost" parameterType="post" databaseId="mysql" keyProperty="postId" keyColumn="post_id">
+	<insert id="addPost" parameterType="post" keyProperty="postId" keyColumn="post_id">
         insert into posts (user_id, text, timestamp) values (
             #{userId}, #{text}, now()
         )
@@ -149,7 +149,7 @@
         )
 	</insert>
 
-	<insert id="likePost" databaseId="mysql">
+	<insert id="likePost">
 		insert into post_likes (post_id, user_id, timestamp) values (
             #{postId}, #{userId}, now()
         )
