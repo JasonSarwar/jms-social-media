@@ -14,7 +14,7 @@ subprojects {
     repositories {
         mavenCentral()
     }
-    
+
     jacoco {
     	toolVersion = "0.8.4"
 	}
@@ -25,6 +25,6 @@ subprojects {
 	        csv.enabled true
 	    }
 	}
-	
+
 	check.dependsOn(jacocoTestReport)
 }

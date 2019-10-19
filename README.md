@@ -1,17 +1,21 @@
 # jms-social-media
 
-[![Build Status](https://travis-ci.org/JasonSarwar/jms-social-media.svg?branch=master)](https://travis-ci.org/JasonSarwar/jms-social-media) 
-[![<Sonarcloud Quality Gate>](https://sonarcloud.io/api/project_badges/measure?project=JasonSarwar_jms-social-media&metric=alert_status)](https://sonarcloud.io/dashboard?id=JasonSarwar_jms-social-media) 
-[![codecov](https://codecov.io/gh/JasonSarwar/jms-social-media/branch/master/graph/badge.svg)](https://codecov.io/gh/JasonSarwar/jms-social-media) 
-[![GitHub version](https://badge.fury.io/gh/JasonSarwar%2Fjms-social-media.svg)](https://badge.fury.io/gh/JasonSarwar%2Fjms-social-media) 
-[![Commit Activity](https://img.shields.io/github/commit-activity/m/jasonsarwar/jms-social-media.svg)](https://github.com/JasonSarwar/jms-social-media/graphs/commit-activity) 
-[![Languages](https://img.shields.io/github/languages/count/jasonsarwar/jms-social-media.svg?color=orange)](https://github.com/JasonSarwar/jms-social-media) 
+[![Build Status](https://travis-ci.org/JasonSarwar/jms-social-media.svg?branch=master)](https://travis-ci.org/JasonSarwar/jms-social-media)
+[![<Sonarcloud Quality Gate>](https://sonarcloud.io/api/project_badges/measure?project=JasonSarwar_jms-social-media&metric=alert_status)](https://sonarcloud.io/dashboard?id=JasonSarwar_jms-social-media)
+[![codecov](https://codecov.io/gh/JasonSarwar/jms-social-media/branch/master/graph/badge.svg)](https://codecov.io/gh/JasonSarwar/jms-social-media)
+[![GitHub version](https://badge.fury.io/gh/JasonSarwar%2Fjms-social-media.svg)](https://badge.fury.io/gh/JasonSarwar%2Fjms-social-media)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/jasonsarwar/jms-social-media.svg)](https://github.com/JasonSarwar/jms-social-media/graphs/commit-activity)
+[![Languages](https://img.shields.io/github/languages/count/jasonsarwar/jms-social-media.svg?color=orange)](https://github.com/JasonSarwar/jms-social-media)
 [![Repo Size](https://img.shields.io/github/repo-size/jasonsarwar/jms-social-media.svg?color=yellow)](https://github.com/JasonSarwar/jms-social-media)
 
-[![CircleCI](https://circleci.com/gh/JasonSarwar/jms-social-media/tree/master.svg?style=svg)](https://circleci.com/gh/JasonSarwar/jms-social-media/tree/master) 
+[![CircleCI](https://circleci.com/gh/JasonSarwar/jms-social-media/tree/master.svg?style=svg)](https://circleci.com/gh/JasonSarwar/jms-social-media/tree/master)
 
 -----
-JMS Social Media is a personal simple social media website. The website is currently up on [http://bit.ly/jms-social-media].
+JMS Social Media is a personal simple social media website. The website is currently up on http://bit.ly/jms-social-media.
+
+The Social Media Website allows you to create an account, create posts, comment on posts, like posts, follow other users and much more!
+
+GitHub Pages: https://jasonsarwar.github.io/jms-social-media/
 
 ## Technologies and Services Used in this Project
 - Java
@@ -23,7 +27,7 @@ JMS Social Media is a personal simple social media website. The website is curre
 - Redis
 - Docker
 - TravisCI
-- Google Cloud Platform
+- Azure
 - SonarQube
 
 ## Java Libraries Used in this Project
@@ -52,7 +56,7 @@ To run with maven:
 ```make
 make mavenrun
 ```
-or 
+or
 ```bash
 mvn package exec:java -Dexec.mainClass="com.jms.socialmedia.app.App"
 ```

@@ -2,10 +2,10 @@
 
 ## Login to Docker Registries
 echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-echo $GITHUB_TOKEN | docker login -u JasonSarwar --password-stdin
+echo $GITHUB_TOKEN | docker login docker.pkg.github.com -u jasonsarwar --password-stdin
 
 ## Make Jars for Docker Build
-mvn -P assemble-jars package -B
+mvn -P assemble-jars package -DskipTests -B
 
 ## For Docker Image Tags
 DOCKERTAG="${TRAVIS_TAG:1}-${TRAVIS_COMMIT:0:7}"
