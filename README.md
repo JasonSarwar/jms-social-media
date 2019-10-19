@@ -1,7 +1,9 @@
 # Welcome to My GitHub Pages
-JMS Social Media is a personal simple social media website. The website is currently up on [http://bit.ly/jms-social-media].
+JMS Social Media is a personal simple social media website. The website is currently up on [http://bit.ly/jms-social-media](http://bit.ly/jms-social-media).
 
 The website is written with a Java backend, a MySQL data store, and an AngularJS frontend. The website is deployed using Docker and Azure.
+
+The Social Media Website allows you to create an account, create posts, comment on posts, like posts, follow other users and much more!
 
 ## Javadocs
 You can view the javadocs for this project [here](https://jasonsarwar.github.io/jms-social-media/apidocs/index.html).
