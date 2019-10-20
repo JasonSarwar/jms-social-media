@@ -5,8 +5,16 @@ The website is written with a Java backend, a MySQL data store, and an AngularJS
 
 The Social Media Website allows you to create an account, create posts, comment on posts, like posts, follow other users and much more!
 
+## Screenshots
+
+#### Home Page
+![Home Page](/assets/images/HomePage.jpg)
+
+#### User Page
+![User Page](/assets/images/UserPage.jpg)
+
 ## Javadocs
-You can view the javadocs for this project [here](https://jasonsarwar.github.io/jms-social-media/apidocs/index.html).
+You can view the javadocs for this project [here](/jms-social-media/apidocs/).
 
 ## Swagger UI
 Swagger UI will be up soon
