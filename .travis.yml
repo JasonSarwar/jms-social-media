@@ -11,19 +11,23 @@ services:
 - docker
 git:
   depth: false
-before_deploy:
-- mvn javadoc:aggregate
 deploy:
 - provider: script
   script: bash .travis/deploy.sh
   skip_cleanup: true
   on:
     tags: true
-- provider: pages
+- provider: script
+  script: bash .travis/gh-pages.sh
   skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  keep_history: true
-  local_dir: target/site
+  on:
+    tags: true
+- provider: releases
+  api_key: $GITHUB_TOKEN
+  file:
+    - "api/target/api-${TRAVIS_TAG:1}.jar"
+    - "core/target/core-${TRAVIS_TAG:1}.jar"
+  skip_cleanup: true
   on:
     tags: true
 cache:
