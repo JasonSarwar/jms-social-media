@@ -1,0 +1,14 @@
+com.jms.socialmedia.app
+com.jms.socialmedia.cache
+com.jms.socialmedia.cache.codec
+com.jms.socialmedia.configuration
+com.jms.socialmedia.dataservice
+com.jms.socialmedia.exception
+com.jms.socialmedia.handlers
+com.jms.socialmedia.metrics
+com.jms.socialmedia.model
+com.jms.socialmedia.mybatis
+com.jms.socialmedia.password
+com.jms.socialmedia.routes
+com.jms.socialmedia.token
+com.jms.socialmedia.utils
