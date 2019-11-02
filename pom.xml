@@ -23,23 +23,23 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<spark-core.version>2.9.0</spark-core.version>
-		<guava.version>27.1-jre</guava.version>
+		<spark-core.version>2.9.1</spark-core.version>
+		<guava.version>28.1-jre</guava.version>
 		<javax-xml.version>2.3.1</javax-xml.version>
-		<gson.version>2.8.5</gson.version>
-		<jackson.version>2.9.8</jackson.version>
-		<mybatis.version>3.5.1</mybatis.version>
+		<gson.version>2.8.6</gson.version>
+		<jackson.version>2.9.9</jackson.version>
+		<mybatis.version>3.5.3</mybatis.version>
 		<jjwt.version>0.9.1</jjwt.version>
-		<spring-security.version>5.1.5.RELEASE</spring-security.version>
-		<mysql-connector.version>8.0.16</mysql-connector.version>
+		<spring-security.version>5.2.0.RELEASE</spring-security.version>
+		<mysql-connector.version>8.0.18</mysql-connector.version>
 		<h2.version>1.4.199</h2.version>
-		<metrics.version>4.1.0</metrics.version>
-		<apache.commons.pool>2.6.2</apache.commons.pool>
-		<jedis.version>3.0.1</jedis.version>
-		<logging.version>2.11.2</logging.version>
+		<dropwizard.metrics.version>4.1.1</dropwizard.metrics.version>
+		<apache.commons.pool.version>2.7.0</apache.commons.pool.version>
+		<jedis.version>3.1.0</jedis.version>
+		<log4j.logging.version>2.12.1</log4j.logging.version>
 		<junit.version>4.12</junit.version>
-		<mockito.version>2.27.0</mockito.version>
-		<jacoco.version>0.8.4</jacoco.version>
+		<mockito.version>3.1.0</mockito.version>
+		<jacoco.version>0.8.5</jacoco.version>
 		<maven.exec>1.6.0</maven.exec>
 		<maven.clean>3.1.0</maven.clean>
 		<maven.resources>3.1.0</maven.resources>
@@ -47,7 +47,7 @@
 		<maven.surefire>3.0.0-M3</maven.surefire>
 		<maven.jar>3.1.1</maven.jar>
 		<maven.install>3.0.0-M1</maven.install>
-		<maven.assembly>3.1.0</maven.assembly>
+		<maven.assembly>3.1.1</maven.assembly>
 		<sonar.projectKey>JasonSarwar_jms-social-media</sonar.projectKey>
 		<sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
 	</properties>
@@ -141,21 +141,21 @@
 			<dependency>
 				<groupId>io.dropwizard.metrics</groupId>
 				<artifactId>metrics-core</artifactId>
-				<version>${metrics.version}</version>
+				<version>${dropwizard.metrics.version}</version>
 			</dependency>
 
 			<!-- https://metrics.dropwizard.io/4.0.0/getting-started.html -->
 			<dependency>
 				<groupId>io.dropwizard.metrics</groupId>
 				<artifactId>metrics-json</artifactId>
-				<version>${metrics.version}</version>
+				<version>${dropwizard.metrics.version}</version>
 			</dependency>
 
 			<!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jvm -->
 			<dependency>
 				<groupId>io.dropwizard.metrics</groupId>
 				<artifactId>metrics-jvm</artifactId>
-				<version>${metrics.version}</version>
+				<version>${dropwizard.metrics.version}</version>
 			</dependency>
 
 			<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
@@ -169,14 +169,14 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-pool2</artifactId>
-				<version>${apache.commons.pool}</version>
+				<version>${apache.commons.pool.version}</version>
 			</dependency>
 
 			<!-- For Logging -->
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-slf4j-impl</artifactId>
-				<version>${logging.version}</version>
+				<version>${log4j.logging.version}</version>
 			</dependency>
 
 			<dependency>

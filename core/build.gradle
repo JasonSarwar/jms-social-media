@@ -1,49 +1,49 @@
 // core
 
-apply plugin: 'java-library'
+apply plugin: "java-library"
 
 dependencies {
-    
+
     // https://mvnrepository.com/artifact/com.google.guava/guava
-	compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
-    
+	compile group: "com.google.guava", name: "guava", version: "${guavaVersion}"
+
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
-	compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
-    
+	compile group: "com.google.code.gson", name: "gson", version: "${gsonVersion}"
+
 	// https://mvnrepository.com/artifact/org.mybatis/mybatis
-	compile group: 'org.mybatis', name: 'mybatis', version: '3.5.1'
+	compile group: "org.mybatis", name: "mybatis", version: "${mybatisVersion}"
 
 	// https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
-	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+	compile group: "javax.xml.bind", name: "jaxb-api", version: "${javaxXmlVersion}"
 
 	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
-	compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.1.5.RELEASE'
+	compile group: "org.springframework.security", name: "spring-security-crypto", version: "${springSecurityVersion}"
 
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
-	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.16'
+	compile group: "mysql", name: "mysql-connector-java", version: "${mysqlConnectorVersion}"
 
 	// https://mvnrepository.com/artifact/com.h2database/h2
-	compile group: 'com.h2database', name: 'h2', version: '1.4.199'
+	compile group: 'com.h2database', name: 'h2', version: "${h2Version}"
 
-	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-	
+	compile group: 'io.jsonwebtoken', name: 'jjwt', version: "${jjwtVersion}"
+
 	// https://mvnrepository.com/artifact/redis.clients/jedis
-	compile group: 'redis.clients', name: 'jedis', version: '3.0.1'
+	compile group: "redis.clients", name: "jedis", version: "${jedisVersion}"
 
 	// https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
-	compile group: 'io.dropwizard.metrics', name: 'metrics-core', version: '4.1.0'
+	compile group: "io.dropwizard.metrics", name: "metrics-core", version: "${dropwizardMetricsVersion}"
 
 	// https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jvm
-	compile group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: '4.1.0'
+	compile group: "io.dropwizard.metrics", name: "metrics-jvm", version: "${dropwizardMetricsVersion}"
 
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-pool2
-	compile group: 'org.apache.commons', name: 'commons-pool2', version: '2.6.2'
+	compile group: "org.apache.commons", name: "commons-pool2", version: "${apacheCommonsPoolVersion}"
 
-	compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.2'
+	compile group: "org.apache.logging.log4j", name: "log4j-slf4j-impl", version: "${log4jLoggingVersion}"
 
     // Use JUnit test framework
-    testCompile 'junit:junit:4.12'
+    testCompile group: "junit", name: "junit", version: "${junitVersion}"
 
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
-	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.27.0'
+	testCompile group: "org.mockito", name: "mockito-core", version: "${mockitoVersion}"
 }
