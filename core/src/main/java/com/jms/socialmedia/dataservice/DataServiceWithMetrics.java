@@ -250,7 +250,7 @@ public class DataServiceWithMetrics implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getPostLikes(int postId) {
+	public Collection<String> getPostLikes(int postId) {
 		try (Timer.Context context = getPostLikesTimer.time()) {
 			return dataService.getPostLikes(postId);
 		}
@@ -264,9 +264,23 @@ public class DataServiceWithMetrics implements DataService {
 	}
 
 	@Override
+	public boolean likePost(int postId, String username) {
+		try (Timer.Context context = likePostTimer.time()) {
+			return dataService.likePost(postId, username);
+		}
+	}
+
+	@Override
 	public boolean unlikePost(int postId, int userId) {
 		try (Timer.Context context = unlikePostTimer.time()) {
 			return dataService.unlikePost(postId, userId);
+		}
+	}
+
+	@Override
+	public boolean unlikePost(int postId, String username) {
+		try (Timer.Context context = unlikePostTimer.time()) {
+			return dataService.unlikePost(postId, username);
 		}
 	}
 
@@ -320,7 +334,7 @@ public class DataServiceWithMetrics implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getCommentLikes(int commentId) {
+	public Collection<String> getCommentLikes(int commentId) {
 		try (Timer.Context context = getCommentLikesTimer.time()) {
 			return dataService.getCommentLikes(commentId);
 		}
@@ -334,9 +348,23 @@ public class DataServiceWithMetrics implements DataService {
 	}
 
 	@Override
+	public boolean likeComment(int commentId, String username) {
+		try (Timer.Context context = likeCommentTimer.time()) {
+			return dataService.likeComment(commentId, username);
+		}
+	}
+
+	@Override
 	public boolean unlikeComment(int commentId, int userId) {
 		try (Timer.Context context = unlikeCommentTimer.time()) {
 			return dataService.unlikeComment(commentId, userId);
+		}
+	}
+
+	@Override
+	public boolean unlikeComment(int commentId, String username) {
+		try (Timer.Context context = unlikeCommentTimer.time()) {
+			return dataService.unlikeComment(commentId, username);
 		}
 	}
 

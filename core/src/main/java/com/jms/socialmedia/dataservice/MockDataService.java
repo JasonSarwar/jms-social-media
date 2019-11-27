@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -213,18 +214,30 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getPostLikes(int postId) {
+	public Collection<String> getPostLikes(int postId) {
 		return getPost(postId).getLikes();
 	}
 
 	@Override
 	public boolean likePost(int postId, int userId) {
-		return getPost(postId).addLike(userId);
+		getUsernamesByIds(Collections.singleton(userId)).forEach(e -> getPost(postId).addLike(e.getUsername()));
+		return true;
+	}
+
+	@Override
+	public boolean likePost(int postId, String username) {
+		return getPost(postId).addLike(username);
 	}
 
 	@Override
 	public boolean unlikePost(int postId, int userId) {
-		return getPost(postId).removeLike(userId);
+		getUsernamesByIds(Collections.singleton(userId)).forEach(e -> getPost(postId).removeLike(e.getUsername()));
+		return true;
+	}
+
+	@Override
+	public boolean unlikePost(int postId, String username) {
+		return getPost(postId).removeLike(username);
 	}
 
 	@Override
@@ -277,18 +290,30 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getCommentLikes(int commentId) {
+	public Collection<String> getCommentLikes(int commentId) {
 		return getComment(commentId).getLikes();
 	}
 
 	@Override
 	public boolean likeComment(int commentId, int userId) {
-		return getComment(commentId).addLike(userId);
+		getUsernamesByIds(Collections.singleton(userId)).forEach(e -> getComment(commentId).addLike(e.getUsername()));
+		return true;
+	}
+
+	@Override
+	public boolean likeComment(int commentId, String username) {
+		return getComment(commentId).addLike(username);
 	}
 
 	@Override
 	public boolean unlikeComment(int commentId, int userId) {
-		return getComment(commentId).removeLike(userId);
+		getUsernamesByIds(Collections.singleton(userId)).forEach(e -> getComment(commentId).removeLike(e.getUsername()));
+		return true;
+	}
+
+	@Override
+	public boolean unlikeComment(int commentId, String username) {
+		return getComment(commentId).removeLike(username);
 	}
 
 	@Override

@@ -103,4 +103,9 @@ public class JavaMapCachingService extends AbstractHeapCachingService {
 	public void removeUserSessionFromCache(String sessionKey) {
 		userSessionsByKey.remove(sessionKey);
 	}
+
+	@Override
+	protected void invalidateCommentsByPostId(int postId) {
+		commentsByPostId.remove(postId);
+	}
 }

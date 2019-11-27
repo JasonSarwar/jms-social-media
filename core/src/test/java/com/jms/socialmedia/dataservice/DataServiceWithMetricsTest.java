@@ -318,10 +318,10 @@ public class DataServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.likePost");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.likePost(1, 2);
+		dataServiceWithMetrics.likePost(1, "Me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.likePost(1, 2);
+		dataServiceWithMetrics.likePost(1, "Me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -331,10 +331,10 @@ public class DataServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.unlikePost");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.unlikePost(1, 2);
+		dataServiceWithMetrics.unlikePost(1, "Me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.unlikePost(1, 2);
+		dataServiceWithMetrics.unlikePost(1, "Me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -448,10 +448,10 @@ public class DataServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.likeComment");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.likeComment(1, 2);
+		dataServiceWithMetrics.likeComment(1, "Me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.likeComment(1, 2);
+		dataServiceWithMetrics.likeComment(1, "Me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -461,10 +461,10 @@ public class DataServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.unlikeComment");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.unlikeComment(1, 2);
+		dataServiceWithMetrics.unlikeComment(1, "Me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.unlikeComment(1, 2);
+		dataServiceWithMetrics.unlikeComment(1, "Me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}

@@ -179,18 +179,28 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getPostLikes(int postId) {
+	public Collection<String> getPostLikes(int postId) {
 		return postsMapper.getPostLikes(postId);
 	}
 
 	@Override
 	public boolean likePost(int postId, int userId) {
-		return postsMapper.likePost(postId, userId) == 1;
+		return postsMapper.likePost(postId, userId, null) == 1;
+	}
+
+	@Override
+	public boolean likePost(int postId, String username) {
+		return postsMapper.likePost(postId, null, username) == 1;
 	}
 
 	@Override
 	public boolean unlikePost(int postId, int userId) {
-		return postsMapper.unlikePost(postId, userId) == 1;
+		return postsMapper.unlikePost(postId, userId, null) == 1;
+	}
+
+	@Override
+	public boolean unlikePost(int postId, String username) {
+		return postsMapper.unlikePost(postId, null, username) == 1;
 	}
 
 	@Override
@@ -237,18 +247,28 @@ public class MybatisDataService implements DataService {
 	}
 	
 	@Override
-	public Collection<Integer> getCommentLikes(int commentId) {
+	public Collection<String> getCommentLikes(int commentId) {
 		return commentsMapper.getCommentLikes(commentId);
 	}
 
 	@Override
 	public boolean likeComment(int commentId, int userId) {
-		return commentsMapper.likeComment(commentId, userId) == 1;
+		return commentsMapper.likeComment(commentId, userId, null) == 1;
+	}
+
+	@Override
+	public boolean likeComment(int commentId, String username) {
+		return commentsMapper.likeComment(commentId, null, username) == 1;
 	}
 
 	@Override
 	public boolean unlikeComment(int commentId, int userId) {
-		return commentsMapper.unlikeComment(commentId, userId) == 1;
+		return commentsMapper.unlikeComment(commentId, userId, null) == 1;
+	}
+
+	@Override
+	public boolean unlikeComment(int commentId, String username) {
+		return commentsMapper.unlikeComment(commentId, null, username) == 1;
 	}
 
 	@Override

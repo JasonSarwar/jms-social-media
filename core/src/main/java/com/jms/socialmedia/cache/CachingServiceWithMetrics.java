@@ -105,16 +105,16 @@ public class CachingServiceWithMetrics extends AbstractCachingService {
 	}
 
 	@Override
-	public void likePostInCache(int postId, int userId) {
+	public void likePostInCache(int postId, String username) {
 		try (Timer.Context context = likePostInCacheTimer.time()) {
-			cachingService.likePostInCache(postId, userId);
+			cachingService.likePostInCache(postId, username);
 		}
 	}
 
 	@Override
-	public void unlikePostInCache(int postId, int userId) {
+	public void unlikePostInCache(int postId, String username) {
 		try (Timer.Context context = unlikePostInCacheTimer.time()) {
-			cachingService.unlikePostInCache(postId, userId);
+			cachingService.unlikePostInCache(postId, username);
 		}
 	}
 
@@ -168,9 +168,23 @@ public class CachingServiceWithMetrics extends AbstractCachingService {
 	}
 
 	@Override
+	public void likeCommentInCache(int commentId, String username) {
+		try (Timer.Context context = likeCommentInCacheTimer.time()) {
+			cachingService.likeCommentInCache(commentId, username);
+		}
+	}
+
+	@Override
 	public void unlikeCommentInCache(int commentId, int userId) {
 		try (Timer.Context context = unlikeCommentInCacheTimer.time()) {
 			cachingService.unlikeCommentInCache(commentId, userId);
+		}
+	}
+
+	@Override
+	public void unlikeCommentInCache(int commentId, String username) {
+		try (Timer.Context context = unlikeCommentInCacheTimer.time()) {
+			cachingService.unlikeCommentInCache(commentId, username);
 		}
 	}
 

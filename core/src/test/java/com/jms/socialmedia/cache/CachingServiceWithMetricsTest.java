@@ -93,10 +93,10 @@ public class CachingServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.likePostInCache");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		cachingServiceWithMetrics.likePostInCache(1, 3);
+		cachingServiceWithMetrics.likePostInCache(1, "Me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		cachingServiceWithMetrics.likePostInCache(1, 3);
+		cachingServiceWithMetrics.likePostInCache(1, "Me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -106,10 +106,10 @@ public class CachingServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.unlikePostInCache");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		cachingServiceWithMetrics.unlikePostInCache(1, 3);
+		cachingServiceWithMetrics.unlikePostInCache(1, "Me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		cachingServiceWithMetrics.unlikePostInCache(1, 3);
+		cachingServiceWithMetrics.unlikePostInCache(1, "Me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -197,10 +197,10 @@ public class CachingServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.likeCommentInCache");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		cachingServiceWithMetrics.likeCommentInCache(1, 3);
+		cachingServiceWithMetrics.likeCommentInCache(1, "Me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		cachingServiceWithMetrics.likeCommentInCache(1, 3);
+		cachingServiceWithMetrics.likeCommentInCache(1, "Me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -210,10 +210,10 @@ public class CachingServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.unlikeCommentInCache");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		cachingServiceWithMetrics.unlikeCommentInCache(1, 3);
+		cachingServiceWithMetrics.unlikeCommentInCache(1, "Me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		cachingServiceWithMetrics.unlikeCommentInCache(1, 3);
+		cachingServiceWithMetrics.unlikeCommentInCache(1, "Me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}

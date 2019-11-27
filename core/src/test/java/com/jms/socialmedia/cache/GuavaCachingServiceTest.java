@@ -302,26 +302,26 @@ public class GuavaCachingServiceTest {
 		guavaCachingService.putPostIntoCache(post);
 		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.emptySet()));
 
-		guavaCachingService.likePostInCache(1, 5);
-		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.singleton(5)));
+		guavaCachingService.likePostInCache(1, "Me");
+		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.singleton("Me")));
 	}
 
 	@Test
 	public void testLikePostThatIsNotThere() {
 
 		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
-		guavaCachingService.likePostInCache(1, 5);
+		guavaCachingService.likePostInCache(1, "Me");
 		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
 	}
 
 	@Test
 	public void testUnlikePost() {
 		Post post = new Post(1);
-		post.addLike(5);
+		post.addLike("Me");
 		guavaCachingService.putPostIntoCache(post);
-		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.singleton(5)));
+		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.singleton("Me")));
 
-		guavaCachingService.unlikePostInCache(1, 5);
+		guavaCachingService.unlikePostInCache(1, "Me");
 		assertThat(guavaCachingService.getPostFromCache(1).getLikes(), is(Collections.emptySet()));
 	}
 
@@ -329,7 +329,7 @@ public class GuavaCachingServiceTest {
 	public void testUnlikePostThatIsNotThere() {
 
 		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
-		guavaCachingService.unlikePostInCache(1, 5);
+		guavaCachingService.unlikePostInCache(1, "Me");
 		assertThat(guavaCachingService.getPostFromCache(1), is(nullValue()));
 	}
 
@@ -357,26 +357,26 @@ public class GuavaCachingServiceTest {
 		guavaCachingService.putCommentIntoCache(comment);
 		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.emptySet()));
 
-		guavaCachingService.likeCommentInCache(1, 5);
-		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.singleton(5)));
+		guavaCachingService.likeCommentInCache(1, "Me");
+		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.singleton("Me")));
 	}
 
 	@Test
 	public void testLikeCommentThatIsNotThere() {
 
 		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
-		guavaCachingService.likeCommentInCache(1, 5);
+		guavaCachingService.likeCommentInCache(1, "Me");
 		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
 	}
 
 	@Test
 	public void testUnlikeComment() {
 		Comment comment = new Comment(1, 3, "Old Text", null);
-		comment.addLike(5);
+		comment.addLike("Me");
 		guavaCachingService.putCommentIntoCache(comment);
-		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.singleton(5)));
+		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.singleton("Me")));
 
-		guavaCachingService.unlikeCommentInCache(1, 5);
+		guavaCachingService.unlikeCommentInCache(1, "Me");
 		assertThat(guavaCachingService.getCommentFromCache(1).getLikes(), is(Collections.emptySet()));
 	}
 
@@ -384,7 +384,7 @@ public class GuavaCachingServiceTest {
 	public void testUnlikeCommentThatIsNotThere() {
 
 		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
-		guavaCachingService.unlikeCommentInCache(1, 5);
+		guavaCachingService.unlikeCommentInCache(1, "Me");
 		assertThat(guavaCachingService.getCommentFromCache(1), is(nullValue()));
 	}
 }

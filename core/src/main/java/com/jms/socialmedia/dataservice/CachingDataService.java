@@ -141,7 +141,7 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getPostLikes(int postId) {
+	public Collection<String> getPostLikes(int postId) {
 		Post post = cachingService.getPostFromCache(postId);
 		if (post != null) {
 			return post.getLikes();
@@ -151,14 +151,26 @@ public class CachingDataService implements DataService {
 
 	@Override
 	public boolean likePost(int postId, int userId) {
-		cachingService.likePostInCache(postId, userId);
+		cachingService.removePostFromCache(postId);
 		return dataService.likePost(postId, userId);
 	}
 
 	@Override
+	public boolean likePost(int postId, String username) {
+		cachingService.likePostInCache(postId, username);
+		return dataService.likePost(postId, username);
+	}
+
+	@Override
 	public boolean unlikePost(int postId, int userId) {
-		cachingService.unlikePostInCache(postId, userId);
+		cachingService.removePostFromCache(postId);
 		return dataService.unlikePost(postId, userId);
+	}
+
+	@Override
+	public boolean unlikePost(int postId, String username) {
+		cachingService.unlikePostInCache(postId, username);
+		return dataService.unlikePost(postId, username);
 	}
 
 	@Override
@@ -213,7 +225,7 @@ public class CachingDataService implements DataService {
 	}
 	
 	@Override
-	public Collection<Integer> getCommentLikes(int commentId) {
+	public Collection<String> getCommentLikes(int commentId) {
 		Comment comment = cachingService.getCommentFromCache(commentId);
 		if (comment != null) {
 			return comment.getLikes();
@@ -228,9 +240,21 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
+	public boolean likeComment(int commentId, String username) {
+		cachingService.likeCommentInCache(commentId, username);
+		return dataService.likeComment(commentId, username);
+	}
+
+	@Override
 	public boolean unlikeComment(int commentId, int userId) {
 		cachingService.unlikeCommentInCache(commentId, userId);
 		return dataService.unlikeComment(commentId, userId);
+	}
+
+	@Override
+	public boolean unlikeComment(int commentId, String username) {
+		cachingService.unlikeCommentInCache(commentId, username);
+		return dataService.unlikeComment(commentId, username);
 	}
 	
 	@Override

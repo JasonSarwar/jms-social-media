@@ -83,7 +83,7 @@ public class SqlSessionPostsMapper implements PostsMapper {
 	}
 
 	@Override
-	public Collection<Integer> getPostLikes(int postId) {
+	public Collection<String> getPostLikes(int postId) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
 			return mapper.getPostLikes(postId);
@@ -91,18 +91,19 @@ public class SqlSessionPostsMapper implements PostsMapper {
 	}
 
 	@Override
-	public int likePost(int postId, int userId) {
+	public int likePost(int postId, Integer userId, String username) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			return mapper.likePost(postId, userId);
+			return mapper.likePost(postId, userId, username);
 		}
 	}
 
+
 	@Override
-	public int unlikePost(int postId, int userId) {
+	public int unlikePost(int postId, Integer userId, String username) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			PostsMapper mapper = session.getMapper(PostsMapper.class);
-			return mapper.unlikePost(postId, userId);
+			return mapper.unlikePost(postId, userId, username);
 		}
 	}
 

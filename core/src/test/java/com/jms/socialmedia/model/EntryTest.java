@@ -18,15 +18,15 @@ public class EntryTest {
 		post.setFullName("Full Name");
 		post.setText("Post Text");
 		post.setTimestamp(LocalDateTime.of(2011, 1, 1, 1, 1, 1));
-		post.addLike(56);
-		post.addLike(57);
+		post.addLike("Me 1");
+		post.addLike("Me 2");
 
 		assertThat(post.toString(), containsString("postId=4"));
 		assertThat(post.toString(), containsString("userId=1"));
 		assertThat(post.toString(), containsString("username=username"));
 		assertThat(post.toString(), containsString("fullName=Full Name"));
 		assertThat(post.toString(), containsString("text=Post Text"));
-		assertThat(post.toString(), containsString("likes=[56, 57]"));
+		assertThat(post.toString(), containsString("likes=[Me 1, Me 2]"));
 		assertThat(post.toString(), containsString("timestamp=2011-01-01T01:01:01"));
 	}
 

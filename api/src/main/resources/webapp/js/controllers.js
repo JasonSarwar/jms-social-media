@@ -50,6 +50,23 @@
 			}
 		};
 
+		$scope.showUsersModalTemp = function (usernames) {
+			var data = [];
+			usernames.forEach((i) => {
+				data.push({username: i})
+			});
+			if (data) {
+				$scope.modalUsers = data;
+				if ($scope.userId) {
+					usersService.getFollowingUserIds($scope.userId)
+						.then(function (data) {
+							$scope.modalFollowingUserIds = data;
+						});
+				}
+				angular.element('#usersModal').modal();
+			}
+		};
+
 		$scope.showMessageBox = function(messageTitle, messageText) {
 			$scope.messageTitle = messageTitle;
 			$scope.messageText = messageText;
@@ -212,7 +229,7 @@
 	var EntryController = function($scope, $location, postsService, alertService) {
 
 		$scope.liked = function (entry) {
-			return entry.likes.indexOf($scope.userId) > -1;
+			return entry.likes.indexOf($scope.username) > -1;
 		}
 
 		$scope.startEditing = function (entry) {
@@ -273,7 +290,7 @@
 		};
 
 		let removeLikeFromEntry = function (entry) {
-			let index = entry.likes.indexOf($scope.userId);
+			let index = entry.likes.indexOf($scope.username);
 			if (index > -1) {
 				entry.likes.splice(index, 1);
 			}
@@ -284,14 +301,14 @@
 			if (entry.commentId) {
 				postsService.likeComment(entry.commentId, $scope.userId)
 					.then(function (data) {
-						entry.likes.push($scope.userId);
+						entry.likes.push($scope.username);
 					}, function (error) {
 						alertService.error(error.data);
 					});
 			} else {
 				postsService.likePost(entry.postId, $scope.userId)
 					.then(function (data) {
-						entry.likes.push($scope.userId);
+						entry.likes.push($scope.username);
 					}, function (error) {
 						alertService.error(error.data);
 					});

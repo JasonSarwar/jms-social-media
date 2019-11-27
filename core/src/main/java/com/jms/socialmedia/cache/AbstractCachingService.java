@@ -39,16 +39,16 @@ public abstract class AbstractCachingService {
 	/**
 	 * Either adds a Like to the Post in the Cache, or invalidates the Post
 	 * @param postId	ID of the Post being liked
-	 * @param userId	ID of the User the liked the Post
+	 * @param username	User that liked the Post
 	 */
-	public abstract void likePostInCache(int postId, int userId);
+	public abstract void likePostInCache(int postId, String username);
 
 	/**
 	 * Either removes a Like in the Post in the Cache, or invalidates the Post
 	 * @param postId	ID of the Post being unliked
-	 * @param userId	ID of the User the unliked the Post
+	 * @param username	User that unliked the Post
 	 */
-	public abstract void unlikePostInCache(int postId, int userId);
+	public abstract void unlikePostInCache(int postId, String username);
 
 	public abstract Collection<Comment> getCommentsFromCache(int postId);
 
@@ -70,16 +70,30 @@ public abstract class AbstractCachingService {
 	/**
 	 * Either adds a Like to the Comment in the Cache, or invalidates the Comment
 	 * @param commentId	ID of the Comment being liked
-	 * @param userId	ID of the User the liked the Comment
+	 * @param userId	ID of the User that liked the Comment
 	 */
 	public abstract void likeCommentInCache(int commentId, int userId);
 
 	/**
+	 * Either adds a Like to the Comment in the Cache, or invalidates the Comment
+	 * @param commentId	ID of the Comment being liked
+	 * @param username	User that liked the Comment
+	 */
+	public abstract void likeCommentInCache(int commentId, String username);
+
+	/**
 	 * Either removes a Like in the Comment in the Cache, or invalidates the Comment
 	 * @param commentId	ID of the Comment being unliked
-	 * @param userId	ID of the User the unliked the Comment
+	 * @param userId	ID of the User that unliked the Comment
 	 */
 	public abstract void unlikeCommentInCache(int commentId, int userId);
+
+	/**
+	 * Either removes a Like in the Comment in the Cache, or invalidates the Comment
+	 * @param commentId	ID of the Comment being unliked
+	 * @param username	User that unliked the Comment
+	 */
+	public abstract void unlikeCommentInCache(int commentId, String username);
 
 	public abstract User getUserSessionFromCache(String sessionKey);
 

@@ -14,18 +14,18 @@ public abstract class AbstractHeapCachingService extends AbstractCachingService 
 	}
 
 	@Override
-	public void likePostInCache(int postId, int userId) {
+	public void likePostInCache(int postId, String username) {
 		Post post = getPostFromCache(postId);
 		if (post != null) {
-			post.addLike(userId);
+			post.addLike(username);
 		}
 	}
 
 	@Override
-	public void unlikePostInCache(int postId, int userId) {
+	public void unlikePostInCache(int postId, String username) {
 		Post post = getPostFromCache(postId);
 		if (post != null) {
-			post.removeLike(userId);
+			post.removeLike(username);
 		}
 	}
 
@@ -41,7 +41,15 @@ public abstract class AbstractHeapCachingService extends AbstractCachingService 
 	public void likeCommentInCache(int commentId, int userId) {
 		Comment comment = getCommentFromCache(commentId);
 		if (comment != null) {
-			comment.addLike(userId);
+			invalidateCommentsByPostId(comment.getPostId());
+		}
+	}
+
+	@Override
+	public void likeCommentInCache(int commentId, String username) {
+		Comment comment = getCommentFromCache(commentId);
+		if (comment != null) {
+			comment.addLike(username);
 		}
 	}
 
@@ -49,7 +57,17 @@ public abstract class AbstractHeapCachingService extends AbstractCachingService 
 	public void unlikeCommentInCache(int commentId, int userId) {
 		Comment comment = getCommentFromCache(commentId);
 		if (comment != null) {
-			comment.removeLike(userId);
+			invalidateCommentsByPostId(comment.getPostId());
 		}
 	}
+
+	@Override
+	public void unlikeCommentInCache(int commentId, String username) {
+		Comment comment = getCommentFromCache(commentId);
+		if (comment != null) {
+			comment.removeLike(username);
+		}
+	}
+	
+	protected abstract void invalidateCommentsByPostId(int postId);
 }

@@ -63,11 +63,39 @@ public interface DataService {
 
 	Collection<Post> getLikedPostsByUserId(int userId);
 
-	Collection<Integer> getPostLikes(int postId);
+	Collection<String> getPostLikes(int postId);
 
+	/**
+	 * @deprecated 			in favor of {@link #likePost(int, String)}
+	 * @param postId		ID of the Post being liked
+	 * @param userId		ID of the user liking the Post
+	 * @return 				true if the action was successful
+	 */
+	@Deprecated
 	boolean likePost(int postId, int userId);
 
+	/**
+	 * @param postId		ID of the Post being liked
+	 * @param username		username of the user liking the Post
+	 * @return 				true if the action was successful
+	 */
+	boolean likePost(int postId, String username);
+
+	/**
+	 * @deprecated 			in favor of {@link #unlikePost(int, String)}
+	 * @param postId		ID of the Post being unliked
+	 * @param userId		ID of the user unliking the Post
+	 * @return 				true if the action was successful
+	 */
+	@Deprecated
 	boolean unlikePost(int postId, int userId);
+
+	/**
+	 * @param postId		ID of the Post being unliked
+	 * @param username		username of the user unliking the Post
+	 * @return 				true if the action was successful
+	 */
+	boolean unlikePost(int postId, String username);
 
 	Collection<Comment> getComments(int postId);
 
@@ -83,11 +111,29 @@ public interface DataService {
 
 	boolean deleteComment(int commentId);
 
-	Collection<Integer> getCommentLikes(int commentId);
+	Collection<String> getCommentLikes(int commentId);
 
+	/**
+	 * @deprecated in favor of {@link #likePost(int, String)}
+	 * @param commentId
+	 * @param userId
+	 * @return
+	 */
+	@Deprecated
 	boolean likeComment(int commentId, int userId);
 
+	boolean likeComment(int commentId, String username);
+
+	/**
+	 * @deprecated in favor of {@link #unlikePost(int, String)}
+	 * @param commentId
+	 * @param userId
+	 * @return
+	 */
+	@Deprecated
 	boolean unlikeComment(int commentId, int userId);
+
+	boolean unlikeComment(int commentId, String username);
 	
 	Collection<Integer> getFollowerUserIds(int userId);
 	

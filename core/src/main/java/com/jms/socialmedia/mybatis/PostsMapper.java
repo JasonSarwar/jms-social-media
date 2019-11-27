@@ -28,11 +28,11 @@ public interface PostsMapper {
 
 	Collection<Post> getLikedPostsByUserId(int userId);
 
-	Collection<Integer> getPostLikes(int postId);
+	Collection<String> getPostLikes(int postId);
 
-	int likePost(@Param(value="postId") int postId, @Param(value="userId") int userId);
+	int likePost(@Param(value="postId") int postId, @Param(value="userId") Integer userId, @Param(value="username") String username);
 
-	int unlikePost(@Param(value="postId") int postId, @Param(value="userId") int userId);
+	int unlikePost(@Param(value="postId") int postId, @Param(value="userId") Integer userId, @Param(value="username") String username);
 
 	Collection<Post> getCommentedPostsByUserId(int userId);
 }

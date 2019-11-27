@@ -158,13 +158,13 @@ public class RedisCachingServiceTest {
 
 	@Test
 	public void testLikePostFromCache() {
-		redisCachingService.likePostInCache(5, 2);
+		redisCachingService.likePostInCache(5, "Me");
 		verify(jedis, times(1)).del(POST_KEY);
 	}
 
 	@Test
 	public void testUnlikePostFromCache() {
-		redisCachingService.unlikePostInCache(5, 2);
+		redisCachingService.unlikePostInCache(5, "Me");
 		verify(jedis, times(1)).del(POST_KEY);
 	}
 
@@ -317,14 +317,14 @@ public class RedisCachingServiceTest {
 
 	@Test
 	public void testLikeCommentFromCache() {
-		redisCachingService.likeCommentInCache(2, 10);
+		redisCachingService.likeCommentInCache(2, "Me");
 		verify(jedis, times(1)).get(POST_ID_OF_COMMENT_KEY2);
 		verify(jedis, times(1)).del(COMMENTS_KEY);
 	}
 
 	@Test
 	public void testUnlikeCommentFromCache() {
-		redisCachingService.unlikeCommentInCache(2, 10);
+		redisCachingService.unlikeCommentInCache(2, "Me");
 		verify(jedis, times(1)).get(POST_ID_OF_COMMENT_KEY2);
 		verify(jedis, times(1)).del(COMMENTS_KEY);
 	}
