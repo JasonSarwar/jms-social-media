@@ -187,7 +187,10 @@ public class UserRequestHandler extends RequestHandler {
 		loginSuccess.setUserId(user.getUserId());
 		loginSuccess.setUsername(user.getUsername());
 		loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
-		Token.Builder tokenBuilder = Token.newBuilder().setUserId(user.getUserId());
+
+		Token.Builder tokenBuilder = Token.newBuilder()
+				.setUserId(user.getUserId())
+				.setUsername(user.getUsername());
 
 		if (adminUserIds.contains(user.getUserId())) {
 			tokenBuilder.addPermissions(Permission.ADMIN);
