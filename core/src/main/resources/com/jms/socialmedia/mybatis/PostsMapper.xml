@@ -147,36 +147,21 @@
 	<insert id="likePost" databaseId="oracle">
 		insert into post_likes (post_id, timestamp, user_id) values (
             #{postId}, systimestamp, 
-            <if test="username != null">
-            	(select user_id from users where lower(username) = lower(#{username}))
-            </if>
-            <if test="username == null">
-            	#{userId}
-            </if>
+            <include refid="getUserIdForLikeAndUnlike"></include>
         )
 	</insert>
 
 	<insert id="likePost">
 		insert into post_likes (post_id, timestamp, user_id) values (
             #{postId}, now(),
-            <if test="username != null">
-            	(select user_id from users where lower(username) = lower(#{username}))
-            </if>
-            <if test="username == null">
-            	#{userId}
-            </if>
+            <include refid="getUserIdForLikeAndUnlike"></include>
         )
 	</insert>
 
 	<delete id="unlikePost">
         delete from post_likes
         where post_id = #{postId} and user_id = 
-        <if test="username != null">
-        	(select user_id from users where lower(username) = lower(#{username}))
-        </if>
-        <if test="username == null">
-        	#{userId}
-        </if>
+        <include refid="getUserIdForLikeAndUnlike"></include>
     </delete>
 
     <select id="getCommentedPostsByUserId" parameterType="int" resultType="post">
@@ -186,5 +171,14 @@
 		where comments.user_id = #{id}
 		order by comments.timestamp desc
 	</select>
+
+	<sql id="getUserIdForLikeAndUnlike">
+		<if test="username != null">
+        	(select user_id from users where lower(username) = lower(#{username}))
+        </if>
+        <if test="username == null">
+        	#{userId}
+        </if>
+	</sql>
 
 </mapper>

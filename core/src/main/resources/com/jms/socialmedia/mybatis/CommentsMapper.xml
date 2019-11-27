@@ -72,36 +72,29 @@
 	<insert id="likeComment" databaseId="oracle">
 		insert into comment_likes (comment_id, timestamp, user_id) values (
             #{commentId}, systimestamp, 
-            <if test="username != null">
-	        	(select user_id from users where lower(username) = lower(#{username}))
-	        </if>
-	        <if test="username == null">
-	        	#{userId}
-	        </if>
+            <include refid="getUserIdForLikeAndUnlike"></include>
         )
 	</insert>
 
 	<insert id="likeComment">
 		insert into comment_likes (comment_id, timestamp, user_id) values (
             #{commentId}, now(), 
-            <if test="username != null">
-	        	(select user_id from users where lower(username) = lower(#{username}))
-	        </if>
-	        <if test="username == null">
-	        	#{userId}
-	        </if>
+            <include refid="getUserIdForLikeAndUnlike"></include>
         )
 	</insert>
 
 	<delete id="unlikeComment">
         delete from comment_likes
         where comment_id = #{commentId} and user_id = 
-        <if test="username != null">
+        <include refid="getUserIdForLikeAndUnlike"></include>
+    </delete>
+
+	<sql id="getUserIdForLikeAndUnlike">
+		<if test="username != null">
         	(select user_id from users where lower(username) = lower(#{username}))
         </if>
         <if test="username == null">
         	#{userId}
         </if>
-    </delete>
-
+	</sql>
 </mapper>
