@@ -6,53 +6,55 @@ import com.google.common.base.MoreObjects;
 
 public class FollowRequest {
 
-	private Integer followerUserId;
-	private Integer followingUserId;
-	
+	private String followerUsername;
+	private String followingUsername;
+
 	public FollowRequest() {
 	}
 
-	public FollowRequest(Integer followerUserId, Integer followingUserId) {
-		this.followerUserId = followerUserId;
-		this.followingUserId = followingUserId;
+	public FollowRequest(String followerUsername, String followingUsername) {
+		this.followerUsername = followerUsername;
+		this.followingUsername = followingUsername;
 	}
 
-	public final Integer getFollowerUserId() {
-		return followerUserId;
+	public final String getFollowerUsername() {
+		return followerUsername;
 	}
 
-	public final void setFollowerUserId(Integer followerUserId) {
-		this.followerUserId = followerUserId;
+	public final void setFollowerUsername(String followerUsername) {
+		this.followerUsername = followerUsername;
 	}
 
-	public final Integer getFollowingUserId() {
-		return followingUserId;
+	public final String getFollowingUsername() {
+		return followingUsername;
 	}
 
-	public final void setFollowingUserId(Integer followingUserId) {
-		this.followingUserId = followingUserId;
+	public final void setFollowingUsername(String followingUsername) {
+		this.followingUsername = followingUsername;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(followerUserId, followingUserId);
+		return Objects.hash(followerUsername, followingUsername);
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
-		if (this == other) return true;
-		if (other == null || other.getClass() != getClass()) return false;
-			
+		if (this == other)
+			return true;
+		if (other == null || other.getClass() != getClass())
+			return false;
+
 		FollowRequest followRequest = (FollowRequest) other;
-		return Objects.equals(followerUserId, followRequest.followerUserId)
-				&& Objects.equals(followingUserId, followRequest.followingUserId);
+		return Objects.equals(followerUsername, followRequest.followerUsername)
+				&& Objects.equals(followingUsername, followRequest.followingUsername);
 	}
 
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
-				.add("followerUserId", followerUserId)
-				.add("followingUserId", followingUserId)
+				.add("followerUsername", followerUsername)
+				.add("followingUsername", followingUsername)
 				.toString();
 	}
 }

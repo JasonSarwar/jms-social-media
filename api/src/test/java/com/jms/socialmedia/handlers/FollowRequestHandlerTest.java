@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jms.socialmedia.dataservice.DataService;
+import com.jms.socialmedia.exception.BadRequestException;
 import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.routes.LocalDateTypeAdapter;
 import com.jms.socialmedia.token.Permission;
@@ -36,8 +37,9 @@ public class FollowRequestHandlerTest {
 
 	private static final String AUTHORIZATION = "Authorization";
 	private static final String USER_ID_PARAM = "userId";
-	private static final String FOLLOW_REQUEST = "{\"followerUserId\":5, \"followingUserId\":11}";
-	private static final String FOLLOW_REQUEST_SAME_IDS = "{\"followerUserId\":6, \"followingUserId\":6}";
+	private static final String FOLLOW_REQUEST = "{\"followerUsername\": \"Jason\", \"followingUsername\": \"Sarwar\"}";
+	private static final String FOLLOW_REQUEST_SAME_NAMES = "{\"followerUsername\": \"Jason\", \"followingUsername\": \"Jason\"}";
+	private static final String FOLLOW_REQUEST_SAME_NAMES_IRREGULAR = "{\"followerUsername\": \" Jason \", \"followingUsername\": \"  jasOn\"}";
 
 	@Mock
 	private DataService dataService;
@@ -60,12 +62,12 @@ public class FollowRequestHandlerTest {
 
 	@Test
 	public void testHandleFollowUser() throws IOException {
-		Token token = Token.newBuilder().setUserId(5).addPermissions(Permission.FOLLOW_USER).build();
+		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.FOLLOW_USER).build();
 
 		when(request.body()).thenReturn(FOLLOW_REQUEST);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
-		when(dataService.followUser(5, 11)).thenReturn(true);
+		when(dataService.followUser(null, "Jason", null, "Sarwar")).thenReturn(true);
 
 		boolean followUser = followRequestHandler.handleFollowUser(request, response);
 		assertThat(followUser, is(true));
@@ -75,23 +77,43 @@ public class FollowRequestHandlerTest {
 		verifyNoMoreInteractions(request);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
 		verifyNoMoreInteractions(tokenService);
-		verify(dataService, times(1)).followUser(5, 11);
+		verify(dataService, times(1)).followUser(null, "Jason", null, "Sarwar");
 		verifyNoMoreInteractions(dataService);
 	}
 
 	@Test
-	public void testHandleFollowUserWithMatchingUserIds() throws IOException {
-		Token token = Token.newBuilder().setUserId(6).addPermissions(Permission.FOLLOW_USER).build();
+	public void testHandleFollowUserWithMatchingUsernames() throws IOException {
+		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.FOLLOW_USER).build();
 
-		when(request.body()).thenReturn(FOLLOW_REQUEST_SAME_IDS);
+		when(request.body()).thenReturn(FOLLOW_REQUEST_SAME_NAMES);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
-		when(dataService.followUser(6, 6)).thenReturn(true);
 
 		try {
 			followRequestHandler.handleFollowUser(request, response);
 			fail("Did not throw exception");
-		} catch (Exception e) {
+		} catch (BadRequestException e) {
+			
+			assertThat(e.getMessage(), is("A User cannot follow themself"));
+			verify(request, times(1)).body();
+			verifyZeroInteractions(dataService);
+		}
+	}
+
+	@Test
+	public void testHandleFollowUserWithMatchingIrregularUsernames() throws IOException {
+		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.FOLLOW_USER).build();
+
+		when(request.body()).thenReturn(FOLLOW_REQUEST_SAME_NAMES_IRREGULAR);
+		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
+		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
+
+		try {
+			followRequestHandler.handleFollowUser(request, response);
+			fail("Did not throw exception");
+		} catch (BadRequestException e) {
+			
+			assertThat(e.getMessage(), is("A User cannot follow themself"));
 			verify(request, times(1)).body();
 			verifyZeroInteractions(dataService);
 		}
@@ -99,12 +121,12 @@ public class FollowRequestHandlerTest {
 
 	@Test
 	public void testHandleUnfollowUser() throws IOException {
-		Token token = Token.newBuilder().setUserId(5).addPermissions(Permission.UNFOLLOW_USER).build();
+		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.UNFOLLOW_USER).build();
 
 		when(request.body()).thenReturn(FOLLOW_REQUEST);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
-		when(dataService.unfollowUser(5, 11)).thenReturn(true);
+		when(dataService.unfollowUser(null, "Jason", null, "Sarwar")).thenReturn(true);
 
 		boolean unfollowUser = followRequestHandler.handleUnfollowUser(request, response);
 		assertThat(unfollowUser, is(true));
@@ -114,23 +136,24 @@ public class FollowRequestHandlerTest {
 		verifyNoMoreInteractions(request);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
 		verifyNoMoreInteractions(tokenService);
-		verify(dataService, times(1)).unfollowUser(5, 11);
+		verify(dataService, times(1)).unfollowUser(null, "Jason", null, "Sarwar");
 		verifyNoMoreInteractions(dataService);
 	}
 
 	@Test
-	public void testHandleUnfollowUserWithMatchingUserIds() throws IOException {
-		Token token = Token.newBuilder().setUserId(6).addPermissions(Permission.FOLLOW_USER).build();
+	public void testHandleUnfollowUserWithMatchingUsernames() throws IOException {
+		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.UNFOLLOW_USER).build();
 
-		when(request.body()).thenReturn(FOLLOW_REQUEST_SAME_IDS);
+		when(request.body()).thenReturn(FOLLOW_REQUEST_SAME_NAMES);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
-		when(dataService.unfollowUser(6, 6)).thenReturn(true);
 
 		try {
 			followRequestHandler.handleUnfollowUser(request, response);
 			fail("Did not throw exception");
-		} catch (Exception e) {
+		} catch (BadRequestException e) {
+
+			assertThat(e.getMessage(), is("A User cannot unfollow themself"));
 			verify(request, times(1)).body();
 			verifyZeroInteractions(dataService);
 		}

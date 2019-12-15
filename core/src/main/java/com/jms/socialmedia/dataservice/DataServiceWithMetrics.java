@@ -383,16 +383,16 @@ public class DataServiceWithMetrics implements DataService {
 	}
 
 	@Override
-	public boolean followUser(int followerUserId, int followingUserId) {
+	public boolean followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
 		try (Timer.Context context = followUserTimer.time()) {
-			return dataService.followUser(followerUserId, followingUserId);
+			return dataService.followUser(followerUserId, followerUsername, followingUserId, followingUsername);
 		}
 	}
 
 	@Override
-	public boolean unfollowUser(int followerUserId, int followingUserId) {
+	public boolean unfollowUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
 		try (Timer.Context context = unfollowUserTimer.time()) {
-			return dataService.unfollowUser(followerUserId, followingUserId);
+			return dataService.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername);
 		}
 	}
 }

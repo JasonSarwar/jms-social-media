@@ -282,12 +282,12 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public boolean followUser(int followerUserId, int followingUserId) {
-		return followersMapper.followUser(followerUserId, followingUserId) == 1;
+	public boolean followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
+		return followersMapper.followUser(followerUserId, followerUsername, followingUserId, followingUsername) == 1;
 	}
 
 	@Override
-	public boolean unfollowUser(int followerUserId, int followingUserId) {
-		return followersMapper.unfollowUser(followerUserId, followingUserId) == 1;
+	public boolean unfollowUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
+		return followersMapper.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername) == 1;
 	}
 }

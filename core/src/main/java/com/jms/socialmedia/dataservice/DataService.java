@@ -139,7 +139,7 @@ public interface DataService {
 	
 	Collection<Integer> getFollowingUserIds(int userId);
 	
-	boolean followUser(int followerUserId, int followingUserId);
+	boolean followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername);
 
-	boolean unfollowUser(int followerUserId, int followingUserId);
+	boolean unfollowUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername);
 }

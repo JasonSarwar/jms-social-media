@@ -32,18 +32,18 @@ public class SqlSessionFollowersMapper implements FollowersMapper {
 	}
 
 	@Override
-	public int followUser(int followerUserId, int followingUserId) {
+	public int followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			FollowersMapper mapper = session.getMapper(FollowersMapper.class);
-			return mapper.followUser(followerUserId, followingUserId);
+			return mapper.followUser(followerUserId, followerUsername, followingUserId, followingUsername);
 		}
 	}
 
 	@Override
-	public int unfollowUser(int followerUserId, int followingUserId) {
+	public int unfollowUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			FollowersMapper mapper = session.getMapper(FollowersMapper.class);
-			return mapper.unfollowUser(followerUserId, followingUserId);
+			return mapper.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername);
 		}
 	}
 

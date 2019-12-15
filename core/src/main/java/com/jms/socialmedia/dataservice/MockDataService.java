@@ -327,13 +327,13 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public boolean followUser(int followerUserId, int followingUserId) {
+	public boolean followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
 		boolean addFollowerUserId = getFollowerUserIds(followingUserId).add(followerUserId);
 		return getFollowingUserIds(followerUserId).add(followingUserId) && addFollowerUserId;
 	}
 
 	@Override
-	public boolean unfollowUser(int followerUserId, int followingUserId) {
+	public boolean unfollowUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
 		boolean removeFollowerUserId = getFollowerUserIds(followingUserId).remove(followerUserId);
 		return getFollowingUserIds(followerUserId).remove(followingUserId) && removeFollowerUserId;
 	}

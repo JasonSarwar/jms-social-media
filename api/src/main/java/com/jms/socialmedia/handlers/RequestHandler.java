@@ -78,6 +78,37 @@ public abstract class RequestHandler {
 	/**
 	 * 
 	 * @param request
+	 * @param usernameFromRequest
+	 * @param permission
+	 * @throws NoBearerTokenException
+	 * @throws ForbiddenException
+	 * @throws ExpiredJwtException
+	 * @throws UnsupportedJwtException
+	 * @throws MalformedJwtException
+	 * @throws SignatureException
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	protected void authorizeRequest(Request request, String usernameFromRequest, Permission permission)
+			throws IOException {
+
+		String auth = request.headers(AUTHORIZATION);
+		if (StringUtils.isBlank(auth) || !auth.startsWith(BEARER)) {
+			throw new NoBearerTokenException("Bearer token must be included in " + AUTHORIZATION + " header");
+		} else {
+			String tokenString = auth.substring(BEARER.length());
+			Token token = tokenService.createTokenFromString(tokenString);
+
+			if (!token.hasPermission(Permission.ADMIN) && (usernameFromRequest == null || 
+					!usernameFromRequest.trim().equalsIgnoreCase(token.getUsername()) || !token.hasPermission(permission))) {
+				throw new ForbiddenException("User not allowed to " + permission.getAction());
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param request
 	 * @throws NoBearerTokenException
 	 * @throws ForbiddenException
 	 * @throws ExpiredJwtException

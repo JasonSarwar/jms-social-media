@@ -500,10 +500,10 @@ public class DataServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.followUser");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.followUser(1, 5);
+		dataServiceWithMetrics.followUser(1, null, 5, null);
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.followUser(1, 5);
+		dataServiceWithMetrics.followUser(1, null, 5, null);
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -513,10 +513,10 @@ public class DataServiceWithMetricsTest {
 		Timer timer = metricRegistry.timer("test.unfollowUser");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.unfollowUser(1, 5);
+		dataServiceWithMetrics.unfollowUser(1, null, 5, null);
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.unfollowUser(1, 5);
+		dataServiceWithMetrics.unfollowUser(1, null, 5, null);
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
