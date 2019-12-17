@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -128,40 +126,6 @@ public class UserRequestHandlerTest {
 			verifyNoMoreInteractions(request);
 			verify(dataService, times(1)).getUserPageInfoByName("Jason");
 			verifyNoMoreInteractions(dataService);
-			verifyZeroInteractions(tokenService);
-			verifyZeroInteractions(passwordService);
-		}
-	}
-
-	@Test
-	public void testHandleGetUsernamesAndIds() {
-		Collection<User> users = createUsersToFollow(5);
-		when(request.queryParams("ids")).thenReturn("0,1,2,3,4");
-		when(dataService.getUsernamesByIds(List.of(0, 1, 2, 3, 4))).thenReturn(users);
-
-		Collection<User> retrievedUsers = userRequestHandler.handleGetUsernamesAndIds(request, response);
-		assertThat(retrievedUsers, is(users));
-
-		verify(request, times(1)).queryParams("ids");
-		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getUsernamesByIds(List.of(0, 1, 2, 3, 4));
-		verifyNoMoreInteractions(dataService);
-		verifyZeroInteractions(tokenService);
-		verifyZeroInteractions(passwordService);
-	}
-
-	@Test
-	public void testHandleGetUsernamesAndIdsBadRequest() {
-		when(request.queryParams("ids")).thenReturn("");
-
-		try {
-			userRequestHandler.handleGetUsernamesAndIds(request, response);
-		} catch (Exception e) {
-			assertThat(e, instanceOf(BadRequestException.class));
-			assertThat(e.getMessage(), is("No User IDs included"));
-			verify(request, times(1)).queryParams("ids");
-			verifyNoMoreInteractions(request);
-			verifyZeroInteractions(dataService);
 			verifyZeroInteractions(tokenService);
 			verifyZeroInteractions(passwordService);
 		}
@@ -797,14 +761,6 @@ public class UserRequestHandlerTest {
 		verify(request, times(1)).cookie(SESSION_COOKIE);
 		verify(dataService, times(1)).removeSessionId("cookie");
 		verify(response, times(1)).removeCookie(SESSION_COOKIE);
-	}
-
-	private static Collection<User> createUsersToFollow(int no) {
-		Collection<User> users = new HashSet<>(no);
-		for (int i = 0; i < no; i++) {
-			users.add(new User(no, "User" + no));
-		}
-		return users;
 	}
 
 	private NewUser createNewUser() {

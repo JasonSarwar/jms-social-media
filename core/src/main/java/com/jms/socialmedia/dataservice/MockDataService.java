@@ -81,11 +81,6 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
-		return usersById.values().stream().filter(user -> userIds.contains(user.getUserId())).collect(toList());
-	}
-
-	@Override
 	public Collection<String> getUsernamesToFollow(String username) {
 		Collection<String> usernames = new HashSet<>(getFollowingUsernames(username));
 		usernames.add(username);
@@ -220,8 +215,7 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean likePost(int postId, int userId) {
-		getUsernamesByIds(Collections.singleton(userId)).forEach(e -> getPost(postId).addLike(e.getUsername()));
-		return true;
+		return likePost(postId, usersById.get(userId).getUsername());
 	}
 
 	@Override
@@ -231,8 +225,7 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean unlikePost(int postId, int userId) {
-		getUsernamesByIds(Collections.singleton(userId)).forEach(e -> getPost(postId).removeLike(e.getUsername()));
-		return true;
+		return unlikePost(postId, usersById.get(userId).getUsername());
 	}
 
 	@Override
@@ -296,8 +289,7 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean likeComment(int commentId, int userId) {
-		getUsernamesByIds(Collections.singleton(userId)).forEach(e -> getComment(commentId).addLike(e.getUsername()));
-		return true;
+		return likeComment(commentId, usersById.get(userId).getUsername());
 	}
 
 	@Override
@@ -307,8 +299,7 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean unlikeComment(int commentId, int userId) {
-		getUsernamesByIds(Collections.singleton(userId)).forEach(e -> getComment(commentId).removeLike(e.getUsername()));
-		return true;
+		return unlikeComment(commentId, usersById.get(userId).getUsername());
 	}
 
 	@Override

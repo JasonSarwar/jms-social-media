@@ -18,7 +18,6 @@ public class DataServiceWithMetrics implements DataService {
 	private final Timer getUserPageInfoByNameTimer;
 	private final Timer getUserLoginInfoByStringTimer;
 	private final Timer getHashedPasswordByUserIdTimer;
-	private final Timer getUsernamesByIdsTimer;
 	private final Timer getUsernamesToFollowTimer;
 	private final Timer isUsernameTakenTimer;
 	private final Timer isEmailTakenTimer;
@@ -63,7 +62,6 @@ public class DataServiceWithMetrics implements DataService {
 		this.getUserPageInfoByNameTimer = metricRegistry.timer(metricsName + ".getUserPageInfoByName");
 		this.getUserLoginInfoByStringTimer = metricRegistry.timer(metricsName + ".getUserLoginInfoByString");
 		this.getHashedPasswordByUserIdTimer = metricRegistry.timer(metricsName + ".getHashedPasswordByUserId");
-		this.getUsernamesByIdsTimer = metricRegistry.timer(metricsName + ".getUsernamesByIds");
 		this.getUsernamesToFollowTimer = metricRegistry.timer(metricsName + ".getUsernamesToFollow");
 		this.isUsernameTakenTimer = metricRegistry.timer(metricsName + ".isUsernameTaken");
 		this.isEmailTakenTimer = metricRegistry.timer(metricsName + ".isEmailTaken");
@@ -124,13 +122,6 @@ public class DataServiceWithMetrics implements DataService {
 	public User getHashedPasswordByUserId(Integer userId) {
 		try (Timer.Context context = getHashedPasswordByUserIdTimer.time()) {
 			return dataService.getHashedPasswordByUserId(userId);
-		}
-	}
-
-	@Override
-	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
-		try (Timer.Context context = getUsernamesByIdsTimer.time()) {
-			return dataService.getUsernamesByIds(userIds);
 		}
 	}
 

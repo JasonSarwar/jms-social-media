@@ -176,13 +176,6 @@
 					return response.data;
 				});
 		};
-		
-		var getUsernames = function (userIds) {
-			return $http.get("/api/users?ids=" + userIds.join())
-				.then(function (response) {
-					return response.data;
-				});
-		};
 
 		var getUsersToFollow = function (username, max) {
 			let url = "/api/user/" + username + "/userstofollow";
@@ -232,7 +225,6 @@
 	
 		return {
 			getUserPageInfo: getUserPageInfo,
-			getUsernames: getUsernames,
 			getUsersToFollow: getUsersToFollow,
 	    	editPassword: editPassword,
 	    	followUser: followUser,

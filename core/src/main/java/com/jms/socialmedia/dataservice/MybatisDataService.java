@@ -77,11 +77,6 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
-		return usersMapper.getUsernamesByIds(userIds);
-	}
-
-	@Override
 	public Collection<String> getUsernamesToFollow(String username) {
 		return followersMapper.getUsernamesToFollow(username);
 	}

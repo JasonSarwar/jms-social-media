@@ -20,8 +20,6 @@ public interface DataService {
 
 	User getHashedPasswordByUserId(Integer userId);
 
-	Collection<User> getUsernamesByIds(Collection<Integer> userIds);
-
 	Collection<String> getUsernamesToFollow(String username);
 
 	boolean isUsernameTaken(String username);

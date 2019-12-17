@@ -147,8 +147,6 @@ public class RouteMappings {
 
 			/** User Request Mappings **/
 
-			get("/users", contentType, userRequestHandler::handleGetUsernamesAndIds, contentWriter);
-
 			get("/user/:username/pageinfo", contentType, userRequestHandler::handleGetUserPage, contentWriter);
 
 			get("/users/isUsernameTaken/:username", contentType, userRequestHandler::handleIsUsernameTaken,

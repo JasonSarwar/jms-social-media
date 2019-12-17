@@ -55,16 +55,6 @@ public class UserRequestHandler extends RequestHandler {
 		}
 	}
 
-	public Collection<User> handleGetUsernamesAndIds(Request request, Response response) {
-		String queryParam = request.queryParams("ids");
-		if (StringUtils.isBlank(queryParam)) {
-			throw new BadRequestException("No User IDs included");
-		}
-		Collection<Integer> userIds = Arrays.stream(queryParam.split(",")).map(Integer::parseInt)
-				.collect(Collectors.toList());
-		return dataService.getUsernamesByIds(userIds);
-	}
-
 	public Boolean handleIsUsernameTaken(Request request, Response response) {
 		String username = request.params("username");
 		if (!username.matches("^[\\w\\d_]+$")) {

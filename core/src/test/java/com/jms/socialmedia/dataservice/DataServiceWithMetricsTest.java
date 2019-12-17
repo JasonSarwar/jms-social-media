@@ -80,19 +80,6 @@ public class DataServiceWithMetricsTest {
 	}
 
 	@Test
-	public void testGetUsernamesByIds() {
-		Timer timer = metricRegistry.timer("test.getUsernamesByIds");
-		assertThat(timer.getCount(), is(0L));
-		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.getUsernamesByIds(null);
-		assertThat(timer.getCount(), is(1L));
-		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.getUsernamesByIds(null);
-		assertThat(timer.getCount(), is(2L));
-		assertThat(timer.getMeanRate() > 0, is(true));
-	}
-
-	@Test
 	public void testGetUsernamesToFollow() {
 		Timer timer = metricRegistry.timer("test.getUsernamesToFollow");
 		assertThat(timer.getCount(), is(0L));

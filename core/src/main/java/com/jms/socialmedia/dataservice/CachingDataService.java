@@ -40,11 +40,6 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
-		return dataService.getUsernamesByIds(userIds);
-	}
-
-	@Override
 	public Collection<String> getUsernamesToFollow(String username) {
 		return dataService.getUsernamesToFollow(username);
 	}
