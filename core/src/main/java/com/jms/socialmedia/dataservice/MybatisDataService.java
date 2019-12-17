@@ -82,8 +82,8 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<User> getUsersToFollow(int userId) {
-		return followersMapper.getUsersToFollow(userId);
+	public Collection<String> getUsernamesToFollow(String username) {
+		return followersMapper.getUsernamesToFollow(username);
 	}
 
 	@Override
@@ -122,9 +122,9 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, 
+	public Collection<Post> getPosts(Collection<Integer> userIds, Collection<String> usernames, String tag, String onDate, 
 			String beforeDate, String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
-		Collection<Post> posts = postsMapper.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+		Collection<Post> posts = postsMapper.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 		posts.forEach(post -> post.setLikes(getPostLikes(post.getPostId())));
 		return posts;
 	}
@@ -272,13 +272,13 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getFollowerUserIds(int userId) {
-		return followersMapper.getFollowerUserIds(userId);
+	public Collection<String> getFollowerUsernames(String username) {
+		return followersMapper.getFollowerUsernames(username);
 	}
 
 	@Override
-	public Collection<Integer> getFollowingUserIds(int userId) {
-		return followersMapper.getFollowingUserIds(userId);
+	public Collection<String> getFollowingUsernames(String username) {
+		return followersMapper.getFollowingUsernames(username);
 	}
 
 	@Override

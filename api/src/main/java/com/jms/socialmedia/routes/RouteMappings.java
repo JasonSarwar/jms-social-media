@@ -100,7 +100,7 @@ public class RouteMappings {
 			get("/user/:userId/commentedposts", contentType, postRequestHandler::handleGetCommentedPosts,
 					contentWriter);
 
-			get("/user/:userId/feed", contentType, postRequestHandler::handleGetFeedPosts, contentWriter);
+			get("/user/:username/feed", contentType, postRequestHandler::handleGetFeedPosts, contentWriter);
 
 			/** Comments Request Mappings **/
 
@@ -136,9 +136,9 @@ public class RouteMappings {
 
 			/** Follow Request Mappings **/
 
-			get("/user/:userId/following", contentType, followRequestHandler::handleGetFollowingUserIds, contentWriter);
+			get("/user/:username/following", contentType, followRequestHandler::handleGetFollowingUsernames, contentWriter);
 
-			get("/user/:userId/userstofollow", contentType, followRequestHandler::handleGetUsersToFollow,
+			get("/user/:username/userstofollow", contentType, followRequestHandler::handleGetUsersToFollow,
 					contentWriter);
 
 			post("/user/follow", contentType, followRequestHandler::handleFollowUser, contentWriter);

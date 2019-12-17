@@ -19,7 +19,7 @@ public class DataServiceWithMetrics implements DataService {
 	private final Timer getUserLoginInfoByStringTimer;
 	private final Timer getHashedPasswordByUserIdTimer;
 	private final Timer getUsernamesByIdsTimer;
-	private final Timer getUsersToFollowTimer;
+	private final Timer getUsernamesToFollowTimer;
 	private final Timer isUsernameTakenTimer;
 	private final Timer isEmailTakenTimer;
 	private final Timer addUserTimer;
@@ -48,8 +48,8 @@ public class DataServiceWithMetrics implements DataService {
 	private final Timer getCommentLikesTimer;
 	private final Timer likeCommentTimer;
 	private final Timer unlikeCommentTimer;
-	private final Timer getFollowerUserIdsTimer;
-	private final Timer getFollowingUserIdsTimer;
+	private final Timer getFollowerUsernamesTimer;
+	private final Timer getFollowingUsernamesTimer;
 	private final Timer followUserTimer;
 	private final Timer unfollowUserTimer;
 
@@ -64,7 +64,7 @@ public class DataServiceWithMetrics implements DataService {
 		this.getUserLoginInfoByStringTimer = metricRegistry.timer(metricsName + ".getUserLoginInfoByString");
 		this.getHashedPasswordByUserIdTimer = metricRegistry.timer(metricsName + ".getHashedPasswordByUserId");
 		this.getUsernamesByIdsTimer = metricRegistry.timer(metricsName + ".getUsernamesByIds");
-		this.getUsersToFollowTimer = metricRegistry.timer(metricsName + ".getUsersToFollow");
+		this.getUsernamesToFollowTimer = metricRegistry.timer(metricsName + ".getUsernamesToFollow");
 		this.isUsernameTakenTimer = metricRegistry.timer(metricsName + ".isUsernameTaken");
 		this.isEmailTakenTimer = metricRegistry.timer(metricsName + ".isEmailTaken");
 		this.addUserTimer = metricRegistry.timer(metricsName + ".addUser");
@@ -93,8 +93,8 @@ public class DataServiceWithMetrics implements DataService {
 		this.getCommentLikesTimer = metricRegistry.timer(metricsName + ".getCommentLikes");
 		this.likeCommentTimer = metricRegistry.timer(metricsName + ".likeComment");
 		this.unlikeCommentTimer = metricRegistry.timer(metricsName + ".unlikeComment");
-		this.getFollowerUserIdsTimer = metricRegistry.timer(metricsName + ".getFollowerUserIds");
-		this.getFollowingUserIdsTimer = metricRegistry.timer(metricsName + ".getFollowingUserIds");
+		this.getFollowerUsernamesTimer = metricRegistry.timer(metricsName + ".getFollowerUsernames");
+		this.getFollowingUsernamesTimer = metricRegistry.timer(metricsName + ".getFollowingUsernames");
 		this.followUserTimer = metricRegistry.timer(metricsName + ".followUser");
 		this.unfollowUserTimer = metricRegistry.timer(metricsName + ".unfollowUser");
 	}
@@ -135,9 +135,9 @@ public class DataServiceWithMetrics implements DataService {
 	}
 
 	@Override
-	public Collection<User> getUsersToFollow(int userId) {
-		try (Timer.Context context = getUsersToFollowTimer.time()) {
-			return dataService.getUsersToFollow(userId);
+	public Collection<String> getUsernamesToFollow(String username) {
+		try (Timer.Context context = getUsernamesToFollowTimer.time()) {
+			return dataService.getUsernamesToFollow(username);
 		}
 	}
 
@@ -191,11 +191,11 @@ public class DataServiceWithMetrics implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate,
+	public Collection<Post> getPosts(Collection<Integer> userIds, Collection<String> usernames, String tag, String onDate,
 			String beforeDate, String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
 
 		try (Timer.Context context = getPostsTimer.time()) {
-			return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, 
+			return dataService.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, 
 					sincePostId, sortBy, sortOrderAsc);
 		}
 	}
@@ -369,16 +369,16 @@ public class DataServiceWithMetrics implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getFollowerUserIds(int userId) {
-		try (Timer.Context context = getFollowerUserIdsTimer.time()) {
-			return dataService.getFollowerUserIds(userId);
+	public Collection<String> getFollowerUsernames(String username) {
+		try (Timer.Context context = getFollowerUsernamesTimer.time()) {
+			return dataService.getFollowerUsernames(username);
 		}
 	}
 
 	@Override
-	public Collection<Integer> getFollowingUserIds(int userId) {
-		try (Timer.Context context = getFollowingUserIdsTimer.time()) {
-			return dataService.getFollowingUserIds(userId);
+	public Collection<String> getFollowingUsernames(String username) {
+		try (Timer.Context context = getFollowingUsernamesTimer.time()) {
+			return dataService.getFollowingUsernames(username);
 		}
 	}
 

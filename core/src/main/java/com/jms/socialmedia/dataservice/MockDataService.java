@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 public class MockDataService implements DataService {
 
 	private final Map<Integer, User> usersById;
-	private final Map<Integer, UserPage> userPagesById;
+	private final Map<String, UserPage> userPagesByUsername;
 	private final Map<String, Integer> userSessionKeys;
 	private final Map<Integer, Post> postsById;
 	private final Map<Integer, Comment> commentsById;
@@ -39,7 +39,7 @@ public class MockDataService implements DataService {
 	public MockDataService() {
 
 		usersById = new HashMap<>();
-		userPagesById = new HashMap<>();
+		userPagesByUsername = new HashMap<>();
 		userSessionKeys = new HashMap<>();
 		postsById = new TreeMap<>((a, b) -> b.compareTo(a));
 		commentsById = new HashMap<>();
@@ -64,7 +64,7 @@ public class MockDataService implements DataService {
 
 	@Override
 	public UserPage getUserPageInfoByName(String username) {
-		return userPagesById.values().stream().filter(page -> page.getUsername().equalsIgnoreCase(username)).findAny()
+		return userPagesByUsername.values().stream().filter(page -> page.getUsername().equalsIgnoreCase(username)).findAny()
 				.orElse(null);
 	}
 
@@ -86,10 +86,10 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<User> getUsersToFollow(int userId) {
-		Collection<Integer> userIds = new HashSet<>(getFollowingUserIds(userId));
-		userIds.add(userId);
-		return usersById.values().stream().filter(user -> !userIds.contains(user.getUserId())).collect(toList());
+	public Collection<String> getUsernamesToFollow(String username) {
+		Collection<String> usernames = new HashSet<>(getFollowingUsernames(username));
+		usernames.add(username);
+		return userPagesByUsername.keySet().stream().filter(name -> !usernames.contains(name)).collect(toList());
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean isEmailTaken(String email) {
-		return userPagesById.values().stream().anyMatch(userPage -> email.equalsIgnoreCase(userPage.getEmail()));
+		return userPagesByUsername.values().stream().anyMatch(userPage -> email.equalsIgnoreCase(userPage.getEmail()));
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class MockDataService implements DataService {
 		userPage.setBirthDate(newUser.getBirthDate());
 		userPage.setProfilePictureLink(newUser.getProfilePictureLink());
 		userPage.setDateTimeJoined(LocalDateTime.now());
-		userPagesById.put(userId, userPage);
+		userPagesByUsername.put(newUser.getUsername(), userPage);
 		return true;
 	}
 
@@ -143,7 +143,7 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate,
+	public Collection<Post> getPosts(Collection<Integer> userIds, Collection<String> usernames, String tag, String onDate,
 			String beforeDate, String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
@@ -152,7 +152,7 @@ public class MockDataService implements DataService {
 			comparator = comparator.reversed();
 		}
 		return postsById.values().stream().filter(post -> userIds == null || userIds.contains(post.getUserId()))
-				.filter(post -> username == null || post.getUsername().equals(username))
+				.filter(post -> usernames == null || post.getUsername().equals(usernames))
 				.filter(post -> sincePostId == null || sincePostId < post.getPostId())
 				.filter(post -> tag == null || post.getText().contains(tag))
 				.filter(post -> onDate == null
@@ -209,7 +209,7 @@ public class MockDataService implements DataService {
 
 	@Override
 	public Collection<Post> getLikedPostsByUserId(int userId) {
-		return postsById.values().stream().filter(post -> post.getLikes().contains(userId))
+		return postsById.values().stream().filter(post -> post.getLikes().contains(usersById.get(userId).getUsername()))
 				.sorted((a, b) -> b.getPostId().compareTo(a.getPostId())).collect(toList());
 	}
 
@@ -317,25 +317,34 @@ public class MockDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getFollowerUserIds(int userId) {
-		return userPagesById.get(userId).getFollowersUserIds();
+	public Collection<String> getFollowerUsernames(String username) {
+		return userPagesByUsername.get(username).getFollowersUsernames();
 	}
 
 	@Override
-	public Collection<Integer> getFollowingUserIds(int userId) {
-		return userPagesById.get(userId).getFollowingUserIds();
+	public Collection<String> getFollowingUsernames(String username) {
+		return userPagesByUsername.get(username).getFollowingUsernames();
 	}
 
 	@Override
 	public boolean followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
-		boolean addFollowerUserId = getFollowerUserIds(followingUserId).add(followerUserId);
-		return getFollowingUserIds(followerUserId).add(followingUserId) && addFollowerUserId;
+
+		if (followerUsername != null) {
+			followerUsername = usersById.get(followerUserId).getUsername();
+		}
+
+		if (followingUsername != null) {
+			followingUsername = usersById.get(followingUserId).getUsername();
+		}
+
+		boolean addFollowerUsername = getFollowerUsernames(followingUsername).add(followerUsername);
+		return getFollowingUsernames(followerUsername).add(followingUsername) && addFollowerUsername;
 	}
 
 	@Override
 	public boolean unfollowUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
-		boolean removeFollowerUserId = getFollowerUserIds(followingUserId).remove(followerUserId);
-		return getFollowingUserIds(followerUserId).remove(followingUserId) && removeFollowerUserId;
+		boolean removeFollowerUserId = getFollowerUsernames(followingUsername).remove(followerUsername);
+		return getFollowingUsernames(followerUsername).remove(followingUsername) && removeFollowerUserId;
 	}
 
 	private void setupUsers() {
@@ -350,7 +359,7 @@ public class MockDataService implements DataService {
 		userPage.setFullName("Visitor");
 		userPage.setBio("Awesome person visiting Jason's website!");
 		userPage.setDateTimeJoined(LocalDateTime.now());
-		userPagesById.put(1, userPage);
+		userPagesByUsername.put("user", userPage);
 
 		UserPage jasonPage = new UserPage();
 		jasonPage.setUserId(2);
@@ -359,7 +368,7 @@ public class MockDataService implements DataService {
 		jasonPage.setEmail("jason_sarwar@yahoo.com");
 		jasonPage.setBio("Trying to create this website.");
 		jasonPage.setDateTimeJoined(LocalDateTime.of(2019, 1, 1, 0, 0, 0));
-		userPagesById.put(2, jasonPage);
+		userPagesByUsername.put("Jason", jasonPage);
 	}
 
 	private void setupPosts() {

@@ -93,14 +93,14 @@ public class DataServiceWithMetricsTest {
 	}
 
 	@Test
-	public void testGetUsersToFollow() {
-		Timer timer = metricRegistry.timer("test.getUsersToFollow");
+	public void testGetUsernamesToFollow() {
+		Timer timer = metricRegistry.timer("test.getUsernamesToFollow");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.getUsersToFollow(1);
+		dataServiceWithMetrics.getUsernamesToFollow("me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.getUsersToFollow(1);
+		dataServiceWithMetrics.getUsernamesToFollow("me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
@@ -470,27 +470,27 @@ public class DataServiceWithMetricsTest {
 	}
 
 	@Test
-	public void testGetFollowerUserIds() {
-		Timer timer = metricRegistry.timer("test.getFollowerUserIds");
+	public void testGetFollowerUsernames() {
+		Timer timer = metricRegistry.timer("test.getFollowerUsernames");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.getFollowerUserIds(1);
+		dataServiceWithMetrics.getFollowerUsernames("me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.getFollowerUserIds(1);
+		dataServiceWithMetrics.getFollowerUsernames("me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}
 
 	@Test
-	public void testGetFollowingUserIds() {
-		Timer timer = metricRegistry.timer("test.getFollowingUserIds");
+	public void testGetFollowingUsernames() {
+		Timer timer = metricRegistry.timer("test.getFollowingUsernames");
 		assertThat(timer.getCount(), is(0L));
 		assertThat(timer.getOneMinuteRate() == 0, is(true));
-		dataServiceWithMetrics.getFollowingUserIds(1);
+		dataServiceWithMetrics.getFollowingUsernames("me");
 		assertThat(timer.getCount(), is(1L));
 		assertThat(timer.getMeanRate() > 0, is(true));
-		dataServiceWithMetrics.getFollowingUserIds(1);
+		dataServiceWithMetrics.getFollowingUsernames("me");
 		assertThat(timer.getCount(), is(2L));
 		assertThat(timer.getMeanRate() > 0, is(true));
 	}

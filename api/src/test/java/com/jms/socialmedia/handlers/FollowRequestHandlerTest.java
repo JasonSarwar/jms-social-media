@@ -14,7 +14,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
-import com.jms.socialmedia.model.User;
 import com.jms.socialmedia.routes.LocalDateTypeAdapter;
 import com.jms.socialmedia.token.Permission;
 import com.jms.socialmedia.token.Token;
@@ -36,7 +35,8 @@ import static org.mockito.Mockito.when;
 public class FollowRequestHandlerTest {
 
 	private static final String AUTHORIZATION = "Authorization";
-	private static final String USER_ID_PARAM = "userId";
+	private static final String USERNAME_PARAM = "username";
+	private static final String TEST_USERNAME = "Jason";
 	private static final String FOLLOW_REQUEST = "{\"followerUsername\": \"Jason\", \"followingUsername\": \"Sarwar\"}";
 	private static final String FOLLOW_REQUEST_SAME_NAMES = "{\"followerUsername\": \"Jason\", \"followingUsername\": \"Jason\"}";
 	private static final String FOLLOW_REQUEST_SAME_NAMES_IRREGULAR = "{\"followerUsername\": \" Jason \", \"followingUsername\": \"  jasOn\"}";
@@ -62,12 +62,12 @@ public class FollowRequestHandlerTest {
 
 	@Test
 	public void testHandleFollowUser() throws IOException {
-		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.FOLLOW_USER).build();
+		Token token = Token.newBuilder().setUsername(TEST_USERNAME).addPermissions(Permission.FOLLOW_USER).build();
 
 		when(request.body()).thenReturn(FOLLOW_REQUEST);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
-		when(dataService.followUser(null, "Jason", null, "Sarwar")).thenReturn(true);
+		when(dataService.followUser(null, TEST_USERNAME, null, "Sarwar")).thenReturn(true);
 
 		boolean followUser = followRequestHandler.handleFollowUser(request, response);
 		assertThat(followUser, is(true));
@@ -77,13 +77,13 @@ public class FollowRequestHandlerTest {
 		verifyNoMoreInteractions(request);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
 		verifyNoMoreInteractions(tokenService);
-		verify(dataService, times(1)).followUser(null, "Jason", null, "Sarwar");
+		verify(dataService, times(1)).followUser(null, TEST_USERNAME, null, "Sarwar");
 		verifyNoMoreInteractions(dataService);
 	}
 
 	@Test
 	public void testHandleFollowUserWithMatchingUsernames() throws IOException {
-		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.FOLLOW_USER).build();
+		Token token = Token.newBuilder().setUsername(TEST_USERNAME).addPermissions(Permission.FOLLOW_USER).build();
 
 		when(request.body()).thenReturn(FOLLOW_REQUEST_SAME_NAMES);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
@@ -102,7 +102,7 @@ public class FollowRequestHandlerTest {
 
 	@Test
 	public void testHandleFollowUserWithMatchingIrregularUsernames() throws IOException {
-		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.FOLLOW_USER).build();
+		Token token = Token.newBuilder().setUsername(TEST_USERNAME).addPermissions(Permission.FOLLOW_USER).build();
 
 		when(request.body()).thenReturn(FOLLOW_REQUEST_SAME_NAMES_IRREGULAR);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
@@ -121,12 +121,12 @@ public class FollowRequestHandlerTest {
 
 	@Test
 	public void testHandleUnfollowUser() throws IOException {
-		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.UNFOLLOW_USER).build();
+		Token token = Token.newBuilder().setUsername(TEST_USERNAME).addPermissions(Permission.UNFOLLOW_USER).build();
 
 		when(request.body()).thenReturn(FOLLOW_REQUEST);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
 		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
-		when(dataService.unfollowUser(null, "Jason", null, "Sarwar")).thenReturn(true);
+		when(dataService.unfollowUser(null, TEST_USERNAME, null, "Sarwar")).thenReturn(true);
 
 		boolean unfollowUser = followRequestHandler.handleUnfollowUser(request, response);
 		assertThat(unfollowUser, is(true));
@@ -136,13 +136,13 @@ public class FollowRequestHandlerTest {
 		verifyNoMoreInteractions(request);
 		verify(tokenService, times(1)).createTokenFromString("SecretToken");
 		verifyNoMoreInteractions(tokenService);
-		verify(dataService, times(1)).unfollowUser(null, "Jason", null, "Sarwar");
+		verify(dataService, times(1)).unfollowUser(null, TEST_USERNAME, null, "Sarwar");
 		verifyNoMoreInteractions(dataService);
 	}
 
 	@Test
 	public void testHandleUnfollowUserWithMatchingUsernames() throws IOException {
-		Token token = Token.newBuilder().setUsername("Jason").addPermissions(Permission.UNFOLLOW_USER).build();
+		Token token = Token.newBuilder().setUsername(TEST_USERNAME).addPermissions(Permission.UNFOLLOW_USER).build();
 
 		when(request.body()).thenReturn(FOLLOW_REQUEST_SAME_NAMES);
 		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
@@ -160,76 +160,76 @@ public class FollowRequestHandlerTest {
 	}
 
 	@Test
-	public void testHandleGetFollowingUserIds() {
-		Collection<Integer> userIds = Set.of(6, 7, 8, 9);
-		when(request.params(USER_ID_PARAM)).thenReturn("5");
-		when(dataService.getFollowingUserIds(5)).thenReturn(userIds);
+	public void testHandleGetFollowingUsernames() {
+		Collection<String> followingUsernames = Set.of("Rob", "Mike", "Matt");
+		when(request.params(USERNAME_PARAM)).thenReturn(TEST_USERNAME);
+		when(dataService.getFollowingUsernames(TEST_USERNAME)).thenReturn(followingUsernames);
 
-		Collection<Integer> retrievedUserIds = followRequestHandler.handleGetFollowingUserIds(request, response);
-		assertThat(retrievedUserIds, is(userIds));
-		verify(request, times(1)).params(USER_ID_PARAM);
+		Collection<String> retrievedUsernames = followRequestHandler.handleGetFollowingUsernames(request, response);
+		assertThat(retrievedUsernames, is(followingUsernames));
+		verify(request, times(1)).params(USERNAME_PARAM);
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getFollowingUserIds(5);
+		verify(dataService, times(1)).getFollowingUsernames(TEST_USERNAME);
 		verifyNoMoreInteractions(dataService);
 	}
 
 	@Test
 	public void testHandleGetUsersToFollow30UsersNoMax() {
-		Collection<User> users = createUsersToFollow(30);
-		when(request.params(USER_ID_PARAM)).thenReturn("100");
-		when(dataService.getUsersToFollow(100)).thenReturn(users);
+		Collection<String> users = createUsernamesToFollow(30);
+		when(request.params(USERNAME_PARAM)).thenReturn(TEST_USERNAME);
+		when(dataService.getUsernamesToFollow(TEST_USERNAME)).thenReturn(users);
 
-		Collection<User> retrievedUsers = followRequestHandler.handleGetUsersToFollow(request, response);
+		Collection<String> retrievedUsers = followRequestHandler.handleGetUsersToFollow(request, response);
 		assertThat(retrievedUsers.size(), is(30));
 		assertThat(retrievedUsers, is(users));
 
-		verify(request, times(1)).params(USER_ID_PARAM);
+		verify(request, times(1)).params(USERNAME_PARAM);
 		verify(request, times(1)).queryParams("max");
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getUsersToFollow(100);
+		verify(dataService, times(1)).getUsernamesToFollow(TEST_USERNAME);
 		verifyNoMoreInteractions(dataService);
 	}
 
 	@Test
 	public void testHandleGetUsersToFollow30UsersMax10() {
-		Collection<User> users = createUsersToFollow(30);
-		when(request.params(USER_ID_PARAM)).thenReturn("100");
+		Collection<String> users = createUsernamesToFollow(30);
+		when(request.params(USERNAME_PARAM)).thenReturn(TEST_USERNAME);
 		when(request.queryParams("max")).thenReturn("10");
-		when(dataService.getUsersToFollow(100)).thenReturn(users);
+		when(dataService.getUsernamesToFollow(TEST_USERNAME)).thenReturn(users);
 
-		Collection<User> retrievedUsers = followRequestHandler.handleGetUsersToFollow(request, response);
+		Collection<String> retrievedUsers = followRequestHandler.handleGetUsersToFollow(request, response);
 		assertThat(retrievedUsers.size(), is(10));
 		assertThat(users.containsAll(retrievedUsers), is(true));
 
-		verify(request, times(1)).params(USER_ID_PARAM);
+		verify(request, times(1)).params(USERNAME_PARAM);
 		verify(request, times(1)).queryParams("max");
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getUsersToFollow(100);
+		verify(dataService, times(1)).getUsernamesToFollow(TEST_USERNAME);
 		verifyNoMoreInteractions(dataService);
 	}
 
 	@Test
 	public void testHandleGetUsersToFollow10UsersMax30() {
-		Collection<User> users = createUsersToFollow(10);
-		when(request.params(USER_ID_PARAM)).thenReturn("100");
+		Collection<String> users = createUsernamesToFollow(10);
+		when(request.params(USERNAME_PARAM)).thenReturn(TEST_USERNAME);
 		when(request.queryParams("max")).thenReturn("30");
-		when(dataService.getUsersToFollow(100)).thenReturn(users);
+		when(dataService.getUsernamesToFollow(TEST_USERNAME)).thenReturn(users);
 
-		Collection<User> retrievedUsers = followRequestHandler.handleGetUsersToFollow(request, response);
+		Collection<String> retrievedUsers = followRequestHandler.handleGetUsersToFollow(request, response);
 		assertThat(retrievedUsers.size(), is(10));
 		assertThat(retrievedUsers, is(users));
 
-		verify(request, times(1)).params(USER_ID_PARAM);
+		verify(request, times(1)).params(USERNAME_PARAM);
 		verify(request, times(1)).queryParams("max");
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getUsersToFollow(100);
+		verify(dataService, times(1)).getUsernamesToFollow(TEST_USERNAME);
 		verifyNoMoreInteractions(dataService);
 	}
 
-	private static Collection<User> createUsersToFollow(int no) {
-		Collection<User> users = new HashSet<>(no);
+	private static Collection<String> createUsernamesToFollow(int no) {
+		Collection<String> users = new HashSet<>(no);
 		for (int i = 0; i < no; i++) {
-			users.add(new User(i, "User" + i));
+			users.add("User" + i);
 		}
 		return users;
 	}

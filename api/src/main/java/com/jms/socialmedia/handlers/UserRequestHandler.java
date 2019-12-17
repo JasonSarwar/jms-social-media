@@ -47,9 +47,8 @@ public class UserRequestHandler extends RequestHandler {
 		String username = request.params("username");
 		UserPage userPage = dataService.getUserPageInfoByName(username);
 		if (userPage != null) {
-			int userId = userPage.getUserId();
-			userPage.addFollowersUserIds(dataService.getFollowerUserIds(userId));
-			userPage.addFollowingUserIds(dataService.getFollowingUserIds(userId));
+			userPage.addFollowersUsernames(dataService.getFollowerUsernames(username));
+			userPage.addFollowingUsernames(dataService.getFollowingUsernames(username));
 			return userPage;
 		} else {
 			throw new NotFoundException("User not found");

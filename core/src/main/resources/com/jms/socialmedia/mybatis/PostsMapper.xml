@@ -36,8 +36,11 @@
 	        		#{userId}
 	        	</foreach>
 	        </if>
-	        <if test="username != null">
-	        	AND lower(username) = lower(#{username})
+	        <if test="usernames != null">
+	        	AND lower(username) in 
+	        	<foreach item="username" collection="usernames" open="(" separator="," close=")">
+	        		lower(#{username})
+	        	</foreach>
 	        </if>
 	        <if test="tag != null">
 	        	AND post_tags.tag = lower(#{tag})

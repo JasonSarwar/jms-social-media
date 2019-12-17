@@ -45,8 +45,8 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<User> getUsersToFollow(int userId) {
-		return dataService.getUsersToFollow(userId);
+	public Collection<String> getUsernamesToFollow(String username) {
+		return dataService.getUsernamesToFollow(username);
 	}
 
 	@Override
@@ -86,9 +86,9 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate,
+	public Collection<Post> getPosts(Collection<Integer> userIds, Collection<String> usernames, String tag, String onDate, String beforeDate,
 			String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
-		Collection<Post> posts = dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+		Collection<Post> posts = dataService.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 		// Put the first 5 posts into cache
 		int i = 0;
 		for (Post post : posts) {
@@ -258,13 +258,13 @@ public class CachingDataService implements DataService {
 	}
 	
 	@Override
-	public Collection<Integer> getFollowerUserIds(int userId) {
-		return dataService.getFollowerUserIds(userId);
+	public Collection<String> getFollowerUsernames(String username) {
+		return dataService.getFollowerUsernames(username);
 	}
 
 	@Override
-	public Collection<Integer> getFollowingUserIds(int userId) {
-		return dataService.getFollowingUserIds(userId);
+	public Collection<String> getFollowingUsernames(String username) {
+		return dataService.getFollowingUsernames(username);
 	}
 
 	@Override

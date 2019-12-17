@@ -86,28 +86,29 @@ public class UserRequestHandlerTest {
 	@Test
 	public void testHandleGetUserPage() {
 
+		String username = "Jason";
 		UserPage userPage = new UserPage();
 		userPage.setUserId(1);
-		userPage.setUsername("Jason");
-		Collection<Integer> followerUserIds = Set.of(2, 3, 4, 5, 6);
-		Collection<Integer> followingUserIds = Set.of(20, 30, 40, 50, 60);
+		userPage.setUsername(username);
+		Collection<String> followerUsernames = Set.of("Joe", "Frank", "Paul");
+		Collection<String> followingUsernames = Set.of("Ken", "John");
 
-		when(request.params("username")).thenReturn("Jason");
-		when(dataService.getUserPageInfoByName("Jason")).thenReturn(userPage);
-		when(dataService.getFollowerUserIds(1)).thenReturn(followerUserIds);
-		when(dataService.getFollowingUserIds(1)).thenReturn(followingUserIds);
+		when(request.params("username")).thenReturn(username);
+		when(dataService.getUserPageInfoByName(username)).thenReturn(userPage);
+		when(dataService.getFollowerUsernames(username)).thenReturn(followerUsernames);
+		when(dataService.getFollowingUsernames(username)).thenReturn(followingUsernames);
 
 		UserPage retrievedUserPage = userRequestHandler.handleGetUserPage(request, response);
 		assertThat(retrievedUserPage.getUserId(), is(1));
-		assertThat(retrievedUserPage.getUsername(), is("Jason"));
-		assertThat(retrievedUserPage.getFollowersUserIds(), is(followerUserIds));
-		assertThat(retrievedUserPage.getFollowingUserIds(), is(followingUserIds));
+		assertThat(retrievedUserPage.getUsername(), is(username));
+		assertThat(retrievedUserPage.getFollowersUsernames(), is(followerUsernames));
+		assertThat(retrievedUserPage.getFollowingUsernames(), is(followingUsernames));
 
 		verify(request, times(1)).params("username");
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getUserPageInfoByName("Jason");
-		verify(dataService, times(1)).getFollowerUserIds(1);
-		verify(dataService, times(1)).getFollowingUserIds(1);
+		verify(dataService, times(1)).getUserPageInfoByName(username);
+		verify(dataService, times(1)).getFollowerUsernames(username);
+		verify(dataService, times(1)).getFollowingUsernames(username);
 		verifyNoMoreInteractions(dataService);
 		verifyZeroInteractions(tokenService);
 		verifyZeroInteractions(passwordService);

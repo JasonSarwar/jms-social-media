@@ -26,6 +26,7 @@ public class PostRequestHandler extends RequestHandler {
 
 	private static final String NOT_FOUND_MESSAGE = "Post Not Found";
 	private static final String USER_ID_PARAM = "userId";
+	private static final String USERNAME_PARAM = "username";
 	private static final String POST_ID_PARAM = "postId";
 	private static final String SINCE_POST_ID_PARAM = "sincePostId";
 
@@ -54,9 +55,10 @@ public class PostRequestHandler extends RequestHandler {
 	 */
 	public Collection<Post> handleGetPosts(Request request, Response response) {
 
-		String userIdStr = request.queryParams(USER_ID_PARAM);
-		Collection<Integer> userIds = userIdStr == null ? null : Arrays.stream(userIdStr.split("[,|]")).map(Integer::parseInt).collect(toSet());
-		String username = request.queryParams("username");
+		String userIdsParam = request.queryParams(USER_ID_PARAM);
+		Collection<Integer> userIds = userIdsParam == null ? null : Arrays.stream(userIdsParam.split("[,|]")).map(Integer::parseInt).collect(toSet());
+		String usernamesParam = request.queryParams(USERNAME_PARAM);
+		Collection<String> usernames = usernamesParam == null ? null : Arrays.stream(usernamesParam.split("[,|]")).collect(toSet());
 		String tag = request.queryParams("tag");
 		String onDate = request.queryParams("on");
 		String beforeDate = request.queryParams("before");
@@ -67,14 +69,14 @@ public class PostRequestHandler extends RequestHandler {
 		String order = request.queryParams("order");
 		boolean sortOrderAsc = StringUtil.isNotBlank(order) && order.equalsIgnoreCase("asc");
 
-		return dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+		return dataService.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 	}
 
 	/**
-	 * <h1> GET /api/user/:userId/feed </h1>
+	 * <h1> GET /api/user/:username/feed </h1>
 	 * 
 	 * <ul>
-	 * 	<li> userId - ID of User </li>
+	 * 	<li> username - Name of User </li>
 	 * </ul>
 	 * 
 	 * @param request		Spark Request
@@ -83,13 +85,13 @@ public class PostRequestHandler extends RequestHandler {
 	 */
 	public Collection<Post> handleGetFeedPosts(Request request, Response response) {
 
-		Integer userId = Integer.parseInt(request.params(USER_ID_PARAM));
-		String strSincePostId = request.queryParams(SINCE_POST_ID_PARAM);
-		Integer sincePostId = strSincePostId == null ? null : Integer.parseInt(strSincePostId);
+		String username = request.params(USERNAME_PARAM);
+		String sincePostIdParam = request.queryParams(SINCE_POST_ID_PARAM);
+		Integer sincePostId = sincePostIdParam == null ? null : Integer.parseInt(sincePostIdParam);
 		
-		Collection<Integer> userIds = new HashSet<>(dataService.getFollowingUserIds(userId));
-		userIds.add(userId);
-		return dataService.getPosts(userIds, null, null, null, null, null, sincePostId, POST_ID_PARAM, false);
+		Collection<String> usernames = new HashSet<>(dataService.getFollowingUsernames(username));
+		usernames.add(username);
+		return dataService.getPosts(null, usernames, null, null, null, null, sincePostId, POST_ID_PARAM, false);
 	}
 
 	/**

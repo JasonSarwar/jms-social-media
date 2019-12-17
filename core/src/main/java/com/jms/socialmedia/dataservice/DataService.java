@@ -22,7 +22,7 @@ public interface DataService {
 
 	Collection<User> getUsernamesByIds(Collection<Integer> userIds);
 
-	Collection<User> getUsersToFollow(int userId);
+	Collection<String> getUsernamesToFollow(String username);
 
 	boolean isUsernameTaken(String username);
 
@@ -38,7 +38,7 @@ public interface DataService {
 
 	void removeSessionId(String sessionId);
 
-	Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate, 
+	Collection<Post> getPosts(Collection<Integer> userIds, Collection<String> usernames, String tag, String onDate, String beforeDate, 
 			String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc);
 
 	default Collection<Post> getPosts(Integer userId) {
@@ -135,9 +135,9 @@ public interface DataService {
 
 	boolean unlikeComment(int commentId, String username);
 	
-	Collection<Integer> getFollowerUserIds(int userId);
+	Collection<String> getFollowerUsernames(String username);
 	
-	Collection<Integer> getFollowingUserIds(int userId);
+	Collection<String> getFollowingUsernames(String username);
 	
 	boolean followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername);
 
