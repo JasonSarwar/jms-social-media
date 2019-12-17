@@ -35,8 +35,8 @@
 	              });
 	    };
 
-	    var getFeedPosts = function (userId) {
-	    	return $http.get("/api/user/" + userId + "/feed")
+	    var getFeedPosts = function (username) {
+	    	return $http.get("/api/user/" + username + "/feed")
 	              .then(function (response) {
 	            	  return response.data;
 	              });
@@ -184,8 +184,8 @@
 				});
 		};
 
-		var getUsersToFollow = function (userId, max) {
-			let url = "/api/user/" + userId + "/userstofollow";
+		var getUsersToFollow = function (username, max) {
+			let url = "/api/user/" + username + "/userstofollow";
 			if (max) {
 				url = url + "?max=" + max
 			}
@@ -209,22 +209,22 @@
 	        });
 	    };
 	
-	    var followUser = function (followerUserId, followingUserId) {
-	    	return $http.post("/api/user/follow", {followerUserId: followerUserId, followingUserId: followingUserId})
+	    var followUser = function (followerUsername, followingUsername) {
+	    	return $http.post("/api/user/follow", {followerUsername: followerUsername, followingUsername: followingUsername})
 		    	.then(function (response) {
 		    		return response.data;
 		    	});
 	    };
     
-	    var unfollowUser = function (followerUserId, followingUserId) {
-	    	return $http.post("/api/user/unfollow", {followerUserId: followerUserId, followingUserId: followingUserId})
+	    var unfollowUser = function (followerUsername, followingUsername) {
+	    	return $http.post("/api/user/unfollow", {followerUsername: followerUsername, followingUsername: followingUsername})
 		    	.then(function (response) {
 		    		return response.data;
 		    	});
 	    };
 	    
-	    var getFollowingUserIds = function (userId) {
-	    	return $http.get("/api/user/" + userId + "/following")
+	    var getFollowingUsernames = function (username) {
+	    	return $http.get("/api/user/" + username + "/following")
 		    	.then(function (response) {
 		    		return response.data;
 		    	});
@@ -237,7 +237,7 @@
 	    	editPassword: editPassword,
 	    	followUser: followUser,
 	    	unfollowUser: unfollowUser,
-	    	getFollowingUserIds: getFollowingUserIds
+	    	getFollowingUsernames: getFollowingUsernames
 		};
     };
 	
