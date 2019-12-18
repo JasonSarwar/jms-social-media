@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jms.socialmedia.dataservice.DataService;
 import com.jms.socialmedia.exception.BadRequestException;
+import com.jms.socialmedia.exception.ForbiddenException;
 import com.jms.socialmedia.routes.LocalDateTypeAdapter;
 import com.jms.socialmedia.token.Permission;
 import com.jms.socialmedia.token.Token;
@@ -115,6 +116,56 @@ public class FollowRequestHandlerTest {
 			
 			assertThat(e.getMessage(), is("A User cannot follow themself"));
 			verify(request, times(1)).body();
+			verifyZeroInteractions(dataService);
+		}
+	}
+
+	@Test
+	public void testHandleFollowUserNotAllowed() throws IOException {
+		Token token = Token.newBuilder().setUsername("A_Different_Username").addPermissions(Permission.FOLLOW_USER).build();
+
+		when(request.body()).thenReturn(FOLLOW_REQUEST);
+		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
+		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
+		when(dataService.followUser(null, TEST_USERNAME, null, "Sarwar")).thenReturn(true);
+
+		try {
+			followRequestHandler.handleFollowUser(request, response);
+			fail("Did not throw ForbiddenException");
+
+		} catch (ForbiddenException e) {
+			assertThat(e.getMessage(), is("User not allowed to Follow User"));
+			verify(request, times(1)).body();
+			verify(request, times(1)).headers(AUTHORIZATION);
+			verify(request, times(1)).contentType();
+			verifyNoMoreInteractions(request);
+			verify(tokenService, times(1)).createTokenFromString("SecretToken");
+			verifyNoMoreInteractions(tokenService);
+			verifyZeroInteractions(dataService);
+		}
+	}
+
+	@Test
+	public void testHandleFollowUserNotAllowed2() throws IOException {
+		Token token = Token.newBuilder().setUsername(TEST_USERNAME).build();
+
+		when(request.body()).thenReturn(FOLLOW_REQUEST);
+		when(request.headers(AUTHORIZATION)).thenReturn("Bearer SecretToken");
+		when(tokenService.createTokenFromString("SecretToken")).thenReturn(token);
+		when(dataService.followUser(null, TEST_USERNAME, null, "Sarwar")).thenReturn(true);
+
+		try {
+			followRequestHandler.handleFollowUser(request, response);
+			fail("Did not throw ForbiddenException");
+
+		} catch (ForbiddenException e) {
+			assertThat(e.getMessage(), is("User not allowed to Follow User"));
+			verify(request, times(1)).body();
+			verify(request, times(1)).headers(AUTHORIZATION);
+			verify(request, times(1)).contentType();
+			verifyNoMoreInteractions(request);
+			verify(tokenService, times(1)).createTokenFromString("SecretToken");
+			verifyNoMoreInteractions(tokenService);
 			verifyZeroInteractions(dataService);
 		}
 	}

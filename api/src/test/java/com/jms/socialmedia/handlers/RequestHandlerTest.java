@@ -80,7 +80,7 @@ public class RequestHandlerTest {
 	@Test
 	public void testAuthorizeRequestMissingHeader2() {
 		try {
-			requestHandler.authorizeRequest(request);
+			requestHandler.authorizeRequest(request, "username", Permission.ADD_COMMENT);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NoBearerTokenException.class));
@@ -91,6 +91,18 @@ public class RequestHandlerTest {
 
 	@Test
 	public void testAuthorizeRequestMissingHeader3() {
+		try {
+			requestHandler.authorizeRequest(request);
+			fail("Did not throw Exception");
+		} catch (Exception e) {
+			assertThat(e, instanceOf(NoBearerTokenException.class));
+			assertThat(e.getMessage(), is("Bearer token must be included in Authorization header"));
+			verify(request, times(1)).headers(AUTHORIZATION);
+		}
+	}
+
+	@Test
+	public void testAuthorizeRequestMissingHeader4() {
 		when(request.headers(AUTHORIZATION)).thenReturn("Invalid");
 		try {
 			requestHandler.authorizeRequest(request);
@@ -123,6 +135,19 @@ public class RequestHandlerTest {
 		when(request.headers(AUTHORIZATION)).thenReturn("Bear er");
 		try {
 			requestHandler.authorizeRequest(request, 1, Permission.ADD_COMMENT);
+			fail("Did not throw Exception");
+		} catch (Exception e) {
+			assertThat(e, instanceOf(NoBearerTokenException.class));
+			assertThat(e.getMessage(), is("Bearer token must be included in Authorization header"));
+			verify(request, times(1)).headers(AUTHORIZATION);
+		}
+	}
+
+	@Test
+	public void testAuthorizeRequestMissingBearer2() {
+		when(request.headers(AUTHORIZATION)).thenReturn("Bear er");
+		try {
+			requestHandler.authorizeRequest(request, "username", Permission.ADD_COMMENT);
 			fail("Did not throw Exception");
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NoBearerTokenException.class));
