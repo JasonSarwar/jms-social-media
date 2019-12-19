@@ -10,6 +10,8 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import com.jms.socialmedia.configuration.Configurations;
 import com.jms.socialmedia.configuration.CoreSettings;
 import com.jms.socialmedia.model.Comment;
@@ -54,6 +56,18 @@ public class MybatisDataService implements DataService {
 			LOGGER.info("Creating SQL Tables");
 			new SqlSessionCreateTablesMapper(factory).createTables();
 		}
+	}
+
+	@VisibleForTesting
+	MybatisDataService(UsersMapper usersMapper, PostsMapper postsMapper, CommentsMapper commentsMapper, 
+			TagsMapper tagsMapper, FollowersMapper followersMapper) {
+
+		this.usersMapper = usersMapper;
+		this.postsMapper = postsMapper;
+		this.commentsMapper = commentsMapper;
+		this.tagsMapper = tagsMapper;
+		this.followersMapper = followersMapper;
+
 	}
 
 	@Override

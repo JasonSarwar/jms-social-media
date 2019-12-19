@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -147,7 +146,7 @@ public class MockDataService implements DataService {
 			comparator = comparator.reversed();
 		}
 		return postsById.values().stream().filter(post -> userIds == null || userIds.contains(post.getUserId()))
-				.filter(post -> usernames == null || post.getUsername().equals(usernames))
+				.filter(post -> usernames == null || usernames.contains(post.getUsername()))
 				.filter(post -> sincePostId == null || sincePostId < post.getPostId())
 				.filter(post -> tag == null || post.getText().contains(tag))
 				.filter(post -> onDate == null
@@ -345,21 +344,21 @@ public class MockDataService implements DataService {
 		usersById.put(2, jason);
 
 		UserPage userPage = new UserPage();
-		userPage.setUserId(1);
-		userPage.setUsername("user");
-		userPage.setFullName("Visitor");
+		userPage.setUserId(user.getUserId());
+		userPage.setUsername(user.getUsername());
+		userPage.setFullName(user.getFullName());
 		userPage.setBio("Awesome person visiting Jason's website!");
 		userPage.setDateTimeJoined(LocalDateTime.now());
-		userPagesByUsername.put("user", userPage);
+		userPagesByUsername.put(user.getUsername(), userPage);
 
 		UserPage jasonPage = new UserPage();
-		jasonPage.setUserId(2);
-		jasonPage.setUsername("Jason");
-		jasonPage.setFullName("Jason Sarwar");
+		jasonPage.setUserId(jason.getUserId());
+		jasonPage.setUsername(jason.getUsername());
+		jasonPage.setFullName(jason.getFullName());
 		jasonPage.setEmail("jason_sarwar@yahoo.com");
 		jasonPage.setBio("Trying to create this website.");
 		jasonPage.setDateTimeJoined(LocalDateTime.of(2019, 1, 1, 0, 0, 0));
-		userPagesByUsername.put("Jason", jasonPage);
+		userPagesByUsername.put(jason.getUsername(), jasonPage);
 	}
 
 	private void setupPosts() {

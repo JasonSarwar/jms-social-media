@@ -1,10 +1,8 @@
 package com.jms.socialmedia.handlers;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;

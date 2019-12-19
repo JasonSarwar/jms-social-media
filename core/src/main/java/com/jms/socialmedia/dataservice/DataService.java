@@ -69,7 +69,7 @@ public interface DataService {
 	 * @param userId		ID of the user liking the Post
 	 * @return 				true if the action was successful
 	 */
-	@Deprecated
+	@Deprecated(since="1.3.0")
 	boolean likePost(int postId, int userId);
 
 	/**
@@ -85,7 +85,7 @@ public interface DataService {
 	 * @param userId		ID of the user unliking the Post
 	 * @return 				true if the action was successful
 	 */
-	@Deprecated
+	@Deprecated(since="1.3.0")
 	boolean unlikePost(int postId, int userId);
 
 	/**
@@ -117,7 +117,7 @@ public interface DataService {
 	 * @param userId
 	 * @return
 	 */
-	@Deprecated
+	@Deprecated(since="1.3.0")
 	boolean likeComment(int commentId, int userId);
 
 	boolean likeComment(int commentId, String username);
@@ -128,7 +128,7 @@ public interface DataService {
 	 * @param userId
 	 * @return
 	 */
-	@Deprecated
+	@Deprecated(since="1.3.0")
 	boolean unlikeComment(int commentId, int userId);
 
 	boolean unlikeComment(int commentId, String username);

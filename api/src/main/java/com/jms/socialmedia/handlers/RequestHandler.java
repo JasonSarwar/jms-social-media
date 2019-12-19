@@ -62,17 +62,16 @@ public abstract class RequestHandler {
 	protected void authorizeRequest(Request request, Integer userIdFromRequest, Permission permission)
 			throws IOException {
 
-		String auth = request.headers(AUTHORIZATION);
-		if (StringUtils.isBlank(auth) || !auth.startsWith(BEARER)) {
-			throw new NoBearerTokenException("Bearer token must be included in " + AUTHORIZATION + " header");
-		} else {
-			String tokenString = auth.substring(BEARER.length());
-			Token token = tokenService.createTokenFromString(tokenString);
-			if (!token.hasPermission(Permission.ADMIN)
-					&& (!userIdFromRequest.equals(token.getUserId()) || !token.hasPermission(permission))) {
-				throw new ForbiddenException("User not allowed to " + permission.getAction());
-			}
+		String authorization = request.headers(AUTHORIZATION);
+		checkIfAuthorizationHeaderIsPresent(authorization);
+
+		String tokenString = authorization.substring(BEARER.length());
+		Token token = tokenService.createTokenFromString(tokenString);
+		if (!token.hasPermission(Permission.ADMIN)
+				&& (!userIdFromRequest.equals(token.getUserId()) || !token.hasPermission(permission))) {
+			throw new ForbiddenException("User not allowed to " + permission.getAction());
 		}
+		
 	}
 
 	/**
@@ -92,18 +91,17 @@ public abstract class RequestHandler {
 	protected void authorizeRequest(Request request, String usernameFromRequest, Permission permission)
 			throws IOException {
 
-		String auth = request.headers(AUTHORIZATION);
-		if (StringUtils.isBlank(auth) || !auth.startsWith(BEARER)) {
-			throw new NoBearerTokenException("Bearer token must be included in " + AUTHORIZATION + " header");
-		} else {
-			String tokenString = auth.substring(BEARER.length());
-			Token token = tokenService.createTokenFromString(tokenString);
+		String authorization = request.headers(AUTHORIZATION);
+		checkIfAuthorizationHeaderIsPresent(authorization);
 
-			if (!token.hasPermission(Permission.ADMIN) && (usernameFromRequest == null || 
-					!usernameFromRequest.trim().equalsIgnoreCase(token.getUsername()) || !token.hasPermission(permission))) {
-				throw new ForbiddenException("User not allowed to " + permission.getAction());
-			}
+		String tokenString = authorization.substring(BEARER.length());
+		Token token = tokenService.createTokenFromString(tokenString);
+
+		if (!token.hasPermission(Permission.ADMIN) && (usernameFromRequest == null || 
+				!usernameFromRequest.trim().equalsIgnoreCase(token.getUsername()) || !token.hasPermission(permission))) {
+			throw new ForbiddenException("User not allowed to " + permission.getAction());
 		}
+		
 	}
 
 	/**
@@ -120,16 +118,15 @@ public abstract class RequestHandler {
 	 */
 	protected void authorizeRequest(Request request) throws IOException {
 
-		String auth = request.headers(AUTHORIZATION);
-		if (StringUtils.isBlank(auth) || !auth.startsWith(BEARER)) {
-			throw new NoBearerTokenException("Bearer token must be included in " + AUTHORIZATION + " header");
-		} else {
-			String tokenString = auth.substring(BEARER.length());
-			Token token = tokenService.createTokenFromString(tokenString);
-			if (!token.hasPermission(Permission.ADMIN)) {
-				throw new ForbiddenException("User does not have Admin rights");
-			}
+		String authorization = request.headers(AUTHORIZATION);
+		checkIfAuthorizationHeaderIsPresent(authorization);
+
+		String tokenString = authorization.substring(BEARER.length());
+		Token token = tokenService.createTokenFromString(tokenString);
+		if (!token.hasPermission(Permission.ADMIN)) {
+			throw new ForbiddenException("User does not have Admin rights");
 		}
+		
 	}
 
 	protected <T> T extractBodyContent(Request request, Class<T> aClass) {
@@ -177,6 +174,12 @@ public abstract class RequestHandler {
 	protected void throwBadRequestExceptionIf(boolean check, String errorMessage) {
 		if (check) {
 			throw new BadRequestException(errorMessage);
+		}
+	}
+
+	private void checkIfAuthorizationHeaderIsPresent(String authorization) {
+		if (StringUtils.isBlank(authorization) || !authorization.startsWith(BEARER)) {
+			throw new NoBearerTokenException("Bearer token must be included in " + AUTHORIZATION + " header");
 		}
 	}
 }

@@ -17,10 +17,6 @@
 		<url>https://github.com/JasonSarwar/jms-social-media</url>
 	</scm>
 
-	<prerequisites>
-		<maven>3.5.2</maven>
-	</prerequisites>
-
 	<properties>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
