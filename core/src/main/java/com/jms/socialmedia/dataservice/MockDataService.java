@@ -319,11 +319,11 @@ public class MockDataService implements DataService {
 	@Override
 	public boolean followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
 
-		if (followerUsername != null) {
+		if (followerUsername == null) {
 			followerUsername = usersById.get(followerUserId).getUsername();
 		}
 
-		if (followingUsername != null) {
+		if (followingUsername == null) {
 			followingUsername = usersById.get(followingUserId).getUsername();
 		}
 
@@ -333,6 +333,15 @@ public class MockDataService implements DataService {
 
 	@Override
 	public boolean unfollowUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
+
+		if (followerUsername == null) {
+			followerUsername = usersById.get(followerUserId).getUsername();
+		}
+
+		if (followingUsername == null) {
+			followingUsername = usersById.get(followingUserId).getUsername();
+		}
+
 		boolean removeFollowerUserId = getFollowerUsernames(followingUsername).remove(followerUsername);
 		return getFollowingUsernames(followerUsername).remove(followingUsername) && removeFollowerUserId;
 	}

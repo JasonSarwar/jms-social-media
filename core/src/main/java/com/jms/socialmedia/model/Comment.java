@@ -12,6 +12,10 @@ public class Comment extends Entry implements Comparable<Comment> {
 	public Comment() {
 	}
 
+	public Comment(Integer commentId) {
+		this(commentId, null, null, null, null, null, null);
+	}
+
 	public Comment(Integer postId, Integer userId, String text) {
 		this(null, postId, userId, null, null, text, null);
 	}

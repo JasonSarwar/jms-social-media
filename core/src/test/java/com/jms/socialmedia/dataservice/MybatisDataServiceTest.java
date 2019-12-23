@@ -43,6 +43,26 @@ public class MybatisDataServiceTest {
 	}
 
 	@Test
+	public void testGetUserIdByUsername() {
+		// TODO
+	}
+
+	@Test
+	public void testGetUserPageInfoByName() {
+		// TODO
+	}
+
+	@Test
+	public void testGetUserLoginInfoByString() {
+		// TODO
+	}
+
+	@Test
+	public void testGetHashedPasswordByUserId() {
+		// TODO
+	}
+
+	@Test
 	public void testGetUsernamesToFollow() {
 		Collection<String> usernamesToFollow = Collections.singleton("A Username To Follow");
 		String username = "My_Username";
@@ -50,6 +70,81 @@ public class MybatisDataServiceTest {
 		assertThat(mybatisDataService.getUsernamesToFollow(username), is(usernamesToFollow));
 		verify(followersMapper, times(1)).getUsernamesToFollow(username);
 		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
+	public void testIsUsernameTaken() {
+		// TODO
+	}
+
+	@Test
+	public void testIsEmailTaken() {
+		// TODO
+	}
+
+	@Test
+	public void testAddUser() {
+		// TODO
+	}
+
+	@Test
+	public void testEditPassword() {
+		// TODO
+	}
+
+	@Test
+	public void testAddUserSession() {
+		// TODO
+	}
+
+	@Test
+	public void testGetUserBySessionId() {
+		// TODO
+	}
+
+	@Test
+	public void testRemoveSessionId() {
+		// TODO
+	}
+
+	@Test
+	public void testGetPosts() {
+		// TODO
+	}
+
+	@Test
+	public void testGetPost() {
+		// TODO
+	}
+
+	@Test
+	public void testGetUserIdFromPostId() {
+		// TODO
+	}
+
+	@Test
+	public void testAddPost() {
+		// TODO
+	}
+
+	@Test
+	public void testEditPost() {
+		// TODO
+	}
+
+	@Test
+	public void testDeletePost() {
+		// TODO
+	}
+
+	@Test
+	public void testGetCommentedPostsByUserId() {
+		// TODO
+	}
+
+	@Test
+	public void testGetLikedPostsByUserId() {
+		// TODO
 	}
 
 	@Test
@@ -83,6 +178,24 @@ public class MybatisDataServiceTest {
 	}
 
 	@Test
+	public void testLikePostUnsuccessful() {
+		int postId = 5;
+		int userId = 10;
+		assertThat(mybatisDataService.likePost(postId, userId), is(false));
+		verify(postsMapper, times(1)).likePost(postId, userId, null);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
+	public void testLikePostUnsuccessful2() {
+		int postId = 5;
+		String username = "Username";
+		assertThat(mybatisDataService.likePost(postId, username), is(false));
+		verify(postsMapper, times(1)).likePost(postId, null, username);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
 	public void testUnlikePost() {
 		int postId = 5;
 		int userId = 10;
@@ -99,6 +212,69 @@ public class MybatisDataServiceTest {
 		when(postsMapper.unlikePost(postId, null, username)).thenReturn(1);
 		assertThat(mybatisDataService.unlikePost(postId, username), is(true));
 		verify(postsMapper, times(1)).unlikePost(postId, null, username);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
+	public void testUnlikePostUnsuccessful() {
+		int postId = 5;
+		int userId = 10;
+		assertThat(mybatisDataService.unlikePost(postId, userId), is(false));
+		verify(postsMapper, times(1)).unlikePost(postId, userId, null);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
+	public void testUnlikePostUnsuccessful2() {
+		int postId = 5;
+		String username = "Username";
+		assertThat(mybatisDataService.unlikePost(postId, username), is(false));
+		verify(postsMapper, times(1)).unlikePost(postId, null, username);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
+	public void testGetComments() {
+		// TODO
+	}
+
+	@Test
+	public void testGetCommentsByUserId() {
+		// TODO
+	}
+
+	@Test
+	public void testGetComment() {
+		// TODO
+	}
+
+	@Test
+	public void testGetUserIdFromCommentId() {
+		// TODO
+	}
+
+	@Test
+	public void testAddComment() {
+		// TODO
+	}
+
+	@Test
+	public void testEditComment() {
+		// TODO
+	}
+
+	@Test
+	public void testDeleteComment() {
+		// TODO
+	}
+
+	@Test
+	public void testGetCommentLikes() {
+		int commentId = 4;
+		Collection<String> commentLikes = Collections.singletonList("A Like");
+		when(commentsMapper.getCommentLikes(commentId)).thenReturn(commentLikes);
+		assertThat(mybatisDataService.getCommentLikes(commentId), is(commentLikes));
+		verify(commentsMapper, times(1)).getCommentLikes(commentId);
 		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
@@ -123,6 +299,24 @@ public class MybatisDataServiceTest {
 	}
 
 	@Test
+	public void testLikeCommentUnsuccessful() {
+		int postId = 5;
+		int userId = 10;
+		assertThat(mybatisDataService.likeComment(postId, userId), is(false));
+		verify(commentsMapper, times(1)).likeComment(postId, userId, null);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
+	public void testLikeCommentUnsuccessful2() {
+		int postId = 5;
+		String username = "Username";
+		assertThat(mybatisDataService.likeComment(postId, username), is(false));
+		verify(commentsMapper, times(1)).likeComment(postId, null, username);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
 	public void testUnlikeComment() {
 		int postId = 5;
 		int userId = 10;
@@ -138,6 +332,24 @@ public class MybatisDataServiceTest {
 		String username = "Username";
 		when(commentsMapper.unlikeComment(postId, null, username)).thenReturn(1);
 		assertThat(mybatisDataService.unlikeComment(postId, username), is(true));
+		verify(commentsMapper, times(1)).unlikeComment(postId, null, username);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
+	public void testUnlikeCommentUnsuccessful() {
+		int postId = 5;
+		int userId = 10;
+		assertThat(mybatisDataService.unlikeComment(postId, userId), is(false));
+		verify(commentsMapper, times(1)).unlikeComment(postId, userId, null);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
+	public void testUnlikeCommentUnsuccessful2() {
+		int postId = 5;
+		String username = "Username";
+		assertThat(mybatisDataService.unlikeComment(postId, username), is(false));
 		verify(commentsMapper, times(1)).unlikeComment(postId, null, username);
 		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
@@ -177,6 +389,19 @@ public class MybatisDataServiceTest {
 	}
 
 	@Test
+	public void testFollowUserUnsuccessful() {
+		
+		int followerUserId = 5;
+		String followerUsername = "Me";
+		int followingUserId = 11;
+		String followingUsername = "A Person I Want To Follow";
+
+		assertThat(mybatisDataService.followUser(followerUserId, followerUsername, followingUserId, followingUsername), is(false));
+		verify(followersMapper, times(1)).followUser(followerUserId, followerUsername, followingUserId, followingUsername);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@Test
 	public void testUnfollowUser() {
 		
 		int followerUserId = 5;
@@ -190,4 +415,16 @@ public class MybatisDataServiceTest {
 		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
+	@Test
+	public void testUnfollowUserUnsuccessful() {
+		
+		int followerUserId = 5;
+		String followerUsername = "Me";
+		int followingUserId = 11;
+		String followingUsername = "A Person I Want To Unfollow";
+
+		assertThat(mybatisDataService.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername), is(false));
+		verify(followersMapper, times(1)).unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername);
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
 }
