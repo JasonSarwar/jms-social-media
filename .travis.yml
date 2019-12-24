@@ -25,8 +25,9 @@ deploy:
 - provider: releases
   api_key: $GITHUB_TOKEN
   file:
-    - "api/target/api-${TRAVIS_TAG:1}.jar"
-    - "core/target/core-${TRAVIS_TAG:1}.jar"
+    - "api/target/jms-social-media-api-${TRAVIS_TAG:1}.jar"
+    - "core/target/jms-social-media-core-${TRAVIS_TAG:1}.jar"
+    - "api/target/jms-social-media-api-${TRAVIS_TAG:1}.tar"
   skip_cleanup: true
   on:
     tags: true

@@ -28,3 +28,23 @@ subprojects {
 
 	check.dependsOn(jacocoTestReport)
 }
+
+// Dependency Versions
+ext {
+	sparkCoreVersion = '2.9.1'
+	guavaVersion = '28.1-jre'
+	javaxXmlVersion = '2.3.1'
+	gsonVersion = '2.8.6'
+	jacksonVersion = '2.9.9'
+	mybatisVersion = '3.5.3'
+	jjwtVersion = '0.9.1'
+	springSecurityVersion = '5.2.0.RELEASE'
+	mysqlConnectorVersion = '8.0.18'
+	h2Version = '1.4.199'
+	dropwizardMetricsVersion = '4.1.1'
+	apacheCommonsPoolVersion = '2.7.0'
+	jedisVersion = '3.1.0'
+	log4jLoggingVersion = '2.12.1'
+	junitVersion = '4.12'
+	mockitoVersion = '3.1.0'
+}

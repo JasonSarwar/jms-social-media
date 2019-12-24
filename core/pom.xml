@@ -9,9 +9,10 @@
 		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>core</artifactId>
+	<artifactId>jms-social-media-core</artifactId>
 	<packaging>jar</packaging>
 	<name>JMS Social Media Core</name>
+	<description>Core - Services required for the Social Media Website</description>
 
 	<dependencies>
 		<dependency>
