@@ -17,6 +17,7 @@ public class FollowRequestTest {
 	public void test() {
 		FollowRequest followRequest1 = new FollowRequest();
 		
+		assertThat(followRequest1.equals(followRequest1), is(true));
 		assertThat(followRequest1.equals(null), is(false));
 		assertThat(followRequest1.equals(new LoginSuccess()), is(false));
 		

@@ -8,13 +8,17 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import com.jms.socialmedia.model.Post;
 import com.jms.socialmedia.mybatis.CommentsMapper;
 import com.jms.socialmedia.mybatis.FollowersMapper;
 import com.jms.socialmedia.mybatis.PostsMapper;
@@ -40,6 +44,11 @@ public class MybatisDataServiceTest {
 	public void setUp() {
 		initMocks(this);
 		mybatisDataService = new MybatisDataService(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
+	}
+
+	@After
+	public void tearDown() {
+		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -69,7 +78,6 @@ public class MybatisDataServiceTest {
 		when(followersMapper.getUsernamesToFollow(username)).thenReturn(usernamesToFollow);
 		assertThat(mybatisDataService.getUsernamesToFollow(username), is(usernamesToFollow));
 		verify(followersMapper, times(1)).getUsernamesToFollow(username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -109,7 +117,31 @@ public class MybatisDataServiceTest {
 
 	@Test
 	public void testGetPosts() {
-		// TODO
+
+		Collection<Integer> userIds = Set.of(1, 2, 3, 4, 5);
+		Collection<String> usernames = Set.of("Pete", "Joe");
+		String tag = "tag";
+		String onDate = "2019-12-23";
+		String beforeDate = "2019-12-24";
+		String afterDate = "2019-12-22";
+		int sincePostId = 1;
+		String sortBy = "postId";
+		boolean sortOrderAsc = true;
+		
+		Post post1 = new Post(1);
+		Post post2 = new Post(2);
+		Post post3 = new Post(3);
+		Collection<Post> posts = Arrays.asList(post1, post2, post3);
+		
+		when(postsMapper.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc)).thenReturn(posts);
+		Collection<Post> returnedPosts = mybatisDataService.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+		
+		assertThat(returnedPosts, is(posts));
+		
+		verify(postsMapper, times(1)).getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+		verify(postsMapper, times(1)).getPostLikes(1);
+		verify(postsMapper, times(1)).getPostLikes(2);
+		verify(postsMapper, times(1)).getPostLikes(3);
 	}
 
 	@Test
@@ -154,7 +186,6 @@ public class MybatisDataServiceTest {
 		when(postsMapper.getPostLikes(postId)).thenReturn(postLikes);
 		assertThat(mybatisDataService.getPostLikes(postId), is(postLikes));
 		verify(postsMapper, times(1)).getPostLikes(postId);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -164,7 +195,6 @@ public class MybatisDataServiceTest {
 		when(postsMapper.likePost(postId, userId, null)).thenReturn(1);
 		assertThat(mybatisDataService.likePost(postId, userId), is(true));
 		verify(postsMapper, times(1)).likePost(postId, userId, null);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -174,7 +204,6 @@ public class MybatisDataServiceTest {
 		when(postsMapper.likePost(postId, null, username)).thenReturn(1);
 		assertThat(mybatisDataService.likePost(postId, username), is(true));
 		verify(postsMapper, times(1)).likePost(postId, null, username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -183,7 +212,6 @@ public class MybatisDataServiceTest {
 		int userId = 10;
 		assertThat(mybatisDataService.likePost(postId, userId), is(false));
 		verify(postsMapper, times(1)).likePost(postId, userId, null);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -192,7 +220,6 @@ public class MybatisDataServiceTest {
 		String username = "Username";
 		assertThat(mybatisDataService.likePost(postId, username), is(false));
 		verify(postsMapper, times(1)).likePost(postId, null, username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -202,7 +229,6 @@ public class MybatisDataServiceTest {
 		when(postsMapper.unlikePost(postId, userId, null)).thenReturn(1);
 		assertThat(mybatisDataService.unlikePost(postId, userId), is(true));
 		verify(postsMapper, times(1)).unlikePost(postId, userId, null);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -212,7 +238,6 @@ public class MybatisDataServiceTest {
 		when(postsMapper.unlikePost(postId, null, username)).thenReturn(1);
 		assertThat(mybatisDataService.unlikePost(postId, username), is(true));
 		verify(postsMapper, times(1)).unlikePost(postId, null, username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -221,7 +246,6 @@ public class MybatisDataServiceTest {
 		int userId = 10;
 		assertThat(mybatisDataService.unlikePost(postId, userId), is(false));
 		verify(postsMapper, times(1)).unlikePost(postId, userId, null);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -230,7 +254,6 @@ public class MybatisDataServiceTest {
 		String username = "Username";
 		assertThat(mybatisDataService.unlikePost(postId, username), is(false));
 		verify(postsMapper, times(1)).unlikePost(postId, null, username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -275,7 +298,6 @@ public class MybatisDataServiceTest {
 		when(commentsMapper.getCommentLikes(commentId)).thenReturn(commentLikes);
 		assertThat(mybatisDataService.getCommentLikes(commentId), is(commentLikes));
 		verify(commentsMapper, times(1)).getCommentLikes(commentId);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -285,7 +307,6 @@ public class MybatisDataServiceTest {
 		when(commentsMapper.likeComment(postId, userId, null)).thenReturn(1);
 		assertThat(mybatisDataService.likeComment(postId, userId), is(true));
 		verify(commentsMapper, times(1)).likeComment(postId, userId, null);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -295,7 +316,6 @@ public class MybatisDataServiceTest {
 		when(commentsMapper.likeComment(postId, null, username)).thenReturn(1);
 		assertThat(mybatisDataService.likeComment(postId, username), is(true));
 		verify(commentsMapper, times(1)).likeComment(postId, null, username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -304,7 +324,6 @@ public class MybatisDataServiceTest {
 		int userId = 10;
 		assertThat(mybatisDataService.likeComment(postId, userId), is(false));
 		verify(commentsMapper, times(1)).likeComment(postId, userId, null);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -313,7 +332,6 @@ public class MybatisDataServiceTest {
 		String username = "Username";
 		assertThat(mybatisDataService.likeComment(postId, username), is(false));
 		verify(commentsMapper, times(1)).likeComment(postId, null, username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -323,7 +341,6 @@ public class MybatisDataServiceTest {
 		when(commentsMapper.unlikeComment(postId, userId, null)).thenReturn(1);
 		assertThat(mybatisDataService.unlikeComment(postId, userId), is(true));
 		verify(commentsMapper, times(1)).unlikeComment(postId, userId, null);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -333,7 +350,6 @@ public class MybatisDataServiceTest {
 		when(commentsMapper.unlikeComment(postId, null, username)).thenReturn(1);
 		assertThat(mybatisDataService.unlikeComment(postId, username), is(true));
 		verify(commentsMapper, times(1)).unlikeComment(postId, null, username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -342,7 +358,6 @@ public class MybatisDataServiceTest {
 		int userId = 10;
 		assertThat(mybatisDataService.unlikeComment(postId, userId), is(false));
 		verify(commentsMapper, times(1)).unlikeComment(postId, userId, null);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -351,7 +366,6 @@ public class MybatisDataServiceTest {
 		String username = "Username";
 		assertThat(mybatisDataService.unlikeComment(postId, username), is(false));
 		verify(commentsMapper, times(1)).unlikeComment(postId, null, username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -361,7 +375,6 @@ public class MybatisDataServiceTest {
 		when(followersMapper.getFollowerUsernames(username)).thenReturn(followerUsernames);
 		assertThat(mybatisDataService.getFollowerUsernames(username), is(followerUsernames));
 		verify(followersMapper, times(1)).getFollowerUsernames(username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -371,7 +384,6 @@ public class MybatisDataServiceTest {
 		when(followersMapper.getFollowingUsernames(username)).thenReturn(followingUsernames);
 		assertThat(mybatisDataService.getFollowingUsernames(username), is(followingUsernames));
 		verify(followersMapper, times(1)).getFollowingUsernames(username);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -385,7 +397,6 @@ public class MybatisDataServiceTest {
 		when(followersMapper.followUser(followerUserId, followerUsername, followingUserId, followingUsername)).thenReturn(1);
 		assertThat(mybatisDataService.followUser(followerUserId, followerUsername, followingUserId, followingUsername), is(true));
 		verify(followersMapper, times(1)).followUser(followerUserId, followerUsername, followingUserId, followingUsername);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -398,7 +409,6 @@ public class MybatisDataServiceTest {
 
 		assertThat(mybatisDataService.followUser(followerUserId, followerUsername, followingUserId, followingUsername), is(false));
 		verify(followersMapper, times(1)).followUser(followerUserId, followerUsername, followingUserId, followingUsername);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -412,7 +422,6 @@ public class MybatisDataServiceTest {
 		when(followersMapper.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername)).thenReturn(1);
 		assertThat(mybatisDataService.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername), is(true));
 		verify(followersMapper, times(1)).unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 
 	@Test
@@ -425,6 +434,5 @@ public class MybatisDataServiceTest {
 
 		assertThat(mybatisDataService.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername), is(false));
 		verify(followersMapper, times(1)).unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername);
-		verifyNoMoreInteractions(usersMapper, postsMapper, commentsMapper, tagsMapper, followersMapper);
 	}
 }

@@ -1,16 +1,20 @@
 package com.jms.socialmedia.dataservice;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -32,6 +36,11 @@ public class CachingDataServiceTest {
 	public void setUp() {
 		initMocks(this);
 		cachingDataService = new CachingDataService(dataService, cachingService);
+	}
+
+	@After
+	public void tearDown() {
+		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -61,7 +70,6 @@ public class CachingDataServiceTest {
 		when(dataService.getUsernamesToFollow(username)).thenReturn(usernamesToFollow);
 		assertThat(cachingDataService.getUsernamesToFollow(username), is(usernamesToFollow));
 		verify(dataService, times(1)).getUsernamesToFollow(username);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -101,7 +109,40 @@ public class CachingDataServiceTest {
 
 	@Test
 	public void testGetPosts() {
-		// TODO
+
+		Collection<Integer> userIds = Set.of(1, 2, 3, 4, 5);
+		Collection<String> usernames = Set.of("Pete", "Joe");
+		String tag = "tag";
+		String onDate = "2019-12-23";
+		String beforeDate = "2019-12-24";
+		String afterDate = "2019-12-22";
+		int sincePostId = 1;
+		String sortBy = "postId";
+		boolean sortOrderAsc = true;
+
+		Post post1 = new Post(1);
+		Post post2 = new Post(2);
+		Post post3 = new Post(3);
+		Post post4 = new Post(4);
+		Post post5 = new Post(5);
+		Post post6 = new Post(6);
+		Collection<Post> posts = Arrays.asList(post1, post2, post3, post4, post5, post6);
+
+		when(dataService.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy,
+				sortOrderAsc)).thenReturn(posts);
+		Collection<Post> returnedPosts = cachingDataService.getPosts(userIds, usernames, tag, onDate, beforeDate,
+				afterDate, sincePostId, sortBy, sortOrderAsc);
+
+		assertThat(returnedPosts, is(posts));
+
+		verify(dataService, times(1)).getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId,
+				sortBy, sortOrderAsc);
+		verify(cachingService, times(1)).putPostIntoCache(post1);
+		verify(cachingService, times(1)).putPostIntoCache(post2);
+		verify(cachingService, times(1)).putPostIntoCache(post3);
+		verify(cachingService, times(1)).putPostIntoCache(post4);
+		verify(cachingService, times(1)).putPostIntoCache(post5);
+		verify(cachingService, never()).putPostIntoCache(post6);
 	}
 
 	@Test
@@ -147,7 +188,6 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.getPostLikes(postId), is(postLikes));
 		verify(cachingService, times(1)).getPostFromCache(postId);
 		verify(dataService, times(1)).getPostLikes(postId);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -159,7 +199,6 @@ public class CachingDataServiceTest {
 		when(cachingService.getPostFromCache(postId)).thenReturn(postInCache);
 		assertThat(cachingDataService.getPostLikes(postId), is(postLikes));
 		verify(cachingService, times(1)).getPostFromCache(postId);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -170,7 +209,6 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.likePost(postId, userId), is(true));
 		verify(dataService, times(1)).likePost(postId, userId);
 		verify(cachingService, times(1)).removePostFromCache(postId);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -181,7 +219,6 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.likePost(postId, username), is(true));
 		verify(dataService, times(1)).likePost(postId, username);
 		verify(cachingService, times(1)).likePostInCache(postId, username);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -192,7 +229,6 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.unlikePost(postId, userId), is(true));
 		verify(dataService, times(1)).unlikePost(postId, userId);
 		verify(cachingService, times(1)).removePostFromCache(postId);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -203,7 +239,6 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.unlikePost(postId, username), is(true));
 		verify(dataService, times(1)).unlikePost(postId, username);
 		verify(cachingService, times(1)).unlikePostInCache(postId, username);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -249,7 +284,6 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.getCommentLikes(commentId), is(commentLikes));
 		verify(cachingService, times(1)).getCommentFromCache(commentId);
 		verify(dataService, times(1)).getCommentLikes(commentId);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -261,7 +295,6 @@ public class CachingDataServiceTest {
 		when(cachingService.getCommentFromCache(commentId)).thenReturn(commentInCache);
 		assertThat(cachingDataService.getCommentLikes(commentId), is(commentLikes));
 		verify(cachingService, times(1)).getCommentFromCache(commentId);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -272,7 +305,6 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.likeComment(commentId, userId), is(true));
 		verify(dataService, times(1)).likeComment(commentId, userId);
 		verify(cachingService, times(1)).likeCommentInCache(commentId, userId);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -283,7 +315,6 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.likeComment(commentId, username), is(true));
 		verify(dataService, times(1)).likeComment(commentId, username);
 		verify(cachingService, times(1)).likeCommentInCache(commentId, username);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -294,7 +325,6 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.unlikeComment(commentId, userId), is(true));
 		verify(dataService, times(1)).unlikeComment(commentId, userId);
 		verify(cachingService, times(1)).unlikeCommentInCache(commentId, userId);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -305,17 +335,24 @@ public class CachingDataServiceTest {
 		assertThat(cachingDataService.unlikeComment(commentId, username), is(true));
 		verify(dataService, times(1)).unlikeComment(commentId, username);
 		verify(cachingService, times(1)).unlikeCommentInCache(commentId, username);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
 	public void testGetFollowerUsernames() {
-		// TODO
+		Collection<String> followerUsernames = Collections.singleton("A Follower");
+		String username = "Username";
+		when(dataService.getFollowerUsernames(username)).thenReturn(followerUsernames);
+		assertThat(cachingDataService.getFollowerUsernames(username), is(followerUsernames));
+		verify(dataService, times(1)).getFollowerUsernames(username);
 	}
 
 	@Test
 	public void testGetFollowingUsernames() {
-		// TODO
+		Collection<String> followingUsernames = Collections.singleton("A User I Follow");
+		String username = "Username";
+		when(dataService.getFollowingUsernames(username)).thenReturn(followingUsernames);
+		assertThat(cachingDataService.getFollowingUsernames(username), is(followingUsernames));
+		verify(dataService, times(1)).getFollowingUsernames(username);
 	}
 
 	@Test
@@ -328,7 +365,6 @@ public class CachingDataServiceTest {
 		when(dataService.followUser(followerUserId, followerUsername, followingUserId, followingUsername)).thenReturn(true);
 		assertThat(cachingDataService.followUser(followerUserId, followerUsername, followingUserId, followingUsername), is(true));
 		verify(dataService, times(1)).followUser(followerUserId, followerUsername, followingUserId, followingUsername);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 
 	@Test
@@ -337,10 +373,9 @@ public class CachingDataServiceTest {
 		String followerUsername = "Me";
 		int followingUserId = 11;
 		String followingUsername = "A Person I Want To Unfollow";
-		
+
 		when(dataService.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername)).thenReturn(true);
 		assertThat(cachingDataService.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername), is(true));
 		verify(dataService, times(1)).unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername);
-		verifyNoMoreInteractions(dataService, cachingService);
 	}
 }

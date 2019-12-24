@@ -364,7 +364,7 @@ public class MockDataService implements DataService {
 		jasonPage.setUserId(jason.getUserId());
 		jasonPage.setUsername(jason.getUsername());
 		jasonPage.setFullName(jason.getFullName());
-		jasonPage.setEmail("jason_sarwar@yahoo.com");
+		jasonPage.setEmail("jason_sarwar@jms.com");
 		jasonPage.setBio("Trying to create this website.");
 		jasonPage.setDateTimeJoined(LocalDateTime.of(2019, 1, 1, 0, 0, 0));
 		userPagesByUsername.put(jason.getUsername(), jasonPage);

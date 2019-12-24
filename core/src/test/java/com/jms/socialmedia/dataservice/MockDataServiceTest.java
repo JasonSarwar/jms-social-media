@@ -2,23 +2,28 @@ package com.jms.socialmedia.dataservice;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.jms.socialmedia.model.NewUser;
 import com.jms.socialmedia.model.Post;
+import com.jms.socialmedia.model.UserPage;
 
 public class MockDataServiceTest {
-	
+
 	private MockDataService mockDataService;
 
 	@Before
 	public void setUp() {
 		mockDataService = new MockDataService();
-		
+
 	}
 
 	@Test
@@ -28,7 +33,7 @@ public class MockDataServiceTest {
 		assertThat(post1.getPostId(), is(1));
 		assertThat(post1.getText(), is("These posts are from a Mock #Data Service and are not from a database"));
 		assertThat(post1.getUserId(), is(2));
-		
+
 		assertThat(mockDataService.getPosts(2).size(), is(3));
 	}
 
@@ -39,7 +44,28 @@ public class MockDataServiceTest {
 
 	@Test
 	public void testGetUserPageInfoByName() {
-		// TODO
+		UserPage jasonsUserPage = mockDataService.getUserPageInfoByName("Jason");
+
+		assertThat(jasonsUserPage, is(notNullValue()));
+		assertThat(jasonsUserPage.getUserId(), is(2));
+		assertThat(jasonsUserPage.getUsername(), is("Jason"));
+		assertThat(jasonsUserPage.getFullName(), is("Jason Sarwar"));
+		assertThat(jasonsUserPage.getEmail(), is("jason_sarwar@jms.com"));
+		assertThat(jasonsUserPage.getBio(), is("Trying to create this website."));
+
+		assertThat(mockDataService.getUserPageInfoByName("Matt"), is(nullValue()));
+
+		mockDataService.addUser(
+				new NewUser(null, "Matt", "Mr. Matt", "matt@jms.com", "password", "password", LocalDate.now(), null));
+
+		UserPage mattsUserPage = mockDataService.getUserPageInfoByName("Matt");
+
+		assertThat(mattsUserPage, is(notNullValue()));
+		assertThat(mattsUserPage.getUserId(), is(3));
+		assertThat(mattsUserPage.getUsername(), is("Matt"));
+		assertThat(mattsUserPage.getFullName(), is("Mr. Matt"));
+		assertThat(mattsUserPage.getEmail(), is("matt@jms.com"));
+		assertThat(mattsUserPage.getBio(), is(nullValue()));
 	}
 
 	@Test
@@ -54,17 +80,48 @@ public class MockDataServiceTest {
 
 	@Test
 	public void testGetUsernamesToFollow() {
-		// TODO
+
+		assertThat(mockDataService.getUsernamesToFollow("user"), is(Collections.singletonList("Jason")));
+
+		mockDataService.addUser(
+				new NewUser(10, "Matt", "Mr. Matt", "matt@jms.com", "password", "password", LocalDate.now(), null));
+		
+		Collection<String> usernamesToFollow = mockDataService.getUsernamesToFollow("user");
+		assertThat(usernamesToFollow.size(), is(2));
+		assertThat(usernamesToFollow.contains("Jason"), is(true));
+		assertThat(usernamesToFollow.contains("Matt"), is(true));
+		
+		mockDataService.followUser(null, "user", null, "Jason");
+		
+		assertThat(mockDataService.getUsernamesToFollow("user"), is(Collections.singletonList("Matt")));
 	}
 
 	@Test
 	public void testIsUsernameTaken() {
-		// TODO
+		assertThat(mockDataService.isUsernameTaken("jason"), is(true));
+		assertThat(mockDataService.isUsernameTaken("JASON"), is(true));
+		assertThat(mockDataService.isUsernameTaken("matt"), is(false));
+		assertThat(mockDataService.isUsernameTaken("MATT"), is(false));
+
+		mockDataService.addUser(
+				new NewUser(10, "Matt", "Mr. Matt", "matt@jms.com", "password", "password", LocalDate.now(), null));
+
+		assertThat(mockDataService.isUsernameTaken("matt"), is(true));
+		assertThat(mockDataService.isUsernameTaken("MATT"), is(true));
 	}
 
 	@Test
 	public void testIsEmailTaken() {
-		// TODO
+		assertThat(mockDataService.isEmailTaken("jason_sarwar@jms.com"), is(true));
+		assertThat(mockDataService.isEmailTaken("Jason_Sarwar@JMS.com"), is(true));
+		assertThat(mockDataService.isEmailTaken("matt@jms.com"), is(false));
+		assertThat(mockDataService.isEmailTaken("MATT@JMS.COM"), is(false));
+
+		mockDataService.addUser(
+				new NewUser(10, "Matt", "Mr. Matt", "matt@jms.com", "password", "password", LocalDate.now(), null));
+
+		assertThat(mockDataService.isEmailTaken("matt@jms.com"), is(true));
+		assertThat(mockDataService.isEmailTaken("MATT@JMS.COM"), is(true));
 	}
 
 	@Test
@@ -137,13 +194,13 @@ public class MockDataServiceTest {
 		int postId = 1;
 
 		assertThat(mockDataService.getPostLikes(postId), is(Collections.emptyList()));
-		
+
 		assertThat(mockDataService.likePost(postId, 1), is(true));
-		
+
 		assertThat(mockDataService.getPostLikes(postId), is(Collections.singletonList("user")));
-		
+
 		assertThat(mockDataService.unlikePost(postId, 1), is(true));
-		
+
 		assertThat(mockDataService.getPostLikes(postId), is(Collections.emptyList()));
 	}
 
@@ -152,13 +209,13 @@ public class MockDataServiceTest {
 		int postId = 1;
 
 		assertThat(mockDataService.getPostLikes(postId), is(Collections.emptyList()));
-		
+
 		assertThat(mockDataService.likePost(postId, "user"), is(true));
-		
+
 		assertThat(mockDataService.getPostLikes(postId), is(Collections.singletonList("user")));
-		
+
 		assertThat(mockDataService.unlikePost(postId, "user"), is(true));
-		
+
 		assertThat(mockDataService.getPostLikes(postId), is(Collections.emptyList()));
 	}
 
@@ -202,13 +259,13 @@ public class MockDataServiceTest {
 		int commentId = 1;
 
 		assertThat(mockDataService.getCommentLikes(commentId), is(Collections.emptyList()));
-		
+
 		assertThat(mockDataService.likeComment(commentId, 1), is(true));
-		
+
 		assertThat(mockDataService.getCommentLikes(commentId), is(Collections.singletonList("user")));
-		
+
 		assertThat(mockDataService.unlikeComment(commentId, 1), is(true));
-		
+
 		assertThat(mockDataService.getCommentLikes(commentId), is(Collections.emptyList()));
 	}
 
@@ -217,13 +274,13 @@ public class MockDataServiceTest {
 		int commentId = 1;
 
 		assertThat(mockDataService.getCommentLikes(commentId), is(Collections.emptyList()));
-		
+
 		assertThat(mockDataService.likeComment(commentId, "user"), is(true));
-		
+
 		assertThat(mockDataService.getCommentLikes(commentId), is(Collections.singletonList("user")));
-		
+
 		assertThat(mockDataService.unlikeComment(commentId, "user"), is(true));
-		
+
 		assertThat(mockDataService.getCommentLikes(commentId), is(Collections.emptyList()));
 	}
 

@@ -88,7 +88,7 @@ public class CachingDataService implements DataService {
 		int i = 0;
 		for (Post post : posts) {
 			cachingService.putPostIntoCache(post);
-			if (i++ > 5)
+			if (++i > 4)
 				break;
 		}
 		return posts;
