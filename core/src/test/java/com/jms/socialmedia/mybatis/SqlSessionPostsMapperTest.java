@@ -10,6 +10,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -17,6 +18,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+
+import com.jms.socialmedia.model.Post;
 
 public class SqlSessionPostsMapperTest {
 
@@ -50,9 +53,27 @@ public class SqlSessionPostsMapperTest {
 		// TODO
 	}
 
-	//@Test
+	@Test
 	public void testGetPosts() {
-		// TODO
+		Collection<Integer> userIds = Set.of(1, 2, 3, 4, 5);
+		Collection<String> usernames = Set.of("Pete", "Joe");
+		String tag = "tag";
+		String onDate = "2019-12-23";
+		String beforeDate = "2019-12-24";
+		String afterDate = "2019-12-22";
+		int sincePostId = 1;
+		String sortBy = "postId";
+		boolean sortOrderAsc = true;
+
+		Collection<Post> posts = Collections.singleton(new Post(1));
+		
+		when(postsMapper.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc)).thenReturn(posts);
+		Collection<Post> returnedPosts = sqlSessionPostsMapper.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+		
+		assertThat(returnedPosts, is(posts));
+		
+		verify(postsMapper, times(1)).getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+		
 	}
 
 	//@Test

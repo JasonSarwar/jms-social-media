@@ -186,7 +186,20 @@ public class MockDataServiceTest {
 
 	@Test
 	public void testGetLikedPostsByUserId() {
-		// TODO
+		assertThat(mockDataService.getLikedPostsByUserId(1), is(Collections.emptyList()));
+		assertThat(mockDataService.likePost(3, 1), is(true));
+		
+		Post post3 = mockDataService.getPost(3);
+		assertThat(mockDataService.getLikedPostsByUserId(1), is(Collections.singletonList(post3)));
+		
+		assertThat(mockDataService.likePost(2, 1), is(true));
+		
+		Post post2 = mockDataService.getPost(2);
+		Collection<Post> likedPosts = mockDataService.getLikedPostsByUserId(1);
+		
+		assertThat(likedPosts.size(), is(2));
+		assertThat(likedPosts.contains(post2), is(true));
+		assertThat(likedPosts.contains(post3), is(true));
 	}
 
 	@Test

@@ -60,9 +60,9 @@ public class SqlSessionFollowersMapperTest {
 		Collection<String> followingUsernames = Collections.singleton("A User I Follow");
 		String username = "Username";
 		
-		when(followersMapper.getFollowerUsernames(username)).thenReturn(followingUsernames);
-		assertThat(sqlSessionFollowersMapper.getFollowerUsernames(username), is(followingUsernames));
-		verify(followersMapper, times(1)).getFollowerUsernames(username);
+		when(followersMapper.getFollowingUsernames(username)).thenReturn(followingUsernames);
+		assertThat(sqlSessionFollowersMapper.getFollowingUsernames(username), is(followingUsernames));
+		verify(followersMapper, times(1)).getFollowingUsernames(username);
 	}
 
 	@Test

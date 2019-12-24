@@ -66,6 +66,15 @@ public class RequestHandlerTest {
 	}
 
 	@Test
+	public void testAuthorizeRequestAdminWithUsername() throws IOException {
+		Token token = Token.newBuilder().addPermissions(Permission.ADMIN).build();
+		when(request.headers(AUTHORIZATION)).thenReturn("Bearer tokenString");
+		when(tokenService.createTokenFromString("tokenString")).thenReturn(token);
+
+		requestHandler.authorizeRequest(request, "username", Permission.ADMIN);
+	}
+
+	@Test
 	public void testAuthorizeRequestMissingHeader() {
 		try {
 			requestHandler.authorizeRequest(request, 1, Permission.ADD_COMMENT);
@@ -152,6 +161,21 @@ public class RequestHandlerTest {
 		} catch (Exception e) {
 			assertThat(e, instanceOf(NoBearerTokenException.class));
 			assertThat(e.getMessage(), is("Bearer token must be included in Authorization header"));
+			verify(request, times(1)).headers(AUTHORIZATION);
+		}
+	}
+
+	@Test
+	public void testAuthorizeRequestWithNullUsername() throws IOException {
+		Token token = Token.newBuilder().addPermissions(Permission.ADD_COMMENT).build();
+		when(request.headers(AUTHORIZATION)).thenReturn("Bearer tokenString");
+		when(tokenService.createTokenFromString("tokenString")).thenReturn(token);
+
+		try {
+			requestHandler.authorizeRequest(request, (String) null, Permission.ADD_COMMENT);
+			fail("Did not throw ForbiddenException");
+		} catch (ForbiddenException e) {
+			assertThat(e.getMessage(), is("User not allowed to Add Comment"));
 			verify(request, times(1)).headers(AUTHORIZATION);
 		}
 	}
