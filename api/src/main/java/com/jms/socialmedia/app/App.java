@@ -29,7 +29,7 @@ public class App {
 
 	public static void main(String[] args) throws IOException {
 
-		String configurationPath = args.length > 0 ? args[0] : "application-mock.properties";
+		String configurationPath = args.length > 0 ? args[0] : "application-dev-h2.properties";
 		Configurations configurations = new ConfigurationsFromFile(configurationPath);
 		startServices(configurations);
 	}
@@ -39,14 +39,14 @@ public class App {
 		setupWebapp(configurations);
 
 		MetricRegistry metricRegistry = MetricRegistryFactory.createMetricRegistry(configurations);
-		AbstractCachingService cachineService = CachingServiceFactory.createCachingService(configurations, metricRegistry);
-		DataService dataService = DataServiceFactory.createDataService(configurations, cachineService, metricRegistry);
+		AbstractCachingService cachingService = CachingServiceFactory.createCachingService(configurations, metricRegistry);
+		DataService dataService = DataServiceFactory.createDataService(configurations, cachingService, metricRegistry);
 		PasswordService passwordService = createPasswordService(configurations);
 
 		RouteMappings routes = new RouteMappings(dataService, passwordService, new JWTService(), metricRegistry,
 				configurations.get(CoreSettings.ADMIN_USER_IDS));
 
-		if (configurations.get(CoreSettings.LOG_REQUESTS_AND_RESPONSES)) {
+		if (Boolean.TRUE.equals(configurations.get(CoreSettings.LOG_REQUESTS_AND_RESPONSES))) {
 			routes.addRouteListener(new LogRouteAdapter());
 		}
 
@@ -55,7 +55,7 @@ public class App {
 	}
 
 	private static void setupWebapp(Configurations configurations) {
-		if (configurations.get(CoreSettings.WEBAPP)) {
+		if (Boolean.TRUE.equals(configurations.get(CoreSettings.WEBAPP))) {
 			String webappLocation = configurations.get(CoreSettings.WEBAPP_LOCATION);
 			if (webappLocation != null) {
 				Spark.staticFiles.externalLocation(webappLocation);
@@ -66,7 +66,7 @@ public class App {
 	}
 
 	private static PasswordService createPasswordService(Configurations configurations) {
-		if (configurations.get(CoreSettings.MOCK_DATA_SERVICE)) {
+		if (Boolean.TRUE.equals(configurations.get(CoreSettings.MOCK_DATA_SERVICE))) {
 			return new NonEncryptionPasswordService();
 		} else {
 			return new BcryptPasswordService();

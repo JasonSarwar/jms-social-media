@@ -1,7 +1,5 @@
 package com.jms.socialmedia.mybatis;
 
-import java.util.Collection;
-
 import org.apache.ibatis.annotations.Param;
 
 import com.jms.socialmedia.model.NewUser;
@@ -23,8 +21,6 @@ public interface UsersMapper {
 	User getUserLoginInfoByString(String usernameOrEmail);
 
 	User getHashedPasswordByUserId(Integer userId);
-
-	Collection<User> getUsernamesByIds(Collection<Integer> userIds);
 
 	int editPassword(@Param(value="id") Integer userId, @Param(value="hashedPassword") String hashedPassword);
 

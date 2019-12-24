@@ -1,7 +1,5 @@
 package com.jms.socialmedia.mybatis;
 
-import java.util.Collection;
-
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -70,14 +68,6 @@ public class SqlSessionUsersMapper implements UsersMapper {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			UsersMapper mapper = session.getMapper(UsersMapper.class);
 			return mapper.getHashedPasswordByUserId(userId);
-		}
-	}
-
-	@Override
-	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
-		try (SqlSession session = sessionfactory.openSession(true)) {
-			UsersMapper mapper = session.getMapper(UsersMapper.class);
-			return mapper.getUsernamesByIds(userIds);
 		}
 	}
 

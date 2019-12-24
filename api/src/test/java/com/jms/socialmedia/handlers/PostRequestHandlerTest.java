@@ -2,8 +2,6 @@ package com.jms.socialmedia.handlers;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 
 import com.google.gson.Gson;
@@ -39,7 +37,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
 
 public class PostRequestHandlerTest {
@@ -66,8 +64,6 @@ public class PostRequestHandlerTest {
 	private Request request;
 	@Mock
 	private Response response;
-	@Captor
-	private ArgumentCaptor<Collection<Integer>> userIdsCaptor;
 
 	private Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter()).create();
 
@@ -102,13 +98,9 @@ public class PostRequestHandlerTest {
 		verify(request, times(1)).queryParams(SORT_BY_PARAM);
 		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq(null), eq(null), eq(null), eq(null),
+		verify(dataService, times(1)).getPosts(eq(Collections.singleton(34)), eq(null), eq(null), eq(null), eq(null),
 				eq(null), eq(null), eq(POST_ID_PARAM), eq(false));
 
-		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
-		assertThat(capture.size(), is(1));
-		assertThat(capture.get(0).size(), is(1));
-		assertThat(capture.get(0).contains(34), is(true));
 	}
 
 	@Test
@@ -135,26 +127,20 @@ public class PostRequestHandlerTest {
 		verify(request, times(1)).queryParams(SORT_BY_PARAM);
 		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq(null), eq(null), eq(null), eq(null),
+		verify(dataService, times(1)).getPosts(eq(Set.of(34, 40, 56)), eq(null), eq(null), eq(null), eq(null),
 				eq(null), eq(null), eq(POST_ID_PARAM), eq(false));
 
-		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
-		assertThat(capture.size(), is(1));
-		assertThat(capture.get(0).size(), is(3));
-		assertThat(capture.get(0).contains(34), is(true));
-		assertThat(capture.get(0).contains(40), is(true));
-		assertThat(capture.get(0).contains(56), is(true));
 	}
 
 	@Test
-	public void testHandleGetPostsWithUsername() {
+	public void testHandleGetPostsWithOneUsername() {
 		Collection<Post> posts = Set.of(
 				new Post(5, 34, "Jason", "Jason Sarwar", "A Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(4, 34, "Jason", "Jason Sarwar", "Another Cool Post", LocalDateTime.of(2019, 4, 17, 7, 34)),
 				new Post(3, 34, "Jason", "Jason Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 2, 15, 6, 12)));
 
 		when(request.queryParams(USERNAME_PARAM)).thenReturn("Jason");
-		when(dataService.getPosts(eq(null), eq("Jason"), eq(null), eq(null), eq(null), eq(null), eq(null),
+		when(dataService.getPosts(eq(null), eq(Collections.singleton("Jason")), eq(null), eq(null), eq(null), eq(null), eq(null),
 				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
@@ -169,7 +155,36 @@ public class PostRequestHandlerTest {
 		verify(request, times(1)).queryParams(SORT_BY_PARAM);
 		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getPosts(eq(null), eq("Jason"), eq(null), eq(null), eq(null), eq(null), eq(null),
+		verify(dataService, times(1)).getPosts(eq(null), eq(Collections.singleton("Jason")), eq(null), eq(null), eq(null), eq(null), eq(null),
+				eq(POST_ID_PARAM), eq(false));
+	}
+
+	@Test
+	public void testHandleGetPostsWithMultipleUsername() {
+		Collection<Post> posts = Set.of(
+				new Post(5, 34, "Jason", "Jason Sarwar", "A Cool Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
+				new Post(4, 35, "Jim", "Jim Sarwar", "Another Cool Post", LocalDateTime.of(2019, 4, 17, 7, 34)),
+				new Post(3, 36, "Ron", "Ron Sarwar", "One Last Cool Post", LocalDateTime.of(2019, 2, 15, 6, 12)));
+
+		Collection<String> usernames = Set.of("Jason", "Jim", "Ron");
+		
+		when(request.queryParams(USERNAME_PARAM)).thenReturn("Jason,Jim,Ron");
+		when(dataService.getPosts(eq(null), eq(usernames), eq(null), eq(null), eq(null), eq(null), eq(null),
+				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
+
+		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
+		assertThat(retrievedPosts, is(posts));
+		verify(request, times(1)).queryParams(USER_ID_PARAM);
+		verify(request, times(1)).queryParams(USERNAME_PARAM);
+		verify(request, times(1)).queryParams(TAG_PARAM);
+		verify(request, times(1)).queryParams(ON_PARAM);
+		verify(request, times(1)).queryParams(BEFORE_PARAM);
+		verify(request, times(1)).queryParams(AFTER_PARAM);
+		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
+		verify(request, times(1)).queryParams(SORT_BY_PARAM);
+		verify(request, times(1)).queryParams(ORDER_PARAM);
+		verifyNoMoreInteractions(request);
+		verify(dataService, times(1)).getPosts(eq(null), eq(usernames), eq(null), eq(null), eq(null), eq(null), eq(null),
 				eq(POST_ID_PARAM), eq(false));
 	}
 
@@ -312,11 +327,11 @@ public class PostRequestHandlerTest {
 	public void testHandleGetPostsWithAllParameters() {
 		Collection<Post> posts = Set.of(
 				new Post(3, 33, "Jason1", "Jason Sarwar", "A Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
-				new Post(4, 34, "Jason1", "Jason Sarwar", "Another Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
-				new Post(5, 35, "Jason1", "Jason Sarwar", "One Last Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)));
+				new Post(4, 34, "Jason2", "Jason Sarwar", "Another Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
+				new Post(5, 35, "Jason3", "Jason Sarwar", "One Last Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)));
 
 		when(request.queryParams(USER_ID_PARAM)).thenReturn("33,34,35");
-		when(request.queryParams(USERNAME_PARAM)).thenReturn("Jason1");
+		when(request.queryParams(USERNAME_PARAM)).thenReturn("Jason1,Jason2,Jason3");
 		when(request.queryParams(TAG_PARAM)).thenReturn("Post");
 		when(request.queryParams(ON_PARAM)).thenReturn("06-15-2019");
 		when(request.queryParams(BEFORE_PARAM)).thenReturn("06-16-2019");
@@ -325,7 +340,7 @@ public class PostRequestHandlerTest {
 		when(request.queryParams(SORT_BY_PARAM)).thenReturn(USER_ID_PARAM);
 		when(request.queryParams(ORDER_PARAM)).thenReturn("asc");
 
-		when(dataService.getPosts(anyCollection(), eq("Jason1"), eq("Post"), eq("06-15-2019"), eq("06-16-2019"),
+		when(dataService.getPosts(eq(Set.of(33, 34, 35)), eq(Set.of("Jason1", "Jason2", "Jason3")), eq("Post"), eq("06-15-2019"), eq("06-16-2019"),
 				eq("06-14-2019"), eq(2), eq(USER_ID_PARAM), eq(true))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetPosts(request, response);
@@ -340,74 +355,65 @@ public class PostRequestHandlerTest {
 		verify(request, times(1)).queryParams(SORT_BY_PARAM);
 		verify(request, times(1)).queryParams(ORDER_PARAM);
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq("Jason1"), eq("Post"), eq("06-15-2019"),
+		verify(dataService, times(1)).getPosts(eq(Set.of(33, 34, 35)), eq(Set.of("Jason1", "Jason2", "Jason3")), eq("Post"), eq("06-15-2019"),
 				eq("06-16-2019"), eq("06-14-2019"), eq(2), eq(USER_ID_PARAM), eq(true));
 
-		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
-		assertThat(capture.size(), is(1));
-		assertThat(capture.get(0).size(), is(3));
-		assertThat(capture.get(0).containsAll(Set.of(33, 34, 35)), is(true));
 	}
 
 	@Test
 	public void testHandleGetFeedPosts() {
 
+		String username = "Jason1";
+		
 		Collection<Post> posts = Set.of(
-				new Post(8, 45, "Jason1", "Jason Sarwar", "A Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
+				new Post(8, 45, username, "Jason Sarwar", "A Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(7, 12, "Jason2", "Jason Sarwar 2", "Another Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(6, 78, "Jason3", "Jason Sarwar 3", "One Last Cool #Post",
 						LocalDateTime.of(2019, 6, 15, 6, 23)));
 
-		when(request.params(USER_ID_PARAM)).thenReturn("45");
-		when(dataService.getFollowingUserIds(45)).thenReturn(Set.of(12, 78, 23));
-		when(dataService.getPosts(anyCollection(), eq(null), eq(null), eq(null), eq(null), eq(null), eq(null),
+		when(request.params(USERNAME_PARAM)).thenReturn(username);
+		when(dataService.getFollowingUsernames(username)).thenReturn(Set.of("Jason2", "Jason3"));
+		when(dataService.getPosts(eq(null), anyCollection(), eq(null), eq(null), eq(null), eq(null), eq(null),
 				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetFeedPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).params(USER_ID_PARAM);
+		verify(request, times(1)).params(USERNAME_PARAM);
 		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getFollowingUserIds(45);
-		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq(null), eq(null), eq(null), eq(null),
-				eq(null), eq(null), eq(POST_ID_PARAM), eq(false));
+		verify(dataService, times(1)).getFollowingUsernames(username);
+		verify(dataService, times(1)).getPosts(null, Set.of(username, "Jason2", "Jason3"), null, null, null,
+				null, null, POST_ID_PARAM, false);
 		verifyNoMoreInteractions(dataService);
-
-		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
-		assertThat(capture.size(), is(1));
-		assertThat(capture.get(0).size(), is(4));
-		assertThat(capture.get(0).containsAll(Set.of(12, 78, 23, 45)), is(true));
 	}
 
 	@Test
 	public void testHandleGetFeedPostsWithSincePostId() {
 
+		String username = "Jason1";
+
 		Collection<Post> posts = Set.of(
 				new Post(8, 45, "Jason1", "Jason Sarwar", "A Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(7, 12, "Jason2", "Jason Sarwar 2", "Another Cool #Post", LocalDateTime.of(2019, 6, 15, 6, 23)),
 				new Post(6, 78, "Jason3", "Jason Sarwar 3", "One Last Cool #Post",
 						LocalDateTime.of(2019, 6, 15, 6, 23)));
 
-		when(request.params(USER_ID_PARAM)).thenReturn("45");
+		when(request.params(USERNAME_PARAM)).thenReturn(username);
 		when(request.queryParams(SINCE_POST_ID_PARAM)).thenReturn("5");
-		when(dataService.getFollowingUserIds(45)).thenReturn(Set.of(12, 78, 23));
-		when(dataService.getPosts(anyCollection(), eq(null), eq(null), eq(null), eq(null), eq(null), eq(5),
+		when(dataService.getFollowingUsernames(username)).thenReturn(Set.of("Jason2", "Jason3"));
+		when(dataService.getPosts(eq(null), anyCollection(), eq(null), eq(null), eq(null), eq(null), eq(5),
 				eq(POST_ID_PARAM), eq(false))).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = postRequestHandler.handleGetFeedPosts(request, response);
 		assertThat(retrievedPosts, is(posts));
-		verify(request, times(1)).params(USER_ID_PARAM);
+		verify(request, times(1)).params(USERNAME_PARAM);
 		verify(request, times(1)).queryParams(SINCE_POST_ID_PARAM);
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getFollowingUserIds(45);
-		verify(dataService, times(1)).getPosts(userIdsCaptor.capture(), eq(null), eq(null), eq(null), eq(null),
-				eq(null), eq(5), eq(POST_ID_PARAM), eq(false));
+		verify(dataService, times(1)).getFollowingUsernames(username);
+		verify(dataService, times(1)).getPosts(null, Set.of(username, "Jason2", "Jason3"), null, null, null,
+				null, 5, POST_ID_PARAM, false);
 		verifyNoMoreInteractions(dataService);
 
-		List<Collection<Integer>> capture = userIdsCaptor.getAllValues();
-		assertThat(capture.size(), is(1));
-		assertThat(capture.get(0).size(), is(4));
-		assertThat(capture.get(0).containsAll(Set.of(12, 78, 23, 45)), is(true));
 	}
 
 	@Test

@@ -15,7 +15,7 @@ public abstract class Entry {
 	protected String profilePictureLink;
 	protected String text;
 	protected LocalDateTime timestamp;
-	protected Collection<Integer> likes;
+	protected Collection<String> likes;
 	
 	public Entry() {
 		this.likes = new HashSet<>();
@@ -76,17 +76,17 @@ public abstract class Entry {
 	public final void setText(String text) {
 		this.text = text;
 	}
-	public final Collection<Integer> getLikes() {
+	public final Collection<String> getLikes() {
 		return likes;
 	}
-	public final void setLikes(Collection<Integer> likes) {
+	public final void setLikes(Collection<String> likes) {
 		this.likes = likes;
 	}
-	public final boolean addLike(Integer userId) {
-		return this.likes.add(userId);
+	public final boolean addLike(String username) {
+		return this.likes.add(username);
 	}
-	public final boolean removeLike(Integer userId) {
-		return this.likes.remove(userId);
+	public final boolean removeLike(String username) {
+		return this.likes.removeIf(e -> e.equalsIgnoreCase(username));
 	}
 	public final LocalDateTime getTimestamp() {
 		return timestamp;

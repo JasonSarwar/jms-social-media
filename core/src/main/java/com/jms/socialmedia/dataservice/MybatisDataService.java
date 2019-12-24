@@ -10,6 +10,8 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import com.jms.socialmedia.configuration.Configurations;
 import com.jms.socialmedia.configuration.CoreSettings;
 import com.jms.socialmedia.model.Comment;
@@ -56,6 +58,18 @@ public class MybatisDataService implements DataService {
 		}
 	}
 
+	@VisibleForTesting
+	MybatisDataService(UsersMapper usersMapper, PostsMapper postsMapper, CommentsMapper commentsMapper, 
+			TagsMapper tagsMapper, FollowersMapper followersMapper) {
+
+		this.usersMapper = usersMapper;
+		this.postsMapper = postsMapper;
+		this.commentsMapper = commentsMapper;
+		this.tagsMapper = tagsMapper;
+		this.followersMapper = followersMapper;
+
+	}
+
 	@Override
 	public Integer getUserIdByUsername(String username) {
 		return usersMapper.getUserIdByUsername(username);
@@ -77,13 +91,8 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
-		return usersMapper.getUsernamesByIds(userIds);
-	}
-
-	@Override
-	public Collection<User> getUsersToFollow(int userId) {
-		return followersMapper.getUsersToFollow(userId);
+	public Collection<String> getUsernamesToFollow(String username) {
+		return followersMapper.getUsernamesToFollow(username);
 	}
 
 	@Override
@@ -122,9 +131,9 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, 
+	public Collection<Post> getPosts(Collection<Integer> userIds, Collection<String> usernames, String tag, String onDate, 
 			String beforeDate, String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
-		Collection<Post> posts = postsMapper.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+		Collection<Post> posts = postsMapper.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 		posts.forEach(post -> post.setLikes(getPostLikes(post.getPostId())));
 		return posts;
 	}
@@ -179,18 +188,28 @@ public class MybatisDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getPostLikes(int postId) {
+	public Collection<String> getPostLikes(int postId) {
 		return postsMapper.getPostLikes(postId);
 	}
 
 	@Override
 	public boolean likePost(int postId, int userId) {
-		return postsMapper.likePost(postId, userId) == 1;
+		return postsMapper.likePost(postId, userId, null) == 1;
+	}
+
+	@Override
+	public boolean likePost(int postId, String username) {
+		return postsMapper.likePost(postId, null, username) == 1;
 	}
 
 	@Override
 	public boolean unlikePost(int postId, int userId) {
-		return postsMapper.unlikePost(postId, userId) == 1;
+		return postsMapper.unlikePost(postId, userId, null) == 1;
+	}
+
+	@Override
+	public boolean unlikePost(int postId, String username) {
+		return postsMapper.unlikePost(postId, null, username) == 1;
 	}
 
 	@Override
@@ -237,37 +256,47 @@ public class MybatisDataService implements DataService {
 	}
 	
 	@Override
-	public Collection<Integer> getCommentLikes(int commentId) {
+	public Collection<String> getCommentLikes(int commentId) {
 		return commentsMapper.getCommentLikes(commentId);
 	}
 
 	@Override
 	public boolean likeComment(int commentId, int userId) {
-		return commentsMapper.likeComment(commentId, userId) == 1;
+		return commentsMapper.likeComment(commentId, userId, null) == 1;
+	}
+
+	@Override
+	public boolean likeComment(int commentId, String username) {
+		return commentsMapper.likeComment(commentId, null, username) == 1;
 	}
 
 	@Override
 	public boolean unlikeComment(int commentId, int userId) {
-		return commentsMapper.unlikeComment(commentId, userId) == 1;
+		return commentsMapper.unlikeComment(commentId, userId, null) == 1;
 	}
 
 	@Override
-	public Collection<Integer> getFollowerUserIds(int userId) {
-		return followersMapper.getFollowerUserIds(userId);
+	public boolean unlikeComment(int commentId, String username) {
+		return commentsMapper.unlikeComment(commentId, null, username) == 1;
 	}
 
 	@Override
-	public Collection<Integer> getFollowingUserIds(int userId) {
-		return followersMapper.getFollowingUserIds(userId);
+	public Collection<String> getFollowerUsernames(String username) {
+		return followersMapper.getFollowerUsernames(username);
 	}
 
 	@Override
-	public boolean followUser(int followerUserId, int followingUserId) {
-		return followersMapper.followUser(followerUserId, followingUserId) == 1;
+	public Collection<String> getFollowingUsernames(String username) {
+		return followersMapper.getFollowingUsernames(username);
 	}
 
 	@Override
-	public boolean unfollowUser(int followerUserId, int followingUserId) {
-		return followersMapper.unfollowUser(followerUserId, followingUserId) == 1;
+	public boolean followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
+		return followersMapper.followUser(followerUserId, followerUsername, followingUserId, followingUsername) == 1;
+	}
+
+	@Override
+	public boolean unfollowUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
+		return followersMapper.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername) == 1;
 	}
 }

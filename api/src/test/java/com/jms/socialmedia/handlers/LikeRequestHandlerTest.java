@@ -60,12 +60,12 @@ public class LikeRequestHandlerTest {
 	@Test
 	public void testHandleGetLikedPosts() {
 		Post post1 = new Post(1, 4, "Jason", "Jason Sarwar", "A cool post!", LocalDateTime.now());
-		post1.addLike(3);
+		post1.addLike("Jack");
 		Post post2 = new Post(2, 4, "Jason", "Jason Sarwar", "Another cool post!", LocalDateTime.now());
-		post2.addLike(3);
+		post2.addLike("Jack");
 		Collection<Post> posts = Set.of(post1, post2);
 
-		when(request.params(USER_ID_PARAM)).thenReturn("3");
+		when(request.params(USER_ID_PARAM)).thenReturn("3"); // Jack is userId 3
 		when(dataService.getLikedPostsByUserId(3)).thenReturn(posts);
 
 		Collection<Post> retrievedPosts = likeRequestHandler.handleGetLikedPosts(request, response);
@@ -79,11 +79,11 @@ public class LikeRequestHandlerTest {
 
 	@Test
 	public void testHandleGetPostLikes() {
-		Collection<Integer> postLikes = Set.of(1, 2, 3, 4, 5);
+		Collection<String> postLikes = Set.of("Jim", "Mike", "Sarah");
 		when(request.params(POST_ID_PARAM)).thenReturn("27");
 		when(dataService.getPostLikes(27)).thenReturn(postLikes);
 
-		Collection<Integer> retrievedPostLikes = likeRequestHandler.handleGetPostLikes(request, response);
+		Collection<String> retrievedPostLikes = likeRequestHandler.handleGetPostLikes(request, response);
 		assertThat(retrievedPostLikes, is(postLikes));
 		verify(request, times(1)).params(POST_ID_PARAM);
 		verifyNoMoreInteractions(request);
@@ -138,11 +138,11 @@ public class LikeRequestHandlerTest {
 
 	@Test
 	public void testHandleGetCommentLikes() {
-		Collection<Integer> commentLikes = Set.of(1, 2, 3, 4, 5);
+		Collection<String> commentLikes = Set.of("Richie", "Mike", "Pat", "Sarah");
 		when(request.params(COMMENT_ID_PARAM)).thenReturn("6");
 		when(dataService.getCommentLikes(6)).thenReturn(commentLikes);
 
-		Collection<Integer> retrievedCommentLikes = likeRequestHandler.handleGetCommentLikes(request, response);
+		Collection<String> retrievedCommentLikes = likeRequestHandler.handleGetCommentLikes(request, response);
 		assertThat(retrievedCommentLikes, is(commentLikes));
 		verify(request, times(1)).params(COMMENT_ID_PARAM);
 		verifyNoMoreInteractions(request);

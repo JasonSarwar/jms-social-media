@@ -40,13 +40,8 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<User> getUsernamesByIds(Collection<Integer> userIds) {
-		return dataService.getUsernamesByIds(userIds);
-	}
-
-	@Override
-	public Collection<User> getUsersToFollow(int userId) {
-		return dataService.getUsersToFollow(userId);
+	public Collection<String> getUsernamesToFollow(String username) {
+		return dataService.getUsernamesToFollow(username);
 	}
 
 	@Override
@@ -86,14 +81,14 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Post> getPosts(Collection<Integer> userIds, String username, String tag, String onDate, String beforeDate,
+	public Collection<Post> getPosts(Collection<Integer> userIds, Collection<String> usernames, String tag, String onDate, String beforeDate,
 			String afterDate, Integer sincePostId, String sortBy, boolean sortOrderAsc) {
-		Collection<Post> posts = dataService.getPosts(userIds, username, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
+		Collection<Post> posts = dataService.getPosts(userIds, usernames, tag, onDate, beforeDate, afterDate, sincePostId, sortBy, sortOrderAsc);
 		// Put the first 5 posts into cache
 		int i = 0;
 		for (Post post : posts) {
 			cachingService.putPostIntoCache(post);
-			if (i++ > 5)
+			if (++i > 4)
 				break;
 		}
 		return posts;
@@ -141,7 +136,7 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
-	public Collection<Integer> getPostLikes(int postId) {
+	public Collection<String> getPostLikes(int postId) {
 		Post post = cachingService.getPostFromCache(postId);
 		if (post != null) {
 			return post.getLikes();
@@ -151,14 +146,26 @@ public class CachingDataService implements DataService {
 
 	@Override
 	public boolean likePost(int postId, int userId) {
-		cachingService.likePostInCache(postId, userId);
+		cachingService.removePostFromCache(postId);
 		return dataService.likePost(postId, userId);
 	}
 
 	@Override
+	public boolean likePost(int postId, String username) {
+		cachingService.likePostInCache(postId, username);
+		return dataService.likePost(postId, username);
+	}
+
+	@Override
 	public boolean unlikePost(int postId, int userId) {
-		cachingService.unlikePostInCache(postId, userId);
+		cachingService.removePostFromCache(postId);
 		return dataService.unlikePost(postId, userId);
+	}
+
+	@Override
+	public boolean unlikePost(int postId, String username) {
+		cachingService.unlikePostInCache(postId, username);
+		return dataService.unlikePost(postId, username);
 	}
 
 	@Override
@@ -213,7 +220,7 @@ public class CachingDataService implements DataService {
 	}
 	
 	@Override
-	public Collection<Integer> getCommentLikes(int commentId) {
+	public Collection<String> getCommentLikes(int commentId) {
 		Comment comment = cachingService.getCommentFromCache(commentId);
 		if (comment != null) {
 			return comment.getLikes();
@@ -228,28 +235,40 @@ public class CachingDataService implements DataService {
 	}
 
 	@Override
+	public boolean likeComment(int commentId, String username) {
+		cachingService.likeCommentInCache(commentId, username);
+		return dataService.likeComment(commentId, username);
+	}
+
+	@Override
 	public boolean unlikeComment(int commentId, int userId) {
 		cachingService.unlikeCommentInCache(commentId, userId);
 		return dataService.unlikeComment(commentId, userId);
 	}
+
+	@Override
+	public boolean unlikeComment(int commentId, String username) {
+		cachingService.unlikeCommentInCache(commentId, username);
+		return dataService.unlikeComment(commentId, username);
+	}
 	
 	@Override
-	public Collection<Integer> getFollowerUserIds(int userId) {
-		return dataService.getFollowerUserIds(userId);
+	public Collection<String> getFollowerUsernames(String username) {
+		return dataService.getFollowerUsernames(username);
 	}
 
 	@Override
-	public Collection<Integer> getFollowingUserIds(int userId) {
-		return dataService.getFollowingUserIds(userId);
+	public Collection<String> getFollowingUsernames(String username) {
+		return dataService.getFollowingUsernames(username);
 	}
 
 	@Override
-	public boolean followUser(int followerUserId, int followingUserId) {
-		return dataService.followUser(followerUserId, followingUserId);
+	public boolean followUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
+		return dataService.followUser(followerUserId, followerUsername, followingUserId, followingUsername);
 	}
 
 	@Override
-	public boolean unfollowUser(int followerUserId, int followingUserId) {
-		return dataService.unfollowUser(followerUserId, followingUserId);
+	public boolean unfollowUser(Integer followerUserId, String followerUsername, Integer followingUserId, String followingUsername) {
+		return dataService.unfollowUser(followerUserId, followerUsername, followingUserId, followingUsername);
 	}
 }

@@ -46,7 +46,7 @@
         )
     </insert>
 
-	<insert id="addComment" parameterType="comment" databaseId="mysql" keyProperty="commentId" keyColumn="comment_id">
+	<insert id="addComment" parameterType="comment" keyProperty="commentId" keyColumn="comment_id">
         insert into comments (post_id, user_id, text, timestamp) values (
             #{postId}, #{userId}, #{text}, now()
         )
@@ -63,26 +63,38 @@
         where comment_id = #{id}
     </delete>
 
-    <select id="getCommentLikes" parameterType="int" resultType="Integer">
-		select user_id from comment_likes
+    <select id="getCommentLikes" parameterType="int" resultType="String">
+		select username from users inner join comment_likes
+		on users.user_id = comment_likes.user_id
 		where comment_id = #{id}
 	</select>
 
 	<insert id="likeComment" databaseId="oracle">
-		insert into comment_likes (comment_id, user_id, timestamp) values (
-            #{commentId}, #{userId}, systimestamp
+		insert into comment_likes (comment_id, timestamp, user_id) values (
+            #{commentId}, systimestamp, 
+            <include refid="getUserIdForLikeAndUnlike"></include>
         )
 	</insert>
 
-	<insert id="likeComment" databaseId="mysql">
-		insert into comment_likes (comment_id, user_id, timestamp) values (
-            #{commentId}, #{userId}, now()
+	<insert id="likeComment">
+		insert into comment_likes (comment_id, timestamp, user_id) values (
+            #{commentId}, now(), 
+            <include refid="getUserIdForLikeAndUnlike"></include>
         )
 	</insert>
 
 	<delete id="unlikeComment">
         delete from comment_likes
-        where comment_id = #{commentId} and user_id = #{userId}
+        where comment_id = #{commentId} and user_id = 
+        <include refid="getUserIdForLikeAndUnlike"></include>
     </delete>
 
+	<sql id="getUserIdForLikeAndUnlike">
+		<if test="username != null">
+        	(select user_id from users where lower(username) = lower(#{username}))
+        </if>
+        <if test="username == null">
+        	#{userId}
+        </if>
+	</sql>
 </mapper>

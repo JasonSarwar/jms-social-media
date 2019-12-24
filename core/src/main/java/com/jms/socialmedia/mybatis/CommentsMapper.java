@@ -24,9 +24,9 @@ public interface CommentsMapper {
 	
 	int deleteComment(int commentId);
 
-	Collection<Integer> getCommentLikes(int commentId);
+	Collection<String> getCommentLikes(int commentId);
 
-	int likeComment(@Param(value="commentId") int commentId, @Param(value="userId") int userId);
+	int likeComment(@Param(value="commentId") int commentId, @Param(value="userId") Integer userId, @Param(value="username") String username);
 
-	int unlikeComment(@Param(value="commentId") int commentId, @Param(value="userId") int userId);
+	int unlikeComment(@Param(value="commentId") int commentId, @Param(value="userId") Integer userId, @Param(value="username") String username);
 }

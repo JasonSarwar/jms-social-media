@@ -8,15 +8,21 @@ import java.util.Set;
 public class Token {
 
 	private final Integer userId;
+	private final String username;
 	private final Set<Permission> permissions;
 
 	public Token(Builder b) {
 		this.userId = b.userId;
+		this.username = b.username;
 		this.permissions = b.permissions;
 	}
 
 	public final Integer getUserId() {
 		return userId;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 
 	public final Set<Permission> getPermissions() {
@@ -49,10 +55,16 @@ public class Token {
 
 	public static class Builder {
 		private Integer userId;
+		private String username;
 		private Set<Permission> permissions = EnumSet.noneOf(Permission.class);
 
 		public Builder setUserId(Integer userId) {
 			this.userId = userId;
+			return this;
+		}
+
+		public Builder setUsername(String username) {
+			this.username = username;
 			return this;
 		}
 

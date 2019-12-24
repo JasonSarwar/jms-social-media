@@ -32,21 +32,16 @@
 			$location.path("/home");
 		};
 
-		$scope.showUsersModal = function (userIds) {
-			if (userIds && userIds.length > 0) {
-				usersService.getUsernames(userIds)
-					.then(function (data) {
-						if (data) {
-							$scope.modalUsers = data;
-							if ($scope.userId) {
-								usersService.getFollowingUserIds($scope.userId)
-									.then(function (data) {
-										$scope.modalFollowingUserIds = data;
-									});
-							}
-							angular.element('#usersModal').modal();
-						}
-					});
+		$scope.showUsersModal = function (usernames) {
+			if (usernames && usernames.length > 0) {
+				$scope.modalUsernames = usernames;
+				if ($scope.username) {
+					usersService.getFollowingUsernames($scope.username)
+						.then(function (data) {
+							$scope.modalFollowingUsernames = data;
+						});
+				}
+				angular.element('#usersModal').modal();
 			}
 		};
 
@@ -87,7 +82,7 @@
 
 		$scope.getFeedPosts = function() {
 			$scope.noPostsMessage = undefined;
-			postsService.getFeedPosts($scope.userId)
+			postsService.getFeedPosts($scope.username)
 				.then(function (data) {
 					$scope.posts = data;
 					noPostsMessage(data, "Start following people to see Posts here!");
@@ -212,7 +207,7 @@
 	var EntryController = function($scope, $location, postsService, alertService) {
 
 		$scope.liked = function (entry) {
-			return entry.likes.indexOf($scope.userId) > -1;
+			return entry.likes.indexOf($scope.username) > -1;
 		}
 
 		$scope.startEditing = function (entry) {
@@ -273,7 +268,7 @@
 		};
 
 		let removeLikeFromEntry = function (entry) {
-			let index = entry.likes.indexOf($scope.userId);
+			let index = entry.likes.indexOf($scope.username);
 			if (index > -1) {
 				entry.likes.splice(index, 1);
 			}
@@ -284,14 +279,14 @@
 			if (entry.commentId) {
 				postsService.likeComment(entry.commentId, $scope.userId)
 					.then(function (data) {
-						entry.likes.push($scope.userId);
+						entry.likes.push($scope.username);
 					}, function (error) {
 						alertService.error(error.data);
 					});
 			} else {
 				postsService.likePost(entry.postId, $scope.userId)
 					.then(function (data) {
-						entry.likes.push($scope.userId);
+						entry.likes.push($scope.username);
 					}, function (error) {
 						alertService.error(error.data);
 					});
@@ -391,39 +386,39 @@
 		};
 
 		$scope.isFollowing = function () {
-			return $scope.user && $scope.user.followersUserIds.indexOf($scope.userId) > -1;
+			return $scope.user && $scope.user.followersUsernames.indexOf($scope.username) > -1;
 		};
 
 		$scope.followUser = function () {
-			usersService.followUser($scope.userId, $scope.user.userId);
-			$scope.user.followersUserIds.push($scope.userId);
+			usersService.followUser($scope.username, $scope.user.username);
+			$scope.user.followersUsernames.push($scope.username);
 		};
 
 		$scope.unfollowUser = function () {
-			usersService.unfollowUser($scope.userId, $scope.user.userId);
-			let index = $scope.user.followersUserIds.indexOf($scope.userId);
+			usersService.unfollowUser($scope.username, $scope.user.username);
+			let index = $scope.user.followersUsernames.indexOf($scope.username);
 			if (index > -1) {
-				$scope.user.followersUserIds.splice(index, 1);
+				$scope.user.followersUsernames.splice(index, 1);
 			}
 		};
 	};
 
 	var UsersModalController = function($scope, $location, usersService) {
 
-		$scope.isFollowing = function (userId) {
-			return $scope.modalFollowingUserIds && $scope.modalFollowingUserIds.indexOf(userId) > -1;
+		$scope.isFollowing = function (username) {
+			return $scope.modalFollowingUsernames && $scope.modalFollowingUsernames.indexOf(username) > -1;
 		};
 
-		$scope.followUser = function (userId) {
-			usersService.followUser($scope.userId, userId);
-			$scope.modalFollowingUserIds.push(userId);
+		$scope.followUser = function (username) {
+			usersService.followUser($scope.username, username);
+			$scope.modalFollowingUsernames.push(username);
 		};
 
-		$scope.unfollowUser = function (userId) {
-			usersService.unfollowUser($scope.userId, userId);
-			let index = $scope.modalFollowingUserIds.indexOf(userId);
+		$scope.unfollowUser = function (username) {
+			usersService.unfollowUser($scope.username, username);
+			let index = $scope.modalFollowingUsernames.indexOf(username);
 			if (index > -1) {
-				$scope.modalFollowingUserIds.splice(index, 1);
+				$scope.modalFollowingUsernames.splice(index, 1);
 			}
 		};
 
@@ -539,22 +534,20 @@
 
 	var UsersToFollowController = function($scope, usersService) {
 
-		usersService.getUsersToFollow($scope.userId, 20)
+		usersService.getUsersToFollow($scope.username, 20)
 		.then(function (data) {
 			$scope.usersToFollow = data;
 		});
 
-		$scope.followUser = function (userId) {
-			usersService.followUser($scope.userId, userId)
+		$scope.followUser = function (username) {
+			usersService.followUser($scope.username, username)
 			.then(function (data) {
 				$scope.getFeedPosts();
 			});
-			let len = $scope.usersToFollow.length;
-			for (let i = 0; i < len; i++) {
-				if ($scope.usersToFollow[i].userId == userId) {
-					$scope.usersToFollow.splice(i, 1);
-					break;
-				}
+
+			let index = $scope.usersToFollow.indexOf(username);
+			if (index > -1) {
+				$scope.usersToFollow.splice(index, 1);
 			}
 		};
 	}

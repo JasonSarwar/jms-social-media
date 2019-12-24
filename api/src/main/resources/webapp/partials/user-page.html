@@ -52,18 +52,18 @@
 						</button>
 					</div>
 					<div class="col-sm-4">
-						<button type="button" class="btn btn-link" ng-click="showUsersModal(user.followingUserIds)">
-							{{ user.followingUserIds.length }}
+						<button type="button" class="btn btn-link" ng-click="showUsersModal(user.followingUsernames)">
+							{{ user.followingUsernames.length }}
 						</button>
 					</div>
 					<div class="col-sm-4">
-						<button type="button" class="btn btn-link" ng-click="showUsersModal(user.followersUserIds)">
-							{{ user.followersUserIds.length }}
+						<button type="button" class="btn btn-link" ng-click="showUsersModal(user.followersUsernames)">
+							{{ user.followersUsernames.length }}
 						</button>
 					</div>
 				</div>
 				<hr>
-				<div ng-show="userId && userId != user.userId">
+				<div ng-show="username && username != user.username">
 					<button type="button" class="btn btn-success btn-lg" ng-hide="isFollowing()" ng-click="followUser()">
 						<span class="fas fa-user-plus"></span> Follow
 					</button>

@@ -80,7 +80,7 @@ public class SqlSessionCommentsMapper implements CommentsMapper {
 	}
 
 	@Override
-	public Collection<Integer> getCommentLikes(int commentId) {
+	public Collection<String> getCommentLikes(int commentId) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			CommentsMapper mapper = session.getMapper(CommentsMapper.class);
 			return mapper.getCommentLikes(commentId);
@@ -88,18 +88,18 @@ public class SqlSessionCommentsMapper implements CommentsMapper {
 	}
 
 	@Override
-	public int likeComment(int commentId, int userId) {
+	public int likeComment(int commentId, Integer userId, String username) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			CommentsMapper mapper = session.getMapper(CommentsMapper.class);
-			return mapper.likeComment(commentId, userId);
+			return mapper.likeComment(commentId, userId, username);
 		}
 	}
 
 	@Override
-	public int unlikeComment(int commentId, int userId) {
+	public int unlikeComment(int commentId, Integer userId, String username) {
 		try (SqlSession session = sessionfactory.openSession(true)) {
 			CommentsMapper mapper = session.getMapper(CommentsMapper.class);
-			return mapper.unlikeComment(commentId, userId);
+			return mapper.unlikeComment(commentId, userId, username);
 		}
 	}
 }

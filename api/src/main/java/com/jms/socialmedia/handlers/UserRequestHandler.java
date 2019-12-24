@@ -1,10 +1,8 @@
 package com.jms.socialmedia.handlers;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.jms.socialmedia.dataservice.DataService;
@@ -47,23 +45,12 @@ public class UserRequestHandler extends RequestHandler {
 		String username = request.params("username");
 		UserPage userPage = dataService.getUserPageInfoByName(username);
 		if (userPage != null) {
-			int userId = userPage.getUserId();
-			userPage.addFollowersUserIds(dataService.getFollowerUserIds(userId));
-			userPage.addFollowingUserIds(dataService.getFollowingUserIds(userId));
+			userPage.addFollowersUsernames(dataService.getFollowerUsernames(username));
+			userPage.addFollowingUsernames(dataService.getFollowingUsernames(username));
 			return userPage;
 		} else {
 			throw new NotFoundException("User not found");
 		}
-	}
-
-	public Collection<User> handleGetUsernamesAndIds(Request request, Response response) {
-		String queryParam = request.queryParams("ids");
-		if (StringUtils.isBlank(queryParam)) {
-			throw new BadRequestException("No User IDs included");
-		}
-		Collection<Integer> userIds = Arrays.stream(queryParam.split(",")).map(Integer::parseInt)
-				.collect(Collectors.toList());
-		return dataService.getUsernamesByIds(userIds);
 	}
 
 	public Boolean handleIsUsernameTaken(Request request, Response response) {
@@ -187,7 +174,10 @@ public class UserRequestHandler extends RequestHandler {
 		loginSuccess.setUserId(user.getUserId());
 		loginSuccess.setUsername(user.getUsername());
 		loginSuccess.setFirstname(user.getFullName().split(" ")[0]);
-		Token.Builder tokenBuilder = Token.newBuilder().setUserId(user.getUserId());
+
+		Token.Builder tokenBuilder = Token.newBuilder()
+				.setUserId(user.getUserId())
+				.setUsername(user.getUsername());
 
 		if (adminUserIds.contains(user.getUserId())) {
 			tokenBuilder.addPermissions(Permission.ADMIN);

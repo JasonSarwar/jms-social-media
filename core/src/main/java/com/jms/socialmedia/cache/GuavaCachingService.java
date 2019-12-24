@@ -113,4 +113,9 @@ public class GuavaCachingService extends AbstractHeapCachingService {
 	public void removeUserSessionFromCache(String sessionKey) {
 		userSessionsByKey.invalidate(sessionKey);
 	}
+
+	@Override
+	protected void invalidateCommentsByPostId(int postId) {
+		commentsByPostId.invalidate(postId);
+	}
 }

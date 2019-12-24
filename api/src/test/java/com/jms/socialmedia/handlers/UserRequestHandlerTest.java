@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -86,28 +84,29 @@ public class UserRequestHandlerTest {
 	@Test
 	public void testHandleGetUserPage() {
 
+		String username = "Jason";
 		UserPage userPage = new UserPage();
 		userPage.setUserId(1);
-		userPage.setUsername("Jason");
-		Collection<Integer> followerUserIds = Set.of(2, 3, 4, 5, 6);
-		Collection<Integer> followingUserIds = Set.of(20, 30, 40, 50, 60);
+		userPage.setUsername(username);
+		Collection<String> followerUsernames = Set.of("Joe", "Frank", "Paul");
+		Collection<String> followingUsernames = Set.of("Ken", "John");
 
-		when(request.params("username")).thenReturn("Jason");
-		when(dataService.getUserPageInfoByName("Jason")).thenReturn(userPage);
-		when(dataService.getFollowerUserIds(1)).thenReturn(followerUserIds);
-		when(dataService.getFollowingUserIds(1)).thenReturn(followingUserIds);
+		when(request.params("username")).thenReturn(username);
+		when(dataService.getUserPageInfoByName(username)).thenReturn(userPage);
+		when(dataService.getFollowerUsernames(username)).thenReturn(followerUsernames);
+		when(dataService.getFollowingUsernames(username)).thenReturn(followingUsernames);
 
 		UserPage retrievedUserPage = userRequestHandler.handleGetUserPage(request, response);
 		assertThat(retrievedUserPage.getUserId(), is(1));
-		assertThat(retrievedUserPage.getUsername(), is("Jason"));
-		assertThat(retrievedUserPage.getFollowersUserIds(), is(followerUserIds));
-		assertThat(retrievedUserPage.getFollowingUserIds(), is(followingUserIds));
+		assertThat(retrievedUserPage.getUsername(), is(username));
+		assertThat(retrievedUserPage.getFollowersUsernames(), is(followerUsernames));
+		assertThat(retrievedUserPage.getFollowingUsernames(), is(followingUsernames));
 
 		verify(request, times(1)).params("username");
 		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getUserPageInfoByName("Jason");
-		verify(dataService, times(1)).getFollowerUserIds(1);
-		verify(dataService, times(1)).getFollowingUserIds(1);
+		verify(dataService, times(1)).getUserPageInfoByName(username);
+		verify(dataService, times(1)).getFollowerUsernames(username);
+		verify(dataService, times(1)).getFollowingUsernames(username);
 		verifyNoMoreInteractions(dataService);
 		verifyZeroInteractions(tokenService);
 		verifyZeroInteractions(passwordService);
@@ -127,40 +126,6 @@ public class UserRequestHandlerTest {
 			verifyNoMoreInteractions(request);
 			verify(dataService, times(1)).getUserPageInfoByName("Jason");
 			verifyNoMoreInteractions(dataService);
-			verifyZeroInteractions(tokenService);
-			verifyZeroInteractions(passwordService);
-		}
-	}
-
-	@Test
-	public void testHandleGetUsernamesAndIds() {
-		Collection<User> users = createUsersToFollow(5);
-		when(request.queryParams("ids")).thenReturn("0,1,2,3,4");
-		when(dataService.getUsernamesByIds(List.of(0, 1, 2, 3, 4))).thenReturn(users);
-
-		Collection<User> retrievedUsers = userRequestHandler.handleGetUsernamesAndIds(request, response);
-		assertThat(retrievedUsers, is(users));
-
-		verify(request, times(1)).queryParams("ids");
-		verifyNoMoreInteractions(request);
-		verify(dataService, times(1)).getUsernamesByIds(List.of(0, 1, 2, 3, 4));
-		verifyNoMoreInteractions(dataService);
-		verifyZeroInteractions(tokenService);
-		verifyZeroInteractions(passwordService);
-	}
-
-	@Test
-	public void testHandleGetUsernamesAndIdsBadRequest() {
-		when(request.queryParams("ids")).thenReturn("");
-
-		try {
-			userRequestHandler.handleGetUsernamesAndIds(request, response);
-		} catch (Exception e) {
-			assertThat(e, instanceOf(BadRequestException.class));
-			assertThat(e.getMessage(), is("No User IDs included"));
-			verify(request, times(1)).queryParams("ids");
-			verifyNoMoreInteractions(request);
-			verifyZeroInteractions(dataService);
 			verifyZeroInteractions(tokenService);
 			verifyZeroInteractions(passwordService);
 		}
@@ -796,14 +761,6 @@ public class UserRequestHandlerTest {
 		verify(request, times(1)).cookie(SESSION_COOKIE);
 		verify(dataService, times(1)).removeSessionId("cookie");
 		verify(response, times(1)).removeCookie(SESSION_COOKIE);
-	}
-
-	private static Collection<User> createUsersToFollow(int no) {
-		Collection<User> users = new HashSet<>(no);
-		for (int i = 0; i < no; i++) {
-			users.add(new User(no, "User" + no));
-		}
-		return users;
 	}
 
 	private NewUser createNewUser() {

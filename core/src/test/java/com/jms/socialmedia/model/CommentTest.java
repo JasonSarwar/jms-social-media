@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.not;
 
 public class CommentTest {
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Test
 	public void testEqualsObjectAndHashCode() {
 		Comment comment = new Comment();
@@ -58,11 +57,11 @@ public class CommentTest {
 		assertThat(comment.hashCode(), is(not(comment2.hashCode())));
 
 		comment2.setTimestamp(LocalDateTime.of(1, 1, 1, 1, 1, 1));
-		comment.addLike(56);
+		comment.addLike("Me");
 		assertThat(comment.equals(comment2), is(false));
 		assertThat(comment.hashCode(), is(not(comment2.hashCode())));
 
-		comment2.addLike(56);
+		comment2.addLike("Me");
 		assertThat(comment.equals(comment2), is(true));
 		assertThat(comment.hashCode(), is(comment2.hashCode()));
 	}
@@ -70,8 +69,8 @@ public class CommentTest {
 	@Test
 	public void testToString() {
 		Comment comment = new Comment(4, 22, 1, "username", "Full Name", "Comment Text", LocalDateTime.of(2011, 1, 1, 1, 1, 1));
-		comment.addLike(56);
-		comment.addLike(57);
+		comment.addLike("Me 1");
+		comment.addLike("Me 2");
 
 		assertThat(comment.toString(), containsString("commentId=4"));
 		assertThat(comment.toString(), containsString("postId=22"));
@@ -79,7 +78,7 @@ public class CommentTest {
 		assertThat(comment.toString(), containsString("username=username"));
 		assertThat(comment.toString(), containsString("fullName=Full Name"));
 		assertThat(comment.toString(), containsString("text=Comment Text"));
-		assertThat(comment.toString(), containsString("likes=[56, 57]"));
+		assertThat(comment.toString(), containsString("likes=[Me 1, Me 2]"));
 		assertThat(comment.toString(), containsString("timestamp=2011-01-01T01:01:01"));
 	}
 }

@@ -17,12 +17,9 @@
 		<url>https://github.com/JasonSarwar/jms-social-media</url>
 	</scm>
 
-	<prerequisites>
-		<maven>3.5.2</maven>
-	</prerequisites>
-
 	<properties>
 		<java.version>11</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<spark-core.version>2.9.0</spark-core.version>
@@ -34,6 +31,7 @@
 		<jjwt.version>0.9.1</jjwt.version>
 		<spring-security.version>5.1.5.RELEASE</spring-security.version>
 		<mysql-connector.version>8.0.16</mysql-connector.version>
+		<h2.version>1.4.199</h2.version>
 		<metrics.version>4.1.0</metrics.version>
 		<apache.commons.pool>2.6.2</apache.commons.pool>
 		<jedis.version>3.0.1</jedis.version>
@@ -129,6 +127,13 @@
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
 				<version>${mysql-connector.version}</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>${h2.version}</version>
 			</dependency>
 
 			<!-- https://metrics.dropwizard.io/4.0.0/getting-started.html -->

@@ -2,17 +2,19 @@ package com.jms.socialmedia.mybatis;
 
 import java.util.Collection;
 
-import com.jms.socialmedia.model.User;
+import org.apache.ibatis.annotations.Param;
 
 public interface FollowersMapper {
 
-	Collection<Integer> getFollowerUserIds(int userId);
+	Collection<String> getFollowerUsernames(String username);
 
-	Collection<Integer> getFollowingUserIds(int userId);
+	Collection<String> getFollowingUsernames(String username);
 
-	int followUser(int followerUserId, int followingUserId);
+	int followUser(@Param(value="followerUserId") Integer followerUserId, @Param(value="followerUsername") String followerUsername, 
+			@Param(value="followingUserId") Integer followingUserId, @Param(value="followingUsername") String followingUsername);
 
-	int unfollowUser(int followerUserId, int followingUserId);
+	int unfollowUser(@Param(value="followerUserId") Integer followerUserId, @Param(value="followerUsername") String followerUsername, 
+			@Param(value="followingUserId") Integer followingUserId, @Param(value="followingUsername") String followingUsername);
 	
-	Collection<User> getUsersToFollow(int userId);
+	Collection<String> getUsernamesToFollow(String username);
 }

@@ -2,6 +2,7 @@ package com.jms.socialmedia.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -15,12 +16,12 @@ public class UserPage {
 	private LocalDate birthDate;
 	private LocalDateTime dateTimeJoined;
 	private String profilePictureLink;
-	private final Collection<Integer> followersUserIds;
-	private final Collection<Integer> followingUserIds;
+	private final Collection<String> followersUsernames;
+	private final Collection<String> followingUsernames;
 	
 	public UserPage() {
-		followersUserIds = new HashSet<>();
-		followingUserIds = new HashSet<>();
+		followersUsernames = new HashSet<>();
+		followingUsernames = new HashSet<>();
 	}
 
 	public final int getUserId() {
@@ -87,19 +88,27 @@ public class UserPage {
 		this.profilePictureLink = profilePictureLink;
 	}
 
-	public final Collection<Integer> getFollowersUserIds() {
-		return followersUserIds;
+	public final Collection<String> getFollowersUsernames() {
+		return followersUsernames;
 	}
 
-	public final Collection<Integer> getFollowingUserIds() {
-		return followingUserIds;
+	public final Collection<String> getFollowingUsernames() {
+		return followingUsernames;
 	}
 	
-	public final boolean addFollowersUserIds(Collection<Integer> userIds) {
-		return followersUserIds.addAll(userIds);
+	public final boolean addFollowersUsernames(String... usernames) {
+		return addFollowersUsernames(Arrays.asList(usernames));
+	}
+	
+	public final boolean addFollowersUsernames(Collection<String> usernames) {
+		return followersUsernames.addAll(usernames);
 	}
 
-	public final boolean addFollowingUserIds(Collection<Integer> userIds) {
-		return followingUserIds.addAll(userIds);
+	public final boolean addFollowingUsernames(String... usernames) {
+		return addFollowingUsernames(Arrays.asList(usernames));
+	}
+
+	public final boolean addFollowingUsernames(Collection<String> usernames) {
+		return followingUsernames.addAll(usernames);
 	}
 }

@@ -26,6 +26,7 @@ public class JWTService implements TokenService {
 	private static final String SUBJECT = "User Authenication";
 	private static final String ISSUER = "jms-social-media";
 	private static final String CLAIM_USERID = "userId";
+	private static final String CLAIM_USERNAME = "username";
 	private static final String CLAIM_PERMISSIONS = "permissions";
 
 	/**
@@ -51,6 +52,7 @@ public class JWTService implements TokenService {
 	                                .setIssuer(ISSUER)
 	                                .setIssuedAt(new Date())
 	                                .claim(CLAIM_USERID, token.getUserId())
+	                                .claim(CLAIM_USERNAME, token.getUsername())
 	                                .claim(CLAIM_PERMISSIONS, token.getPermissions())
 	                                .signWith(signatureAlgorithm, signingKey);
 	 
@@ -80,9 +82,15 @@ public class JWTService implements TokenService {
 	    Claims claims = Jwts.parser()         
 	       .setSigningKey(DatatypeConverter.parseBase64Binary(JWT_KEY))
 	       .parseClaimsJws(jwt).getBody();
+
 		Set<Permission> permissions = (Set<Permission>) claims.get(CLAIM_PERMISSIONS, ArrayList.class).stream()
 				.map(e -> Permission.valueOf((String) e)).collect(Collectors.toSet());
-		return Token.newBuilder().setUserId(claims.get(CLAIM_USERID, Integer.class)).addPermissions(permissions).build();
+
+		return Token.newBuilder()
+				.setUserId(claims.get(CLAIM_USERID, Integer.class))
+				.setUsername(claims.get(CLAIM_USERNAME, String.class))
+				.addPermissions(permissions)
+				.build();
 	}
 
 }

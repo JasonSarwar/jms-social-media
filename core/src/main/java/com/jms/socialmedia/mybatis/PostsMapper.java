@@ -10,7 +10,7 @@ public interface PostsMapper {
 
 	int getNumberOfPosts();
 
-	Collection<Post> getPosts(@Param(value="userIds") Collection<Integer> userIds, @Param(value="username") String username, 
+	Collection<Post> getPosts(@Param(value="userIds") Collection<Integer> userIds, @Param(value="usernames") Collection<String> usernames, 
 			@Param(value="tag") String tag, @Param(value="onDate") String onDate, 
 			@Param(value="beforeDate") String beforeDate, @Param(value="afterDate") String afterDate, 
 			@Param(value="sincePostId") Integer sincePostId,
@@ -28,11 +28,11 @@ public interface PostsMapper {
 
 	Collection<Post> getLikedPostsByUserId(int userId);
 
-	Collection<Integer> getPostLikes(int postId);
+	Collection<String> getPostLikes(int postId);
 
-	int likePost(@Param(value="postId") int postId, @Param(value="userId") int userId);
+	int likePost(@Param(value="postId") int postId, @Param(value="userId") Integer userId, @Param(value="username") String username);
 
-	int unlikePost(@Param(value="postId") int postId, @Param(value="userId") int userId);
+	int unlikePost(@Param(value="postId") int postId, @Param(value="userId") Integer userId, @Param(value="username") String username);
 
 	Collection<Post> getCommentedPostsByUserId(int userId);
 }

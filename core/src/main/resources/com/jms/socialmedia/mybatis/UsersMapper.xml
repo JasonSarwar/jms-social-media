@@ -25,7 +25,7 @@
         )
     </insert>
 
-	<insert id="addUser" parameterType="newUser" databaseId="mysql" keyProperty="userId" keyColumn="user_id">
+	<insert id="addUser" parameterType="newUser" keyProperty="userId" keyColumn="user_id">
         insert into users (username, hashed_password, full_name, email, birth_date, profile_picture_link, date_time_joined) values (
             #{username}, #{hashedPassword}, #{fullName}, #{email}, #{birthDate}, #{profilePictureLink}, now()
         )
@@ -71,7 +71,7 @@
         )
     </insert>
 
-    <insert id="addUserSession" databaseId="mysql">
+    <insert id="addUserSession">
         insert into user_sessions (user_id, session_key, timestamp) values (
             #{userId}, #{sessionKey}, now()
         )

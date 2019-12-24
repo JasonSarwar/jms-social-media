@@ -9,17 +9,17 @@
         </button>
       </div>
       <div class="modal-body">
-        <div ng-repeat="user in modalUsers">
+        <div ng-repeat="modalUsername in modalUsernames">
 
 			<div class="row">
 				<div class="col-sm-8">
-					<button type="button" class="btn btn-link" ng-click=goToUser(user.username)>@{{user.username}}</button>
+					<button type="button" class="btn btn-link" ng-click=goToUser(modalUsername)>@{{modalUsername}}</button>
 				</div>
-				<div class="col-sm-4" ng-if="userId && userId != user.userId">
-					<button type="button" class="btn btn-success" ng-hide="isFollowing(user.userId)" ng-click="followUser(user.userId)">
+				<div class="col-sm-4" ng-if="username && username != modalUsername">
+					<button type="button" class="btn btn-success" ng-hide="isFollowing(modalUsername)" ng-click="followUser(modalUsername)">
 						<span class="fas fa-user-plus"></span> Follow
 					</button>
-					<button type="button" class="btn btn-danger" ng-show="isFollowing(user.userId)" ng-click="unfollowUser(user.userId)">
+					<button type="button" class="btn btn-danger" ng-show="isFollowing(modalUsername)" ng-click="unfollowUser(modalUsername)">
 						<span class="fas fa-user-minus"></span> Unfollow
 					</button>
 				</div>

@@ -36,8 +36,11 @@
 	        		#{userId}
 	        	</foreach>
 	        </if>
-	        <if test="username != null">
-	        	AND lower(username) = lower(#{username})
+	        <if test="usernames != null">
+	        	AND lower(username) in 
+	        	<foreach item="username" collection="usernames" open="(" separator="," close=")">
+	        		lower(#{username})
+	        	</foreach>
 	        </if>
 	        <if test="tag != null">
 	        	AND post_tags.tag = lower(#{tag})
@@ -46,7 +49,7 @@
 	        	<if test="_databaseId == 'oracle'">
 	        		AND TO_CHAR(timestamp, 'MM-DD-YYYY') = #{onDate}
 	        	</if>
-	        	<if test="_databaseId == 'mysql'">
+	        	<if test="_databaseId != 'oracle'">
 	        		AND DATE_FORMAT(timestamp, '%m-%d-%Y') = #{onDate}
 	        	</if>
 	        </if>
@@ -113,7 +116,7 @@
         )
     </insert>
 
-	<insert id="addPost" parameterType="post" databaseId="mysql" keyProperty="postId" keyColumn="post_id">
+	<insert id="addPost" parameterType="post" keyProperty="postId" keyColumn="post_id">
         insert into posts (user_id, text, timestamp) values (
             #{userId}, #{text}, now()
         )
@@ -138,26 +141,30 @@
 		order by post_likes.timestamp desc
 	</select>
 
-	<select id="getPostLikes" parameterType="int" resultType="Integer">
-		select user_id from post_likes
+	<select id="getPostLikes" parameterType="int" resultType="String">
+		select username from users inner join post_likes
+		on users.user_id = post_likes.user_id
 		where post_id = #{id}
 	</select>
 
 	<insert id="likePost" databaseId="oracle">
-		insert into post_likes (post_id, user_id, timestamp) values (
-            #{postId}, #{userId}, systimestamp
+		insert into post_likes (post_id, timestamp, user_id) values (
+            #{postId}, systimestamp, 
+            <include refid="getUserIdForLikeAndUnlike"></include>
         )
 	</insert>
 
-	<insert id="likePost" databaseId="mysql">
-		insert into post_likes (post_id, user_id, timestamp) values (
-            #{postId}, #{userId}, now()
+	<insert id="likePost">
+		insert into post_likes (post_id, timestamp, user_id) values (
+            #{postId}, now(),
+            <include refid="getUserIdForLikeAndUnlike"></include>
         )
 	</insert>
 
 	<delete id="unlikePost">
         delete from post_likes
-        where post_id = #{postId} and user_id = #{userId}
+        where post_id = #{postId} and user_id = 
+        <include refid="getUserIdForLikeAndUnlike"></include>
     </delete>
 
     <select id="getCommentedPostsByUserId" parameterType="int" resultType="post">
@@ -167,5 +174,14 @@
 		where comments.user_id = #{id}
 		order by comments.timestamp desc
 	</select>
+
+	<sql id="getUserIdForLikeAndUnlike">
+		<if test="username != null">
+        	(select user_id from users where lower(username) = lower(#{username}))
+        </if>
+        <if test="username == null">
+        	#{userId}
+        </if>
+	</sql>
 
 </mapper>

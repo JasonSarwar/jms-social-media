@@ -28,7 +28,7 @@ public class LikeRequestHandler extends RequestHandler {
 		return dataService.getLikedPostsByUserId(userId);
 	}
 
-	public Collection<Integer> handleGetPostLikes(Request request, Response response) {
+	public Collection<String> handleGetPostLikes(Request request, Response response) {
 
 		int postId = Integer.parseInt(request.params(POST_ID_PARAM));
 		return dataService.getPostLikes(postId);
@@ -50,7 +50,7 @@ public class LikeRequestHandler extends RequestHandler {
 		return dataService.unlikePost(postId, userId);
 	}
 
-	public Collection<Integer> handleGetCommentLikes(Request request, Response response) {
+	public Collection<String> handleGetCommentLikes(Request request, Response response) {
 
 		int commentId = Integer.parseInt(request.params(COMMENT_ID_PARAM));
 		return dataService.getCommentLikes(commentId);

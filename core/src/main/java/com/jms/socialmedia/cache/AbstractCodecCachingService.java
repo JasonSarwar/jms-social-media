@@ -38,12 +38,12 @@ public abstract class AbstractCodecCachingService<T> extends AbstractCachingServ
 
 
 	@Override
-	public void likePostInCache(int postId, int userId) {
+	public void likePostInCache(int postId, String username) {
 		invalidatePost(postId);
 	}
 
 	@Override
-	public void unlikePostInCache(int postId, int userId) {
+	public void unlikePostInCache(int postId, String username) {
 		invalidatePost(postId);
 	}
 
@@ -102,7 +102,17 @@ public abstract class AbstractCodecCachingService<T> extends AbstractCachingServ
 	}
 
 	@Override
+	public void likeCommentInCache(int commentId, String username) {
+		invalidateComment(commentId);
+	}
+
+	@Override
 	public void unlikeCommentInCache(int commentId, int userId) {
+		invalidateComment(commentId);
+	}
+
+	@Override
+	public void unlikeCommentInCache(int commentId, String username) {
 		invalidateComment(commentId);
 	}
 
