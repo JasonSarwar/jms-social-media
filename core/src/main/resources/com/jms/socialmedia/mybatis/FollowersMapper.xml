@@ -4,71 +4,87 @@
 
 <mapper namespace="com.jms.socialmedia.mybatis.FollowersMapper">
 
-	<sql id="fromFollowersAndUsers">
-		from followers
-		inner join users followerUsers on followers.follower_user_id = followerUsers.user_id
-		inner join users followingUsers on followers.following_user_id = followingUsers.user_id
-	</sql>
+  <sql id="fromFollowersAndUsers">
+    from followers
+    inner join users followerUsers on
+    followers.follower_user_id = followerUsers.user_id
+    inner join users
+    followingUsers on followers.following_user_id = followingUsers.user_id
+  </sql>
 
-    <select id="getFollowerUsernames" parameterType="String" resultType="String">
-		select followerUsers.username 
-		<include refid="fromFollowersAndUsers"></include>
-		where lower(followingUsers.username) = lower(#{id})
-	</select>
+  <select id="getFollowerUsernames" parameterType="String"
+    resultType="String">
+    select followerUsers.username
+    <include refid="fromFollowersAndUsers"></include>
+    where lower(followingUsers.username) = lower(#{id})
+  </select>
 
-	<select id="getFollowingUsernames" parameterType="String" resultType="String">
-		select followingUsers.username 
-		<include refid="fromFollowersAndUsers"></include>
-		where lower(followerUsers.username) = lower(#{id})
-	</select>
+  <select id="getFollowingUsernames" parameterType="String"
+    resultType="String">
+    select followingUsers.username
+    <include refid="fromFollowersAndUsers"></include>
+    where lower(followerUsers.username) = lower(#{id})
+  </select>
 
-	<insert id="followUser" databaseId="oracle">
-		insert into followers (follower_user_id, following_user_id, timestamp) values (
-            <include refid="getFollowerUserIdForFollowAndUnfollow"></include>, 
-            <include refid="getFollowingUserIdForFollowAndUnfollow"></include>, 
-            systimestamp
-        )
-	</insert>
+  <insert id="followUser" databaseId="oracle">
+    insert into followers (follower_user_id, following_user_id, timestamp)
+    values (
+    <include refid="getFollowerUserIdForFollowAndUnfollow"></include>
+    ,
+    <include refid="getFollowingUserIdForFollowAndUnfollow"></include>
+    ,
+    systimestamp
+    )
+  </insert>
 
-	<insert id="followUser">
-		insert into followers (follower_user_id, following_user_id, timestamp) values (
-            <include refid="getFollowerUserIdForFollowAndUnfollow"></include>, 
-            <include refid="getFollowingUserIdForFollowAndUnfollow"></include>, 
-            now()
-        )
-	</insert>
+  <insert id="followUser">
+    insert into followers (follower_user_id, following_user_id, timestamp)
+    values (
+    <include refid="getFollowerUserIdForFollowAndUnfollow"></include>
+    ,
+    <include refid="getFollowingUserIdForFollowAndUnfollow"></include>
+    ,
+    now()
+    )
+  </insert>
 
-	<delete id="unfollowUser">
-        delete from followers
-        where follower_user_id = <include refid="getFollowerUserIdForFollowAndUnfollow"></include>
-        and following_user_id = <include refid="getFollowingUserIdForFollowAndUnfollow"></include>
-    </delete>
+  <delete id="unfollowUser">
+    delete from followers
+    where follower_user_id =
+    <include refid="getFollowerUserIdForFollowAndUnfollow"></include>
+    and following_user_id =
+    <include refid="getFollowingUserIdForFollowAndUnfollow"></include>
+  </delete>
 
-	<select id="getUsernamesToFollow" parameterType="String" resultType="String">
-		select username from users
-		where lower(username) != lower(#{id})
-		and user_id not in (
-			select followers.following_user_id from followers
-    		inner join users on followers.follower_user_id = users.user_id
-    		where lower(users.username) = lower(#{id})
-		)
-	</select>
+  <select id="getUsernamesToFollow" parameterType="String"
+    resultType="String">
+    select username from users
+    where lower(username) !=
+    lower(#{id})
+    and user_id not in (
+    select followers.following_user_id from followers
+    inner join users on followers.follower_user_id = users.user_id
+    where lower(users.username) = lower(#{id})
+    )
+  </select>
 
-	<sql id="getFollowerUserIdForFollowAndUnfollow">
-		<if test="followerUserId == null">
-        	(select user_id from users where lower(username) = lower(#{followerUsername}))
-        </if>
-        <if test="followerUserId != null">
-        	#{followerUserId}
-        </if>
-	</sql>
+  <sql id="getFollowerUserIdForFollowAndUnfollow">
+    <if test="followerUserId == null">
+      (select user_id from users where lower(username) =
+      lower(#{followerUsername}))
+    </if>
+    <if test="followerUserId != null">
+      #{followerUserId}
+    </if>
+  </sql>
 
-	<sql id="getFollowingUserIdForFollowAndUnfollow">
-		<if test="followingUserId == null">
-        	(select user_id from users where lower(username) = lower(#{followingUsername}))
-        </if>
-        <if test="followingUserId != null">
-        	#{followingUserId}
-        </if>
-	</sql>
+  <sql id="getFollowingUserIdForFollowAndUnfollow">
+    <if test="followingUserId == null">
+      (select user_id from users where lower(username) =
+      lower(#{followingUsername}))
+    </if>
+    <if test="followingUserId != null">
+      #{followingUserId}
+    </if>
+  </sql>
 </mapper>

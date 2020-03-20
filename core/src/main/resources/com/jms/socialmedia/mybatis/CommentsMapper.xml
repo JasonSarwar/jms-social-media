@@ -4,97 +4,99 @@
 
 <mapper namespace="com.jms.socialmedia.mybatis.CommentsMapper">
 
-    <sql id="retrieveComments">
-		select post_id, comments.user_id as user_id,
-		comment_id, full_name, username, profile_picture_link, text, timestamp
-        from comments, users    
-    </sql>
+  <sql id="retrieveComments">
+    select post_id, comments.user_id as user_id, comment_id,
+    full_name, username, profile_picture_link, text, timestamp
+    from comments, users
+  </sql>
 
-    <select id="getNumberOfCommentsInPost" parameterType="int" resultType="int">
-        select count(*) from comments
-        where post_id = #{id}
-    </select>
+  <select id="getNumberOfCommentsInPost" parameterType="int" resultType="int">
+    select count(*) from comments
+    where post_id = #{id}
+  </select>
 
-    <select id="getComments" parameterType="int" resultType="comment">
-        <include refid="retrieveComments"></include>
-        where post_id = #{id} and comments.user_id = users.user_id
-        order by timestamp asc
-    </select>
+  <select id="getComments" parameterType="int" resultType="comment">
+    <include refid="retrieveComments"></include>
+    where post_id = #{id} and comments.user_id = users.user_id
+    order by timestamp asc
+  </select>
 
-	<select id="getCommentsByUserId" parameterType="int" resultType="comment">
-        <include refid="retrieveComments"></include>
-        where comments.user_id = #{id} and comments.user_id = users.user_id
-        order by timestamp desc
-    </select>
+  <select id="getCommentsByUserId" parameterType="int" resultType="comment">
+    <include refid="retrieveComments"></include>
+    where comments.user_id = #{id} and comments.user_id = users.user_id
+    order by timestamp desc
+  </select>
 
-    <select id="getComment" parameterType="int" resultType="comment">
-        <include refid="retrieveComments"></include>
-        where comment_id = #{id} and comments.user_id = users.user_id
-    </select>
+  <select id="getComment" parameterType="int" resultType="comment">
+    <include refid="retrieveComments"></include>
+    where comment_id = #{id} and comments.user_id = users.user_id
+  </select>
 
-	<select id="getUserIdFromCommentId" parameterType="int" resultType="Integer">
-        select user_id from comments
-        where comment_id = #{id}
-    </select>
+  <select id="getUserIdFromCommentId" parameterType="int" resultType="Integer">
+    select user_id from comments
+    where comment_id = #{id}
+  </select>
 
-	<insert id="addComment" parameterType="comment" databaseId="oracle" keyColumn="comment_id">
-    	<selectKey keyProperty="commentId" resultType="int" order="BEFORE">
-    		select COMMENTS_SEQ.nextval as commentId from DUAL
-    	</selectKey>
-        insert into comments (comment_id, post_id, user_id, text, timestamp) values (
-            #{commentId}, #{postId}, #{userId}, #{text}, systimestamp
-        )
-    </insert>
+  <insert id="addComment" parameterType="comment" databaseId="oracle" keyColumn="comment_id">
+    <selectKey keyProperty="commentId" resultType="int" order="BEFORE">
+      select COMMENTS_SEQ.nextval as commentId from DUAL
+    </selectKey>
+    insert into comments (comment_id, post_id, user_id, text, timestamp)
+    values (
+    #{commentId}, #{postId}, #{userId}, #{text}, systimestamp
+    )
+  </insert>
 
-	<insert id="addComment" parameterType="comment" keyProperty="commentId" keyColumn="comment_id">
-        insert into comments (post_id, user_id, text, timestamp) values (
-            #{postId}, #{userId}, #{text}, now()
-        )
-    </insert>
+  <insert id="addComment" parameterType="comment" keyProperty="commentId" keyColumn="comment_id">
+    insert into comments (post_id, user_id, text, timestamp) values (
+    #{postId}, #{userId}, #{text}, now()
+    )
+  </insert>
 
-    <update id="editComment">
-        update comments
-        set text = #{text}
-        where comment_id = #{id}
-    </update>
+  <update id="editComment">
+    update comments
+    set text = #{text}
+    where comment_id = #{id}
+  </update>
 
-    <delete id="deleteComment" parameterType="int">
-        delete from comments
-        where comment_id = #{id}
-    </delete>
+  <delete id="deleteComment" parameterType="int">
+    delete from comments
+    where comment_id = #{id}
+  </delete>
 
-    <select id="getCommentLikes" parameterType="int" resultType="String">
-		select username from users inner join comment_likes
-		on users.user_id = comment_likes.user_id
-		where comment_id = #{id}
-	</select>
+  <select id="getCommentLikes" parameterType="int" resultType="String">
+    select username from users inner join comment_likes
+    on
+    users.user_id = comment_likes.user_id
+    where comment_id = #{id}
+  </select>
 
-	<insert id="likeComment" databaseId="oracle">
-		insert into comment_likes (comment_id, timestamp, user_id) values (
-            #{commentId}, systimestamp, 
-            <include refid="getUserIdForLikeAndUnlike"></include>
-        )
-	</insert>
+  <insert id="likeComment" databaseId="oracle">
+    insert into comment_likes (comment_id, timestamp, user_id) values (
+    #{commentId}, systimestamp,
+    <include refid="getUserIdForLikeAndUnlike"></include>
+    )
+  </insert>
 
-	<insert id="likeComment">
-		insert into comment_likes (comment_id, timestamp, user_id) values (
-            #{commentId}, now(), 
-            <include refid="getUserIdForLikeAndUnlike"></include>
-        )
-	</insert>
+  <insert id="likeComment">
+    insert into comment_likes (comment_id, timestamp, user_id) values (
+    #{commentId}, now(),
+    <include refid="getUserIdForLikeAndUnlike"></include>
+    )
+  </insert>
 
-	<delete id="unlikeComment">
-        delete from comment_likes
-        where comment_id = #{commentId} and user_id = 
-        <include refid="getUserIdForLikeAndUnlike"></include>
-    </delete>
+  <delete id="unlikeComment">
+    delete from comment_likes
+    where comment_id = #{commentId} and user_id =
+    <include refid="getUserIdForLikeAndUnlike"></include>
+  </delete>
 
-	<sql id="getUserIdForLikeAndUnlike">
-		<if test="username != null">
-        	(select user_id from users where lower(username) = lower(#{username}))
-        </if>
-        <if test="username == null">
-        	#{userId}
-        </if>
-	</sql>
+  <sql id="getUserIdForLikeAndUnlike">
+    <if test="username != null">
+      (select user_id from users where lower(username) = lower(#{username}))
+    </if>
+    <if test="username == null">
+      #{userId}
+    </if>
+  </sql>
 </mapper>

@@ -4,67 +4,67 @@
 
 <mapper namespace="com.jms.socialmedia.mybatis.UsersMapper">
 
-	<select id="getNumberOfUsers" resultType="int">
+  <select id="getNumberOfUsers" resultType="int">
         select count(1) from users
     </select>
-    
+
     <select id="isUsernameTaken" parameterType="String" resultType="int">
         select count(1) from users where lower(username) = lower(#{username})
-    </select>    
-    
+    </select>
+
     <select id="isEmailTaken" parameterType="String" resultType="int">
         select count(1) from users where lower(email) = lower(#{email})
     </select>
-    
+
     <insert id="addUser" parameterType="newUser" databaseId="oracle" keyColumn="user_id">
-    	<selectKey keyProperty="userId" resultType="Integer" order="BEFORE">
-    		select users_seq.nextval as userId from dual
-    	</selectKey>
+      <selectKey keyProperty="userId" resultType="Integer" order="BEFORE">
+        select users_seq.nextval as userId from dual
+      </selectKey>
         insert into users (user_id, username, hashed_password, full_name, email, birth_date, profile_picture_link, date_time_joined) values (
             #{userId}, #{username}, #{hashedPassword}, #{fullName}, #{email}, #{birthDate}, #{profilePictureLink}, systimestamp
         )
     </insert>
 
-	<insert id="addUser" parameterType="newUser" keyProperty="userId" keyColumn="user_id">
+  <insert id="addUser" parameterType="newUser" keyProperty="userId" keyColumn="user_id">
         insert into users (username, hashed_password, full_name, email, birth_date, profile_picture_link, date_time_joined) values (
             #{username}, #{hashedPassword}, #{fullName}, #{email}, #{birthDate}, #{profilePictureLink}, now()
         )
     </insert>
 
-	<select id="getUserIdByUsername" parameterType="String" resultType="Integer">
-        select user_id from users 
+  <select id="getUserIdByUsername" parameterType="String" resultType="Integer">
+        select user_id from users
         where lower(username) = lower(#{id})
     </select>
 
-	<select id="getUserPageInfoByName" parameterType="String" resultType="userPage">
-        select user_id, username, full_name, email, bio, birth_date, date_time_joined, profile_picture_link from users 
+  <select id="getUserPageInfoByName" parameterType="String" resultType="userPage">
+        select user_id, username, full_name, email, bio, birth_date, date_time_joined, profile_picture_link from users
         where lower(username) = lower(#{id})
     </select>
 
     <select id="getUserLoginInfoByString" parameterType="String" resultType="user">
-        select user_id, username, full_name, hashed_password from users 
+        select user_id, username, full_name, hashed_password from users
         where lower(username) = lower(#{id}) or lower(email) = lower(#{id})
     </select>
 
     <select id="getHashedPasswordByUserId" parameterType="Integer" resultType="user">
-        select hashed_password from users 
+        select hashed_password from users
         where user_id = #{id}
     </select>
 
-	<select id="getUsernamesByIds" parameterType="Integer" resultType="User">
+  <select id="getUsernamesByIds" parameterType="Integer" resultType="User">
         select user_id, username from users
-        where user_id in 
+        where user_id in
         <foreach item="item" collection="list" open="(" separator="," close=")">
-	    	#{item}
-	    </foreach>
+        #{item}
+      </foreach>
     </select>
 
-	<update id="editPassword">
+  <update id="editPassword">
         update users
         set hashed_password = #{hashedPassword}
         where user_id = #{id}
     </update>
-    
+
     <insert id="addUserSession" databaseId="oracle">
         insert into user_sessions (user_id, session_key, timestamp) values (
             #{userId}, #{sessionKey}, systimestamp
@@ -78,13 +78,13 @@
     </insert>
 
     <select id="getUserBySessionKey" parameterType="String" resultType="user">
-        select user_sessions.user_id as user_id, username, full_name from user_sessions, users 
+        select user_sessions.user_id as user_id, username, full_name from user_sessions, users
         where session_key = #{id} and user_sessions.user_id = users.user_id
     </select>
 
-	<delete id="removeSessionKey" parameterType="String">
-		delete from user_sessions
-		where session_key = #{id}
-	</delete>
+  <delete id="removeSessionKey" parameterType="String">
+    delete from user_sessions
+    where session_key = #{id}
+  </delete>
 
 </mapper>

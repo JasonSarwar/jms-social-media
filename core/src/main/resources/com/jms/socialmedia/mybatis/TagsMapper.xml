@@ -4,7 +4,7 @@
 
 <mapper namespace="com.jms.socialmedia.mybatis.TagsMapper">
 
-	<select id="getTags" resultType="String">
+  <select id="getTags" resultType="String">
         select distinct tag from post_tags
     </select>
 
@@ -14,24 +14,24 @@
     </select>
 
     <insert id="addTags" databaseId="oracle">
-    	insert all
-    	<foreach item="tag" collection="tags">
-    		into post_tags (post_id, tag) values
-    		(#{postId}, #{tag})
-    	</foreach>
-    	select * from dual
+      insert all
+      <foreach item="tag" collection="tags">
+        into post_tags (post_id, tag) values
+        (#{postId}, #{tag})
+      </foreach>
+      select * from dual
     </insert>
 
     <insert id="addTags">
-    	insert into post_tags values
-    	<foreach item="tag" collection="tags" separator=",">
-    		(#{postId}, #{tag})
-    	</foreach>
+      insert into post_tags values
+      <foreach item="tag" collection="tags" separator=",">
+        (#{postId}, #{tag})
+      </foreach>
     </insert>
 
-	<delete id="removePostTags">
-		delete from post_tags
-		where post_id = #{id}
-	</delete>
+  <delete id="removePostTags">
+    delete from post_tags
+    where post_id = #{id}
+  </delete>
 
 </mapper>
