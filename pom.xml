@@ -6,7 +6,7 @@
 	<groupId>com.jms.socialmedia</groupId>
 	<artifactId>jms-social-media</artifactId>
 	<packaging>pom</packaging>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>1.4.0-SNAPSHOT</version>
 
 	<name>JMS Social Media</name>
 	<url>https://github.com/JasonSarwar/jms-social-media</url>
