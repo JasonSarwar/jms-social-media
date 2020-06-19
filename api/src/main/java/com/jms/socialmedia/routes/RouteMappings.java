@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import com.codahale.metrics.MetricRegistry;
@@ -27,6 +28,7 @@ import com.jms.socialmedia.token.TokenService;
 import spark.Request;
 import spark.Response;
 import spark.ResponseTransformer;
+import spark.utils.StringUtils;
 
 import static spark.Spark.path;
 import static spark.Spark.before;
@@ -78,6 +80,7 @@ public class RouteMappings {
 				"*/xml", xmlWriter::writeValueAsString);
 
 		before("/*", this::informAllListenersOnRequest);
+		before("/*", this::getOrSetThreadId);
 
 		path("/api", () ->
 
@@ -232,6 +235,18 @@ public class RouteMappings {
 		} else {
 			response.type(APPLICATION_JSON);
 		}
+	}
+
+	private void getOrSetThreadId(Request request, Response response) {
+		String threadId = request.queryParams("tid");
+		if (StringUtils.isBlank(threadId)) {
+			threadId = request.headers("X-Thread-ID");
+			if (StringUtils.isBlank(threadId)) {
+				threadId = UUID.randomUUID().toString();
+			}
+		}
+		Thread.currentThread().setName(threadId);
+		response.header("X-Thread-ID", threadId);
 	}
 
 	private Gson createGson() {
