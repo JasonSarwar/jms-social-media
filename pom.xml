@@ -37,7 +37,7 @@
 		<apache.commons.pool.version>2.7.0</apache.commons.pool.version>
 		<jedis.version>3.1.0</jedis.version>
 		<log4j.logging.version>2.12.1</log4j.logging.version>
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<mockito.version>3.1.0</mockito.version>
 		<jacoco.version>0.8.5</jacoco.version>
 		<maven.exec>1.6.0</maven.exec>
