@@ -31,7 +31,7 @@
 		<mybatis.version>3.5.3</mybatis.version>
 		<jjwt.version>0.9.1</jjwt.version>
 		<spring-security.version>5.2.0.RELEASE</spring-security.version>
-		<mysql-connector.version>8.0.18</mysql-connector.version>
+		<mysql-connector.version>8.0.28</mysql-connector.version>
 		<h2.version>1.4.199</h2.version>
 		<dropwizard.metrics.version>4.1.1</dropwizard.metrics.version>
 		<apache.commons.pool.version>2.7.0</apache.commons.pool.version>
